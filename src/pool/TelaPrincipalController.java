@@ -26,7 +26,7 @@ public class TelaPrincipalController implements Initializable
     @FXML
     private CodeArea caCodigo;
     @FXML
-    private JFXListView<?> lvassembly;
+    private JFXListView<Object> lvassembly;
         
     @Override
     public void initialize(URL url, ResourceBundle rb)

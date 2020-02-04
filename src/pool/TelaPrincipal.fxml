@@ -21,7 +21,7 @@
          <children>
             <HBox alignment="CENTER" prefHeight="68.0" prefWidth="589.0">
                <children>
-                  <Label text="Poll++">
+                  <Label text="Pool++">
                      <font>
                         <Font name="Bodoni MT" size="29.0" />
                      </font>

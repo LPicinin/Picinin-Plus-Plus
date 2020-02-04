@@ -122,7 +122,7 @@ public class CodeAreaInit
             }
         });
 
-        codeArea.replaceText(0, 0, sampleCode);
+        //codeArea.replaceText(0, 0, sampleCode);
 
         //Scene scene = new Scene(new StackPane(new VirtualizedScrollPane<>(codeArea)), 600, 400);
         //scene.getStylesheets().add(CodeAreaInit.class.getResource("java-keywords.css").toExternalForm());
