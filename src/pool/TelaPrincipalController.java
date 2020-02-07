@@ -5,7 +5,7 @@
  */
 package pool;
 
-import Util.CodeAreaInit;
+import util.CodeAreaInit;
 import com.jfoenix.controls.JFXListView;
 import java.net.URL;
 import java.util.ResourceBundle;
