@@ -16,4 +16,9 @@ public class Util
      * Expressão regular que descreve nomes de variaveis
      */
     public static final String regex_identificador_variavel = "([A-Za-z])+(\\d)*([A-Za-z])*";
+    
+    /**
+     * Expressão regular que descreve cadeias de caracteres entre aspas
+     */
+    public static final String regex_string = "\\\"(.*?)\\\"";
 }
