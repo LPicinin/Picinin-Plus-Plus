@@ -118,7 +118,7 @@
             </HBox>
          </top>
          <center>
-            <CodeArea fx:id="caCodigo" prefHeight="400.0" prefWidth="800.0" style="-fx-background-color: lightgray; -fx-background-radius: 30;" BorderPane.alignment="CENTER" />
+            <CodeArea fx:id="caCodigo" prefHeight="400.0" prefWidth="800.0" stylesheets="@../css/editor_style.css" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
    </center>
