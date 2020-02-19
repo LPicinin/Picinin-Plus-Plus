@@ -1,0 +1,46 @@
+
+init = "program" id-funcao "\n"
+id-funcao = id
+id = identificador
+identificador = string-chars
+
+tipo = "int" | "double" | "bool" | "string" | "char"
+
+
+
+
+valor = numero-valor | bool-valor | string-valor | char-valor | null-valor
+
+sinal						= '+' | '-'
+numero-valor				= [sinal] decimal-numero | hex-numero | oct-numero
+
+decimal-numero				= digito | digito decimal-numero
+digito 						= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+
+hex-numero 					= 'x' hex-digito | hex-numero hex-digito
+hex-digito					= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
+
+oct-numero					= 'o' octal-digito | oct-numero octal-digito
+octal-digito				= '0' | '1'| '2' | '3' | '4' | '5' | '6' | '7'
+
+boolean-valor				= "true" | "false"
+
+string-valor				= '"' string-chars '"'
+string-chars				= char-valor | char-valor string-chars
+char-valor					= . //todos os caracteres
+
+
+null-valor					= "null"		
+
+declaracao-variavel 		= tipo id ['=' valor] ';' 
+
+
+palavra-chave 				= "bool" | "char" | "double" | "else" | "false" | "for" | "if" | "int" | "null" | "program" | "string" | "true" | "while"
+
+
+
+bloco 						= '{' bloco-codigos '}'
+bloco-codigos 				= bloco-codigo | bloco-codigos bloco-codigo
+bloco-codigo				= variavel-codigo | codigo
+variavel-codigo				= declaracao-variavel
+codigo						= declaracao-sem-sub | if-codigo | if-else-codigo | while-codigo | for-codigo
