@@ -1,3 +1,4 @@
+Backus Naur Form
 
 init = "program" id-funcao "\n"
 id-funcao = id
@@ -17,13 +18,13 @@ numero-valor				= [sinal] decimal-numero | hex-numero | oct-numero
 decimal-numero				= digito | digito decimal-numero
 digito 						= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
 
-hex-numero 					= 'x' hex-digito | hex-numero hex-digito
+hex-numero 					= 'x' hex-digito | hex-digito hex-numero
 hex-digito					= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
 
-oct-numero					= 'o' octal-digito | oct-numero octal-digito
+oct-numero					= 'o' octal-digito | octal-digito oct-numero
 octal-digito				= '0' | '1'| '2' | '3' | '4' | '5' | '6' | '7'
 
-boolean-valor				= "true" | "false"
+bool-valor					= "true" | "false"
 
 string-valor				= '"' string-chars '"'
 string-chars				= char-valor | char-valor string-chars
@@ -33,14 +34,62 @@ char-valor					= . //todos os caracteres
 null-valor					= "null"		
 
 declaracao-variavel 		= tipo id ['=' valor] ';' 
+atribuicao					= id '=' (valor | operacao) ';'
+
+//+,-,*,/
+operacao 				= numero-valor operadores numero-valor [operacao] | string-valor '+' string-valor
+operadores 				= '+' | '-' | '*' | '/'
 
 
-palavra-chave 				= "bool" | "char" | "double" | "else" | "false" | "for" | "if" | "int" | "null" | "program" | "string" | "true" | "while"
+
+palavra-chave 				= "bool" | "char" | "double" | "else" | "false" | "for" | "if" | "int" | "null" | "program" | "string" | "true" | "while" | "and" | "or"
 
 
-
+///////////////////////////
 bloco 						= '{' bloco-codigos '}'
-bloco-codigos 				= bloco-codigo | bloco-codigos bloco-codigo
+bloco-codigos 				= bloco-codigo | bloco-codigo bloco-codigos
 bloco-codigo				= variavel-codigo | codigo
 variavel-codigo				= declaracao-variavel
-codigo						= declaracao-sem-sub | if-codigo | if-else-codigo | while-codigo | for-codigo
+codigo						= declaracao-sem-sub | if-codigo | if-else-codigo | while-codigo
+
+declaracao-sem-sub			= ';' codigo
+
+if-codigo					= "if" "(" expressao ")" codigo
+if-else-codigo				= "if" "(" expressao ")" "else" codigo
+while-codigo				= "while" "(" expressao ")" codigo
+
+expressao					= ['('] expressao-logica [')']
+expressao-logica			= bool-valor [expressao-logica] | bool-valor operador-logico bool-valor [expressao-logica] | id condicional-logica id [expressao-logica]
+
+
+operador-logico			= "or" | "and"
+condicional-logica		= ">" | ">=" | "<" | "<=" | "==" | "!="
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
