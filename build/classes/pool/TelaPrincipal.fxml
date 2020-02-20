@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXListView?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -7,11 +8,14 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -43,31 +47,10 @@
                 </Menu>
               </menus>
             </MenuBar>
+            <Separator prefWidth="200.0" />
          </children>
       </VBox>
    </top>
-   <right>
-      <VBox prefHeight="473.0" prefWidth="305.0" spacing="15.0" BorderPane.alignment="CENTER">
-         <children>
-            <CheckBox mnemonicParsing="false" text="Exibir todos">
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-            </CheckBox>
-            <TableView prefHeight="636.0" prefWidth="200.0" style="-fx-background-radius: 50;">
-              <columns>
-                <TableColumn prefWidth="75.0" style="-fx-background-radius: 2;" text="Palavra" />
-                <TableColumn prefWidth="75.0" style="-fx-background-radius: 2;" text="Token" />
-                  <TableColumn prefWidth="75.0" style="-fx-background-radius: 2;" text="Valor" />
-                  <TableColumn prefWidth="75.0" style="-fx-background-radius: 2;" text="Tipo" />
-              </columns>
-            </TableView>
-         </children>
-         <BorderPane.margin>
-            <Insets left="1.0" />
-         </BorderPane.margin>
-      </VBox>
-   </right>
    <bottom>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
@@ -86,40 +69,99 @@
                   <TextArea prefHeight="200.0" prefWidth="200.0" />
                </content>
             </Tab>
+            <Tab style="-fx-background-radius: 5;" text="Terminal">
+               <content>
+                  <VBox spacing="3.0">
+                     <children>
+                        <HBox spacing="3.0">
+                           <children>
+                              <TextField fx:id="txcomando" prefHeight="25.0" prefWidth="410.0" promptText="Comando:" />
+                              <Button mnemonicParsing="false" onMouseClicked="#evtExecutaComando" text="Executar" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="1.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <TextArea fx:id="txTerminal" prefHeight="200.0" prefWidth="200.0" />
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
         </tabs>
       </TabPane>
    </bottom>
    <center>
       <BorderPane prefHeight="473.0" prefWidth="776.0" BorderPane.alignment="CENTER">
          <top>
-            <HBox alignment="CENTER_LEFT" maxHeight="46.0" minWidth="30.0" prefHeight="41.0" prefWidth="694.0" spacing="5.0" BorderPane.alignment="CENTER">
+            <VBox BorderPane.alignment="CENTER">
                <children>
-                  <Button focusTraversable="false" mnemonicParsing="false" prefHeight="33.0" prefWidth="29.0" style="-fx-background-radius: 30;">
-                     <graphic>
-                        <FontAwesomeIconView fill="#0400e8" glyphName="SAVE" size="25" />
-                     </graphic>
-                  </Button>
-                  <Button focusTraversable="false" mnemonicParsing="false" style="-fx-background-radius: 30;">
-                     <graphic>
-                        <FontAwesomeIconView fill="#b22f00" glyphName="BUG" size="25" />
-                     </graphic>
-                  </Button>
-                  <Button focusTraversable="false" mnemonicParsing="false" style="-fx-background-radius: 30;">
-                     <graphic>
-                        <FontAwesomeIconView fill="#6f00ff" glyphName="GITHUB" size="25" />
-                     </graphic>
-                  </Button>
-                  <Button focusTraversable="false" mnemonicParsing="false" style="-fx-background-radius: 30;">
-                     <graphic>
-                        <FontAwesomeIconView fill="#167500" glyphName="PLAY" size="25" />
-                     </graphic>
-                  </Button>
+                  <HBox alignment="CENTER_LEFT" maxHeight="46.0" minWidth="30.0" prefHeight="41.0" prefWidth="694.0" spacing="5.0">
+                     <children>
+                        <Button alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
+                           <graphic>
+                              <FontAwesomeIconView fill="WHITE" glyphName="FOLDER_OPEN_ALT" size="25" />
+                           </graphic>
+                        </Button>
+                        <Button alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
+                           <graphic>
+                              <FontAwesomeIconView fill="#b22f00" glyphName="BUG" size="25" />
+                           </graphic>
+                        </Button>
+                        <Button alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
+                           <graphic>
+                              <FontAwesomeIconView fill="#6f00ff" glyphName="GITHUB" size="25" />
+                           </graphic>
+                        </Button>
+                        <Button alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
+                           <graphic>
+                              <FontAwesomeIconView fill="#167500" glyphName="PLAY" size="25" />
+                           </graphic>
+                        </Button>
+                        <Button alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
+                           <graphic>
+                              <FontAwesomeIconView fill="#0400e8" glyphName="SAVE" size="25" />
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <Separator prefWidth="200.0" />
                </children>
-            </HBox>
+            </VBox>
          </top>
          <center>
             <CodeArea fx:id="caCodigo" prefHeight="400.0" prefWidth="800.0" stylesheets="@../css/editor_style.css" BorderPane.alignment="CENTER" />
          </center>
+         <right>
+            <VBox prefHeight="473.0" prefWidth="305.0" spacing="3.0" BorderPane.alignment="CENTER">
+               <children>
+                  <CheckBox mnemonicParsing="false" text="Exibir todos">
+                     <VBox.margin>
+                        <Insets top="5.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <TableView prefHeight="1000.0" prefWidth="200.0" style="-fx-background-radius: 5;">
+                    <columns>
+                      <TableColumn prefWidth="75.0" style="-fx-background-radius: 2;" text="Palavra" />
+                      <TableColumn prefWidth="75.0" style="-fx-background-radius: 2;" text="Token" />
+                        <TableColumn prefWidth="75.0" style="-fx-background-radius: 2;" text="Valor" />
+                        <TableColumn prefWidth="75.0" style="-fx-background-radius: 2;" text="Tipo" />
+                    </columns>
+                  </TableView>
+               </children>
+               <BorderPane.margin>
+                  <Insets left="1.0" />
+               </BorderPane.margin>
+            </VBox>
+         </right>
+         <left>
+            <VBox prefHeight="426.0" prefWidth="126.0" BorderPane.alignment="CENTER">
+               <children>
+                  <JFXListView minHeight="110.0" prefHeight="110.0" prefWidth="125.0" />
+                  <Separator prefWidth="200.0" />
+                  <TreeView fx:id="treeViewArquivos" prefHeight="1000.0" prefWidth="125.0" />
+               </children>
+            </VBox>
+         </left>
       </BorderPane>
    </center>
 </BorderPane>

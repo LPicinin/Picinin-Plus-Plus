@@ -14,6 +14,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -66,6 +67,24 @@
             <Tab style="-fx-background-radius: 5;" text="Análise Semântica">
                <content>
                   <TextArea prefHeight="200.0" prefWidth="200.0" />
+               </content>
+            </Tab>
+            <Tab style="-fx-background-radius: 5;" text="Terminal">
+               <content>
+                  <VBox spacing="3.0">
+                     <children>
+                        <HBox spacing="3.0">
+                           <children>
+                              <TextField fx:id="txcomando" prefHeight="25.0" prefWidth="410.0" promptText="Comando:" />
+                              <Button mnemonicParsing="false" onMouseClicked="#evtExecutaComando" text="Executar" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="1.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <TextArea fx:id="txTerminal" prefHeight="200.0" prefWidth="200.0" />
+                     </children>
+                  </VBox>
                </content>
             </Tab>
         </tabs>
