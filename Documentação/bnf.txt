@@ -3,7 +3,7 @@ Backus Naur Form
 init = "program" id-funcao "\n"
 id-funcao = id
 id = identificador
-identificador = string-chars
+identificador = '[a-zA-Z]+'
 
 tipo = "int" | "double" | "bool" | "string" | "char"
 
@@ -18,10 +18,10 @@ numero-valor				= [sinal] decimal-numero | hex-numero | oct-numero
 decimal-numero				= digito | digito decimal-numero
 digito 						= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
 
-hex-numero 					= 'x' hex-digito | hex-digito hex-numero
+hex-numero 					= 'x' hex-digito hex-numero
 hex-digito					= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
 
-oct-numero					= 'o' octal-digito | octal-digito oct-numero
+oct-numero					= 'o' octal-digito oct-numero
 octal-digito				= '0' | '1'| '2' | '3' | '4' | '5' | '6' | '7'
 
 bool-valor					= "true" | "false"
@@ -37,8 +37,10 @@ declaracao-variavel 		= tipo id ['=' valor] ';'
 atribuicao					= id '=' (valor | operacao) ';'
 
 //+,-,*,/
-operacao 				= numero-valor operadores numero-valor [operacao] | string-valor '+' string-valor
-operadores 				= '+' | '-' | '*' | '/'
+operacao 					= numero-valor operadores numero-valor [operacao] | string-valor '+' string-valor [operacao-string]
+operadores 					= '+' | '-' | '*' | '/'
+
+operacao-string				= string-valor '+' string-valor [operacao-string]
 
 
 
@@ -49,16 +51,16 @@ palavra-chave 				= "bool" | "char" | "double" | "else" | "false" | "for" | "if"
 bloco 						= '{' bloco-codigos '}'
 bloco-codigos 				= bloco-codigo | bloco-codigo bloco-codigos
 bloco-codigo				= variavel-codigo | codigo
-variavel-codigo				= declaracao-variavel
+variavel-codigo				= declaracao-variavel | atribuicao
 codigo						= declaracao-sem-sub | if-codigo | if-else-codigo | while-codigo
 
 declaracao-sem-sub			= ';' codigo
 
-if-codigo					= "if" "(" expressao ")" codigo
-if-else-codigo				= "if" "(" expressao ")" "else" codigo
-while-codigo				= "while" "(" expressao ")" codigo
+if-codigo					= "if" "(" expressao ")" bloco
+if-else-codigo				= "if" "(" expressao ")" bloco "else" bloco
+while-codigo				= "while" "(" expressao ")" bloco
 
-expressao					= ['('] expressao-logica [')']
+expressao					= ['('] expressao-logica [(')' expressao)]
 expressao-logica			= bool-valor [expressao-logica] | bool-valor operador-logico bool-valor [expressao-logica] | id condicional-logica id [expressao-logica]
 
 
@@ -69,6 +71,57 @@ condicional-logica		= ">" | ">=" | "<" | "<=" | "==" | "!="
 
 
 
+
+//FIRST
+
+
+FIRST(init) = {$"program"}
+
+FIRST(id-funcao) = {/*[a-zA-Z]+*/}
+FIRST(id) = {/*[a-zA-Z]+*/}
+FIRST(identificador) = {/*[a-zA-Z]+*/}
+
+FIRST(tipo) = {"int" , "double" , "bool" , "string" , "char"}
+
+FIRST(valor) = {numero-valor , bool-valor , string-valor , char-valor , null-valor}
+FIRST(sinal) = {'+', '-'}
+FIRST(numero-valor) = {'0' , '1' , '2' , '3' , '4' , '5' , '6' , '7' , '8' , '9' , 'x' , 'A' , 'B' , 'C' , 'D' , 'E' , 'F' , 'o'}
+FIRST(decimal-numero) = {'0' , '1' , '2' , '3' , '4' , '5' , '6' , '7' , '8' , '9'}
+FIRST(digito) = {'0' , '1' , '2' , '3' , '4' , '5' , '6' , '7' , '8' , '9'}
+FIRST(hex-numero) = {'x'}
+FIRST(hex-digito) = {'0' , '1' , '2' , '3' , '4' , '5' , '6' , '7' , '8' , '9', 'A' , 'B' , 'C' , 'D' , 'E' , 'F'}
+FIRST(oct-numero) = {'o'}
+FIRST(octal-digito) = {'0' , '1' , '2' , '3' , '4' , '5' , '6' , '7'}
+FIRST(bool-valor) = {"true", "false"}
+FIRST(string-valor) = {'"'}
+FIRST(string-chars) = {/*[a-zA-Z]+*/}
+FIRST(char-valor) = {/*[a-zA-Z]+*/}
+FIRST(null-valor) = {"null"}
+FIRST(declaracao-variavel) = {"int" , "double" , "bool" , "string" , "char"}
+FIRST(atribuicao) = {/*[a-zA-Z]+*/}
+FIRST(operacao) = {'0' , '1' , '2' , '3' , '4' , '5' , '6' , '7' , '8' , '9' , 'x' , 'A' , 'B' , 'C' , 'D' , 'E' , 'F' , 'o', '"'}
+FIRST(operadores) = {'+' , '-' , '*' , '/'}
+FIRST(operacao-string) = {'"'}
+FIRST(palavra-chave) = {"bool" , "char" , "double" , "else" , "false" , "for" , "if" , "int" , "null" , "program" , "string" , "true" , "while" , "and" , "or"}
+FIRST(bloco) = {'{'}
+
+FIRST(bloco-codigos) = {}
+FIRST(bloco-codigo) = {}
+FIRST(variavel-codigo) = {}
+FIRST(codigo) = {}
+FIRST(declaracao-sem-sub) = {}
+FIRST(if-codigo) = {"if"}
+FIRST(if-else-codigo) = {"if"}
+FIRST(while-codigo) = {"while"}
+FIRST(expressao) = {}
+FIRST(expressao-logica) = {}
+FIRST(operador-logico) = {"or", "and"}
+FIRST(condicional-logica) = {">" , ">=" , "<" , "<=" , "==" , "!="}
+FIRST() = {}
+FIRST() = {}
+FIRST() = {}
+FIRST() = {}
+FIRST() = {}
 
 
 
