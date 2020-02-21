@@ -1,11 +1,8 @@
 Backus Naur Form
 
-init = "program" id-funcao "\n"
-id-funcao = id
-id = identificador
-identificador = '[a-zA-Z]+'
-
-tipo = "int" | "double" | "bool" | "string" | "char"
+init 						= "main" id bloco
+id 							= (a-zA-Z)+
+tipo 						= "int" | "double" | "bool" | "string" | "char"
 
 
 
@@ -18,16 +15,16 @@ numero-valor				= [sinal] decimal-numero | hex-numero | oct-numero
 decimal-numero				= digito | digito decimal-numero
 digito 						= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
 
-hex-numero 					= 'x' hex-digito hex-numero
+hex-numero 					= 'x' (hex-digito)+
 hex-digito					= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
 
-oct-numero					= 'o' octal-digito oct-numero
+oct-numero					= 'o' (octal-digito)+
 octal-digito				= '0' | '1'| '2' | '3' | '4' | '5' | '6' | '7'
 
 bool-valor					= "true" | "false"
 
 string-valor				= '"' string-chars '"'
-string-chars				= char-valor | char-valor string-chars
+string-chars				= char-valor*
 char-valor					= . //todos os caracteres
 
 
@@ -60,26 +57,20 @@ if-codigo					= "if" "(" expressao ")" bloco
 if-else-codigo				= "if" "(" expressao ")" bloco "else" bloco
 while-codigo				= "while" "(" expressao ")" bloco
 
-expressao					= ['('] expressao-logica [(')' expressao)]
-expressao-logica			= bool-valor [expressao-logica] | bool-valor operador-logico bool-valor [expressao-logica] | id condicional-logica id [expressao-logica]
+expressao					= expressao-logica | '(' expressao ')'
+expressao-logica			= bool-valor [ operador-logico expressao-logica] | id operador-relacional id [operador-logico expressao-logica]
 
 
 operador-logico			= "or" | "and"
-condicional-logica		= ">" | ">=" | "<" | "<=" | "==" | "!="
-
-
-
-
+operador-relacional		= ">" | ">=" | "<" | "<=" | "==" | "!="
 
 
 //FIRST
 
 
-FIRST(init) = {$"program"}
+First(init) = {"main"}
 
-FIRST(id-funcao) = {/*[a-zA-Z]+*/}
 FIRST(id) = {/*[a-zA-Z]+*/}
-FIRST(identificador) = {/*[a-zA-Z]+*/}
 
 FIRST(tipo) = {"int" , "double" , "bool" , "string" , "char"}
 
@@ -116,7 +107,7 @@ FIRST(while-codigo) = {"while"}
 FIRST(expressao) = {}
 FIRST(expressao-logica) = {}
 FIRST(operador-logico) = {"or", "and"}
-FIRST(condicional-logica) = {">" , ">=" , "<" , "<=" , "==" , "!="}
+FIRST(operador-relacional) = {">" , ">=" , "<" , "<=" , "==" , "!="}
 FIRST() = {}
 FIRST() = {}
 FIRST() = {}
