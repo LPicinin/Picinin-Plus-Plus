@@ -12,7 +12,7 @@ valor = numero-valor | bool-valor | string-valor | char-valor | null-valor
 sinal						= '+' | '-'
 numero-valor				= [sinal] decimal-numero | hex-numero | oct-numero
 
-decimal-numero				= digito | digito decimal-numero
+decimal-numero				= (digito)+
 digito 						= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
 
 hex-numero 					= 'x' (hex-digito)+
@@ -34,10 +34,10 @@ declaracao-variavel 		= tipo id ['=' valor] ';'
 atribuicao					= id '=' (valor | operacao) ';'
 
 //+,-,*,/
-operacao 					= numero-valor operadores numero-valor [operacao] | string-valor '+' string-valor [operacao-string]
+operacao 					= numero-valor [operadores operacao] | operacao-string
 operadores 					= '+' | '-' | '*' | '/'
 
-operacao-string				= string-valor '+' string-valor [operacao-string]
+operacao-string				= string-valor '+' string-valor ['+' operacao-string]
 
 
 
@@ -49,13 +49,14 @@ bloco 						= '{' bloco-codigos '}'
 bloco-codigos 				= bloco-codigo | bloco-codigo bloco-codigos
 bloco-codigo				= variavel-codigo | codigo
 variavel-codigo				= declaracao-variavel | atribuicao
-codigo						= declaracao-sem-sub | if-codigo | if-else-codigo | while-codigo
+codigo						= declaracao-sem-sub | if-codigo | if-else-codigo | while-codigo | for-codigo
 
 declaracao-sem-sub			= ';' codigo
 
 if-codigo					= "if" "(" expressao ")" bloco
 if-else-codigo				= "if" "(" expressao ")" bloco "else" bloco
 while-codigo				= "while" "(" expressao ")" bloco
+for-codigo					= "for" "(" (declaracao-variavel | atribuicao) ";" expressao ";" operacao ")" bloco
 
 expressao					= expressao-logica | '(' expressao ')'
 expressao-logica			= bool-valor [ operador-logico expressao-logica] | id operador-relacional id [operador-logico expressao-logica]
@@ -67,57 +68,91 @@ operador-relacional		= ">" | ">=" | "<" | "<=" | "==" | "!="
 
 //FIRST
 
-
-First(init) = {"main"}
-
-FIRST(id) = {/*[a-zA-Z]+*/}
+FIRST(id) = {(a-zA-Z)+}
 
 FIRST(tipo) = {"int" , "double" , "bool" , "string" , "char"}
 
-FIRST(valor) = {numero-valor , bool-valor , string-valor , char-valor , null-valor}
+FIRST(valor) = {'+', '-', (0-9) , (A-F), "true" , "false" , '"' , (.) , "null"}
 FIRST(sinal) = {'+', '-'}
-FIRST(numero-valor) = {'0' , '1' , '2' , '3' , '4' , '5' , '6' , '7' , '8' , '9' , 'x' , 'A' , 'B' , 'C' , 'D' , 'E' , 'F' , 'o'}
-FIRST(decimal-numero) = {'0' , '1' , '2' , '3' , '4' , '5' , '6' , '7' , '8' , '9'}
-FIRST(digito) = {'0' , '1' , '2' , '3' , '4' , '5' , '6' , '7' , '8' , '9'}
+FIRST(numero-valor) = {'-', '+', (0-9) , 'x' , (A-F) , 'o'}
+FIRST(decimal-numero) = {'-', '+', (0-9)}
+FIRST(digito) = {(0-9)}
 FIRST(hex-numero) = {'x'}
-FIRST(hex-digito) = {'0' , '1' , '2' , '3' , '4' , '5' , '6' , '7' , '8' , '9', 'A' , 'B' , 'C' , 'D' , 'E' , 'F'}
+FIRST(hex-digito) = {(0-9), (A-F)}
 FIRST(oct-numero) = {'o'}
-FIRST(octal-digito) = {'0' , '1' , '2' , '3' , '4' , '5' , '6' , '7'}
+FIRST(octal-digito) = {(0-7)}
 FIRST(bool-valor) = {"true", "false"}
 FIRST(string-valor) = {'"'}
-FIRST(string-chars) = {/*[a-zA-Z]+*/}
-FIRST(char-valor) = {/*[a-zA-Z]+*/}
+FIRST(string-chars) = {[a-zA-Z]+}
+FIRST(char-valor) = {[a-zA-Z]+}
 FIRST(null-valor) = {"null"}
 FIRST(declaracao-variavel) = {"int" , "double" , "bool" , "string" , "char"}
-FIRST(atribuicao) = {/*[a-zA-Z]+*/}
-FIRST(operacao) = {'0' , '1' , '2' , '3' , '4' , '5' , '6' , '7' , '8' , '9' , 'x' , 'A' , 'B' , 'C' , 'D' , 'E' , 'F' , 'o', '"'}
+FIRST(atribuicao) = {(a-zA-Z)+}
+FIRST(operacao) = {(0-9) , 'x' , (A-F) , 'o', '"'}
 FIRST(operadores) = {'+' , '-' , '*' , '/'}
 FIRST(operacao-string) = {'"'}
-FIRST(palavra-chave) = {"bool" , "char" , "double" , "else" , "false" , "for" , "if" , "int" , "null" , "program" , "string" , "true" , "while" , "and" , "or"}
+FIRST(palavra-chave) = {$}
 FIRST(bloco) = {'{'}
 
-FIRST(bloco-codigos) = {}
-FIRST(bloco-codigo) = {}
-FIRST(variavel-codigo) = {}
-FIRST(codigo) = {}
-FIRST(declaracao-sem-sub) = {}
+FIRST(bloco-codigos) = {"int" , "double" , "bool" , "string" , "char", (a-zA-Z)+, ';', "if" , "while" , "for"}
+FIRST(bloco-codigo) = {"int" , "double" , "bool" , "string" , "char", (a-zA-Z)+, ';', "if" , "while" , "for"}
+FIRST(variavel-codigo) = {"int" , "double" , "bool" , "string" , "char", (a-zA-Z)+}
+FIRST(codigo) = {';', "if" , "while" , "for"}
+FIRST(declaracao-sem-sub) = {';'}
 FIRST(if-codigo) = {"if"}
 FIRST(if-else-codigo) = {"if"}
 FIRST(while-codigo) = {"while"}
-FIRST(expressao) = {}
-FIRST(expressao-logica) = {}
+FIRST(for-codigo) = {"for"}
+FIRST(expressao) = {'(', "true", "false", (a-zA-Z)+}
+FIRST(expressao-logica) = {"true", "false", (a-zA-Z)+}
 FIRST(operador-logico) = {"or", "and"}
 FIRST(operador-relacional) = {">" , ">=" , "<" , "<=" , "==" , "!="}
-FIRST() = {}
-FIRST() = {}
-FIRST() = {}
-FIRST() = {}
-FIRST() = {}
 
 
+//FOLLOW
+FOLLOW(init) = {"main"}
+
+FOLLOW(id) = {'{' , '=' , ';' , ">" , ">=" , "<" , "<=" , "==" , "!=" , "and" , "or"}
+
+FOLLOW(tipo) = {(a-zA-Z)+}
+
+FOLLOW(valor) = {';'}
+FOLLOW(sinal) = {(0-9)+}
+FOLLOW(numero-valor) = {'+' , '-' , '*' , '/'}
+FOLLOW(decimal-numero) = {'+' , '-' , '*' , '/'}
+FOLLOW(digito) = {'+' , '-' , '*' , '/'}
+FOLLOW(hex-numero) = {'+' , '-' , '*' , '/'}
+FOLLOW(hex-digito) = {'+' , '-' , '*' , '/'}
+FOLLOW(oct-numero) = {'+' , '-' , '*' , '/'}
+FOLLOW(octal-digito) = {'+' , '-' , '*' , '/'}
+FOLLOW(bool-valor) = {"or", "and" , ';'}
+FOLLOW(string-valor) = {'+'}
+FOLLOW(string-chars) = {"'"}
+FOLLOW(char-valor) = {(.)}//??????????
+FOLLOW(null-valor) = {';'}
+FOLLOW(declaracao-variavel) = {';'}
+FOLLOW(atribuicao) = {';'}
+FOLLOW(operacao) = {';' , ')'}
+FOLLOW(operadores) = {(0-9) , 'x' , (A-F) , 'o', '"'}
+FOLLOW(operacao-string) = {'+' , ';'}
+FOLLOW(palavra-chave) = {"bool" , "char" , "double" , "else" , "false" , "if" , "int" , "null" , "program" , "string" , "true" , "while", "for" , "and" , "or"}
+FOLLOW(bloco) = {'else'}
 
 
-
+//T_T
+FOLLOW(bloco-codigos) = {"}"}
+FOLLOW(bloco-codigo) = {"int" , "double" , "bool" , "string" , "char", (a-zA-Z)+, ';', "if" , "while" , "for"}
+FOLLOW(variavel-codigo) = {"int" , "double" , "bool" , "string" , "char", (a-zA-Z)+, ';', "if" , "while" , "for"}
+FOLLOW(codigo) = {"int" , "double" , "bool" , "string" , "char", (a-zA-Z)+, ';', "if" , "while" , "for"}
+FOLLOW(declaracao-sem-sub) = {"int" , "double" , "bool" , "string" , "char", (a-zA-Z)+, ';', "if" , "while" , "for"}
+FOLLOW(if-codigo) = {"int" , "double" , "bool" , "string" , "char", (a-zA-Z)+, ';', "if" , "while" , "for"}
+FOLLOW(if-else-codigo) = {"int" , "double" , "bool" , "string" , "char", (a-zA-Z)+, ';', "if" , "while" , "for"}
+FOLLOW(while-codigo) = {"int" , "double" , "bool" , "string" , "char", (a-zA-Z)+, ';', "if" , "while" , "for"}
+FOLLOW(for-codigo) = {"int" , "double" , "bool" , "string" , "char", (a-zA-Z)+, ';', "if" , "while" , "for"}
+FOLLOW(expressao) = {')' , ';'}
+FOLLOW(expressao-logica) = {')' , ';'}
+FOLLOW(operador-logico) = {"true", "false", (a-zA-Z)+}//------
+FOLLOW(operador-relacional) = {(a-zA-Z)+}
 
 
 
