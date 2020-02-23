@@ -27,6 +27,7 @@ import org.reactfx.Subscription;
 public class CodeAreaInit
 {
 
+    /*
     private static final String[] KEYWORDS = new String[]
     {
         "abstract", "assert", "boolean", "break", "byte",
@@ -38,14 +39,21 @@ public class CodeAreaInit
         "new", "package", "private", "protected", "public",
         "return", "short", "static", "strictfp", "super",
         "switch", "synchronized", "this", "throw", "throws",
-        "transient", "try", "void", "volatile", "while"
+        "transient", "try", "void", "volatile", "while", "string"
+    };
+     */
+    private static final String[] KEYWORDS = new String[]
+    {
+        "bool" , "char" , "double" , "else" , "false" , "for" , 
+        "if" , "int" , "null" , "program" , "string" , "true" , 
+        "while" , "and" , "or"
     };
 
     private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
     private static final String PAREN_PATTERN = "\\(|\\)";
     private static final String BRACE_PATTERN = "\\{|\\}";
     private static final String BRACKET_PATTERN = "\\[|\\]";
-    private static final String SEMICOLON_PATTERN = "\\;";
+    private static final String SEMICOLON_PATTERN = "\\;";//era só \\;
     private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
     private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
 
@@ -82,27 +90,18 @@ public class CodeAreaInit
         "",
         "}"
     });
+
     public static void inicializa(CodeArea ca)
     {
         CodeArea codeArea = ca;
 
-        // add line numbers to the left of area
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
 
-        // recompute the syntax highlighting 500 ms after user stops editing area
         Subscription cleanupWhenNoLongerNeedIt = codeArea
-                // plain changes = ignore style changes that are emitted when syntax highlighting is reapplied
-                // multi plain changes = save computation by not rerunning the code multiple times
-                //   when making multiple changes (e.g. renaming a method at multiple parts in file)
                 .multiPlainChanges()
-                // do not emit an event until 500 ms have passed since the last emission of previous stream
                 .successionEnds(Duration.ofMillis(500))
-                // run the following code block when previous stream emits an event
                 .subscribe(ignore -> codeArea.setStyleSpans(0, computeHighlighting(codeArea.getText())));
 
-        // when no longer need syntax highlighting and wish to clean up memory leaks
-        // run: `cleanupWhenNoLongerNeedIt.unsubscribe();`
-        // auto-indent: insert previous line's indents on enter
         final Pattern whiteSpace = Pattern.compile("^\\s+");
         codeArea.addEventHandler(KeyEvent.KEY_PRESSED, KE ->
         {
@@ -117,11 +116,6 @@ public class CodeAreaInit
                 }
             }
         });
-
-        //codeArea.replaceText(0, 0, sampleCode);
-
-        //Scene scene = new Scene(new StackPane(new VirtualizedScrollPane<>(codeArea)), 600, 400);
-        //scene.getStylesheets().add(CodeAreaInit.class.getResource("java-keywords.css").toExternalForm());
     }
 
     private static StyleSpans<Collection<String>> computeHighlighting(String text)
