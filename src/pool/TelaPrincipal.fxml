@@ -112,7 +112,7 @@
                               <FontAwesomeIconView fill="#6f00ff" glyphName="GITHUB" size="25" />
                            </graphic>
                         </Button>
-                        <Button alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
+                        <Button alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#evtCompilar" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
                            <graphic>
                               <FontAwesomeIconView fill="#167500" glyphName="PLAY" size="25" />
                            </graphic>
@@ -146,6 +146,9 @@
                         <TableColumn prefWidth="75.0" style="-fx-background-radius: 2;" text="Valor" />
                         <TableColumn prefWidth="75.0" style="-fx-background-radius: 2;" text="Tipo" />
                     </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
                   </TableView>
                </children>
                <BorderPane.margin>

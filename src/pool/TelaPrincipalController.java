@@ -5,6 +5,8 @@
  */
 package pool;
 
+import Classes.Token;
+import Controladora.CtrCompilador;
 import util.CodeAreaInit;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -17,6 +19,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import org.fxmisc.richtext.CodeArea;
 
 /**
@@ -63,23 +66,20 @@ public class TelaPrincipalController implements Initializable
                 }
                 txTerminal.appendText(line + "\n");
             }
-            /*Process proc = Runtime.getRuntime().exec(command);
-            
-            // Read the output
-            
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(proc.getInputStream()));
-            
-            String line = "";
-            txTerminal.appendText("\n--------------------------------------\n"+command+LocalTime.now().toString()+"\n");
-            while((line = reader.readLine()) != null) {
-                txTerminal.appendText(line + "\n");
-            }
-            proc.waitFor();
-             */
+           
         } catch (Exception ex)
         {
             txTerminal.appendText("[ERRO]: " + ex.getMessage());
+        }
+    }
+
+    @FXML
+    private void evtCompilar(MouseEvent event)
+    {
+       // CtrCompilador.instancia().Analisar(caCodigo.getText());
+        for (Token token : Token.tokens)
+        {
+            System.out.println(token.getIdToken()+" - "+token.getRegex());
         }
     }
 
