@@ -15,12 +15,14 @@ import java.time.LocalTime;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import org.fxmisc.richtext.CodeArea;
+import view.MyAlert;
 
 /**
  *
@@ -37,6 +39,8 @@ public class TelaPrincipalController implements Initializable
     private TextArea txTerminal;
     @FXML
     private TreeView<?> treeViewArquivos;
+    @FXML
+    private CheckBox chExibirTodos;
 
     @Override
     public void initialize(URL url, ResourceBundle rb)
@@ -56,7 +60,7 @@ public class TelaPrincipalController implements Initializable
             Process p = builder.start();
             BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;
-            txTerminal.appendText("\n--------------------------------------\n"+command+LocalTime.now().toString()+"\n");
+            txTerminal.appendText("\n--------------------------------------\n" + command + LocalTime.now().toString() + "\n");
             while (true)
             {
                 line = r.readLine();
@@ -66,7 +70,7 @@ public class TelaPrincipalController implements Initializable
                 }
                 txTerminal.appendText(line + "\n");
             }
-           
+
         } catch (Exception ex)
         {
             txTerminal.appendText("[ERRO]: " + ex.getMessage());
@@ -76,11 +80,18 @@ public class TelaPrincipalController implements Initializable
     @FXML
     private void evtCompilar(MouseEvent event)
     {
-       // CtrCompilador.instancia().Analisar(caCodigo.getText());
+        if (chExibirTodos.isSelected())
+            MyAlert.compilou("Compilou!!!").show();
+        else
+            MyAlert.erro("Não Compilou!!!").show();
+        //CtrCompilador.instancia().Analisar(caCodigo.getText());
+
+        /*
         for (Token token : Token.tokens)
         {
-            System.out.println(token.getIdToken()+" - "+token.getRegex());
+            System.out.println(token.getIdToken() + " - " + token.getRegex());
         }
+         */
     }
 
 }
