@@ -7,6 +7,7 @@ package Classes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  *
@@ -14,8 +15,11 @@ import java.util.List;
  */
 public class Compilador
 {
+    //identificadoe - lexema - (se id tipo) - variavel(escopo, tipo e valor)
     private String code;
-
+    private List<Object> erros_avisos;
+    private Stack<String> pilha_simbolos;
+    
     public Compilador()
     {
     }
@@ -25,10 +29,9 @@ public class Compilador
         this.code = code;
     }
     
-    public List<Object> analisar()
+    public void analisar()
     {
-        List<Object> erros_avisos = new ArrayList<>();
+        erros_avisos = new ArrayList<>();
         
-        return erros_avisos;
     }
 }

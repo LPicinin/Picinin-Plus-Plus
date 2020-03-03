@@ -134,7 +134,7 @@
          <right>
             <VBox prefHeight="473.0" prefWidth="305.0" spacing="3.0" BorderPane.alignment="CENTER">
                <children>
-                  <CheckBox mnemonicParsing="false" text="Exibir todos">
+                  <CheckBox fx:id="chExibirTodos" mnemonicParsing="false" text="Exibir todos">
                      <VBox.margin>
                         <Insets top="5.0" />
                      </VBox.margin>
