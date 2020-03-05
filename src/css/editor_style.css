@@ -1,13 +1,13 @@
 .lineno {
- -fx-background-color: #303030;
+    -fx-background-color: #303030;
 }
 
 .styled-text-area{
-  -fx-background-color: #272822;
+    -fx-background-color: #272822;
 }
 
 .styled-text-area .text{
-  -fx-fill: #f8f8f2;
+    -fx-fill: #f8f8f2;
 }
 
 .styled-text-area .text.keyword {
@@ -40,48 +40,48 @@
 }
 
 .styled-text-area .text.todo {
- 	-fx-fill: #40E0D0;
- 	-fx-font-weight: bold;
+    -fx-fill: #40E0D0;
+    -fx-font-weight: bold;
 }
 
 .styled-text-area .text.warn {
-  	-fx-fill: #FF0000;
-  	-fx-font-weight: bold;
+    -fx-fill: #FF0000;
+    -fx-font-weight: bold;
 }
 
 .styled-text-area .text.comment {
- 	-fx-fill: #C0C0C0;
+    -fx-fill: #C0C0C0;
 }
 
 .styled-text-area .text.annotation {
-	-fx-fill: #69d7ee;
-	-fx-font-weight: bold;
+    -fx-fill: #69d7ee;
+    -fx-font-weight: bold;
 }
 
 .styled-text-area .text.cast {
-	-fx-fill: #65d8ee;
+    -fx-fill: #65d8ee;
 }
 
 .styled-text-area .text.operation {
-  -fx-fill: #e17b20;
+    -fx-fill: #e17b20;
 }
 
 .styled-text-area .text.hex{
-  -fx-fill: #ff5555;
+    -fx-fill: #ff5555;
 }
 
 .styled-text-area .text.number{
-  -fx-fill: #ae81ff;
+    -fx-fill: #ae81ff;
 }
 
 .styled-text-area .text.method{
-  -fx-fill: #69d7ee;
+    -fx-fill: #69d7ee;
 }
 
 .paragraph-box:has-caret {
-   -fx-background-color: #1c1c1c99;
+    -fx-background-color: #1c1c1c99;
 }
 
 .caret {
-   -fx-stroke: #f8f8f2;
+    -fx-stroke: #f8f8f2;
 }

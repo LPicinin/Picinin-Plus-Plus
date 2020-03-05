@@ -14,16 +14,18 @@ import java.util.List;
  */
 public class CtrCompilador
 {
+
     private static CtrCompilador ctrCompilador;
     private Compilador compilador;
-    
+
     private CtrCompilador()
     {
         compilador = new Compilador();
     }
+
     public static CtrCompilador instancia()
     {
-        if(ctrCompilador == null)
+        if (ctrCompilador == null)
             ctrCompilador = new CtrCompilador();
         return ctrCompilador;
     }
@@ -33,6 +35,10 @@ public class CtrCompilador
         compilador = new Compilador(code);
         compilador.analisar();
     }
-    
-    
+
+    public Compilador getCompilador()
+    {
+        return compilador;
+    }
+
 }

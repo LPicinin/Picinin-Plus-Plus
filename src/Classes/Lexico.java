@@ -6,6 +6,7 @@
 package Classes;
 
 import Classes.Controle.Erro;
+import Classes.Controle.Match;
 
 /**
  *
@@ -17,20 +18,21 @@ public class Lexico implements Analisador
     @Override
     public Object analise(String palavra)
     {
-        Token r;
+        //System.out.println(palavra);
         boolean naoAchou = true;
         int i;
         for (i = 0; i < Token.tokens.size() && naoAchou; i++)
         {
-            naoAchou = palavra.matches(Token.tokens.get(i).getRegex());
+            naoAchou = !palavra.matches(Token.tokens.get(i).getRegex());
         }
-        if(!naoAchou)
+        if (!naoAchou)
         {
-            r = Token.tokens.get(i);
+            return new Match(new Lexema(palavra, 0, 0), Token.tokens.get(i - 1));
+        } else
+        {
+            Erro e = new Erro(404, "Token não encontrado", new Lexema(palavra, 0, 0));
+            return e;
         }
-        else
-            return Erro.tokenNaoEncontrado;
-        return r;
     }
-    
+
 }

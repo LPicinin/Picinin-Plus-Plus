@@ -15,11 +15,13 @@ import java.util.Stack;
  */
 public class Compilador
 {
+
     //identificadoe - lexema - (se id tipo) - variavel(escopo, tipo e valor)
     private String code;
     private List<Object> erros_avisos;
-    private Stack<String> pilha_simbolos;
-    
+    private List<Object> matchs;
+    private Sintatico al_sintatico;
+
     public Compilador()
     {
     }
@@ -28,10 +30,44 @@ public class Compilador
     {
         this.code = code;
     }
-    
+
     public void analisar()
     {
         erros_avisos = new ArrayList<>();
-        
+        al_sintatico = new Sintatico();
+        al_sintatico.analise(code);
+        erros_avisos = new ArrayList<>(al_sintatico.getErros());
+        matchs = new ArrayList<>(al_sintatico.getLexemas_tokens_correspondidos());
     }
+
+    public String getCode()
+    {
+        return code;
+    }
+
+    public void setCode(String code)
+    {
+        this.code = code;
+    }
+
+    public List<Object> getErros_avisos()
+    {
+        return erros_avisos;
+    }
+
+    public void setErros_avisos(List<Object> erros_avisos)
+    {
+        this.erros_avisos = erros_avisos;
+    }
+
+    public List<Object> getMatchs()
+    {
+        return matchs;
+    }
+
+    public void setMatchs(List<Object> matchs)
+    {
+        this.matchs = matchs;
+    }
+
 }

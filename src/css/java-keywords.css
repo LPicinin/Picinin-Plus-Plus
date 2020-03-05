@@ -32,7 +32,7 @@ and open the template in the editor.
 }
 
 .comment {
-	-fx-fill: cadetblue;
+    -fx-fill: cadetblue;
 }
 
 .paragraph-box:has-caret {

@@ -5,16 +5,23 @@
  */
 package Classes.Controle;
 
+import Classes.Lexema;
+
 /**
  *
  * @author luish
  */
 public class Aviso extends Controle
 {
-    
+
     public Aviso(int codigo, String mensagem)
     {
         super(codigo, mensagem);
     }
-    
+
+    public Aviso(int codigo, String mensagem, Lexema lexema)
+    {
+        super(codigo, mensagem, lexema);
+    }
+
 }

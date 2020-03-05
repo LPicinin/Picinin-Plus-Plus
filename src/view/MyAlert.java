@@ -21,6 +21,7 @@ import javafx.stage.StageStyle;
  */
 public class MyAlert
 {
+
     private Stage stage;
     private String url_Imagem;
 
@@ -29,15 +30,17 @@ public class MyAlert
         this.stage = stage;
         this.url_Imagem = url_Imagem;
     }
-    
+
     public static Stage erro(String msg)
-    {       
+    {
         return montaAlert(msg, "/img/ERRO.jpg");
     }
+
     public static Stage compilou(String msg)
-    {       
+    {
         return montaAlert(msg, "/img/compilou.jpg");
     }
+
     private static Stage montaAlert(String msg, String urlImagem)
     {
         ImageView img;

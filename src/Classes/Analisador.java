@@ -11,5 +11,6 @@ package Classes;
  */
 public interface Analisador
 {
+
     public Object analise(String code);
 }
