@@ -46,7 +46,7 @@ public class CodeAreaInit
     {
         "bool", "char", "double", "else", "false", "for",
         "if", "int", "null", "program", "string", "true",
-        "while", "and", "or"
+        "while", "and", "or", "main"
     };
 
     private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";

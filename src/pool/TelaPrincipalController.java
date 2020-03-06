@@ -5,7 +5,9 @@
  */
 package pool;
 
+import Classes.Controle.Erro;
 import Classes.Controle.Match;
+import Classes.Controle.Simbolo;
 import Classes.Lexema;
 import Classes.Token;
 import Controladora.CtrCompilador;
@@ -19,6 +21,8 @@ import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
@@ -30,7 +34,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import org.fxmisc.richtext.CodeArea;
-import view.MyAlert;
 
 /**
  *
@@ -54,7 +57,7 @@ public class TelaPrincipalController implements Initializable
     @FXML
     private TableView<Object> tabela;
     @FXML
-    private TableColumn<Object, Lexema> colCadeia;
+    private TableColumn<Object, String> colCadeia;
     @FXML
     private TableColumn<Object, Token> colToken;
     @FXML
@@ -66,13 +69,15 @@ public class TelaPrincipalController implements Initializable
     public void initialize(URL url, ResourceBundle rb)
     {
         CodeAreaInit.inicializa(caCodigo);
-        colCadeia.setCellValueFactory(new PropertyValueFactory("lexema"));
+        colCadeia.setCellValueFactory(new PropertyValueFactory("cadeia"));
         colToken.setCellValueFactory(new PropertyValueFactory("token"));
+        colTipo.setCellValueFactory(new PropertyValueFactory("tipo"));
+        colValor.setCellValueFactory(new PropertyValueFactory("valor"));
         
-        caCodigo.replaceText("int main()\n"
+        caCodigo.replaceText("main teste\n"
                 + "{\n"
                 + "    double x = 543.56;\n"
-                + "    string s = \"skbdkslb slndbçs smpn\"\n"
+                + "    string s = \"skbdkslb slndbçs smpn\";\n"
                 + "}");
     }
 
@@ -114,8 +119,8 @@ public class TelaPrincipalController implements Initializable
                 CtrCompilador.instancia().getCompilador().getErros_avisos())); 
         
         tabela.setItems(FXCollections.observableArrayList(
-                CtrCompilador.instancia().getCompilador().getMatchs()));
-        
+                CtrCompilador.instancia().getCompilador().getTabela_Simbolos()));
+        tabela.refresh();
         /*
         if (lvErros_Avisos.getItems().size() == 0)
             MyAlert.compilou("Compilou!!!").show();
@@ -136,10 +141,25 @@ public class TelaPrincipalController implements Initializable
         if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1)
         {
             Object o = tabela.getSelectionModel().getSelectedItem();
-            Match m = (Match) o;
+            Match m = ((Simbolo) o).getMatch();
+            Lexema l = m.getLexema();
             caCodigo.requestFocus();
-            caCodigo.position(m.getLexema().getPosParagrafo(), m.getLexema().getPosLinha());
-            
+            caCodigo.position(l.getPosParagrafo(), l.getPosLinha());
+            new Alert(Alert.AlertType.INFORMATION, l.getPalavra()+" EM "+l.getPosParagrafo()+" - "+l.getPosLinha(), ButtonType.OK).show();
+        }
+    }
+
+    @FXML
+    private void evtErroAviso(MouseEvent event)
+    {
+        if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1)
+        {
+            Object o = lvErros_Avisos.getSelectionModel().getSelectedItem();
+            Erro e = (Erro) o;
+            Lexema l = e.getLexema();
+            caCodigo.requestFocus();
+            caCodigo.position(l.getPosParagrafo(), l.getPosLinha());
+            new Alert(Alert.AlertType.INFORMATION, l.getPalavra()+" EM "+l.getPosParagrafo()+" - "+l.getPosLinha(), ButtonType.OK).show();
         }
     }
 

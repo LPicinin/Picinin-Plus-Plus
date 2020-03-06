@@ -7,6 +7,8 @@ package Classes;
 
 import Classes.Controle.Erro;
 import Classes.Controle.Match;
+import Classes.Controle.Simbolo;
+import static Classes.Token.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -15,21 +17,25 @@ import java.util.Stack;
  *
  * @author luish
  */
-public class Sintatico extends Analisador
+public class Sintatico extends Constantes
 {
 
     private Lexico al_lexica;
     private Stack<String> pilha_simbolos;
-    private List<Match> lexemas_tokens_correspondidos;
-    private List<Erro> erros;
-    
+
+    public Sintatico(String codeString)
+    {
+        pilha_simbolos = new Stack<>();
+        lexemas_tokens_correspondidos = new ArrayList<>();
+        erros = new ArrayList<>();
+        code = codeString.toCharArray();
+    }
 
     public Sintatico()
     {
         pilha_simbolos = new Stack<>();
         lexemas_tokens_correspondidos = new ArrayList<>();
         erros = new ArrayList<>();
-        al_lexica = new Lexico();
     }
 
     public Stack<String> getPilha_simbolos()
@@ -49,7 +55,7 @@ public class Sintatico extends Analisador
 
     public void setLexemas_tokens_correspondidos(List<Match> lexemas_tokens_correspondidos)
     {
-        this.lexemas_tokens_correspondidos = lexemas_tokens_correspondidos;
+        Sintatico.lexemas_tokens_correspondidos = lexemas_tokens_correspondidos;
     }
 
     public List<Erro> getErros()
@@ -59,140 +65,81 @@ public class Sintatico extends Analisador
 
     public void setErros(List<Erro> erros)
     {
-        this.erros = erros;
+        Sintatico.erros = erros;
     }
 
-    @Override
-    public List<Object> analise(Lexema lex)
+    public List<Simbolo> analise()
     {
-        String codeString = lex.getLexema();
-        int i;
-        posParagrafo = 0;
-        posLinha = 0;
-        code = codeString.toCharArray();
-        StringBuilder cadeia = new StringBuilder();
-        boolean fespecial = true;
 
-        //percorre o código até o fim do código
-        for (pos = 0; pos < code.length; pos++)
+        al_lexica = new Lexico();
+        al_lexica.analise();
+
+        return geraTabelaSimbolos();
+    }
+
+    private List<Simbolo> geraTabelaSimbolos()
+    {
+        List<Simbolo> tabela_simbolos = new ArrayList<>();
+        List<Match> lt = lexemas_tokens_correspondidos;
+        Match aux;
+        
+        for (int i = 0; i < lt.size(); i++)
         {
-            //consome espaços, tabs e quebras de linha
-            consomeCaracteres(code);
-            i = pos;
-            //monta cadeia até um caracter especial ou ignorado
-            while (i < code.length && !(fespecial = caracteresEspeciais.contains(code[i])) && !caracteresIgnorados.contains(code[i]))
+            aux = lt.get(i);
+            //System.out.println(aux.getLexema().getPalavra());
+            if (!aux.getToken().equals(tIdentificador))
             {
-                cadeia.append(code[i]);
-                i++;
-            }
-            pos = i;
-            if (cadeia.length() > 0)//achou uma cadeia
+                addSimbolo(tabela_simbolos, new Simbolo(aux, "", ""));
+            } else
             {
-                //System.out.println(cadeia.toString());
-                addRepostaLexico(new Lexema(cadeia.toString(), posParagrafo, posLinha));
-                //al_lexica.analise(cadeia.toString());
-                cadeia.setLength(0);
+                String val = "";
+                String tipo = "";
+                if (i - 1 >= 0 && lt.get(i - 1).getToken().equals(tInicio_Linguagem))
+                {
+                    tipo = lt.get(i - 1).getToken().getIdToken().replace("t", "");
+                } else
+                {
+                    //o +2 é pra pular atribuição
+                    if (i + 2 < lt.size() && tValores.contains(lt.get(i + 2).getToken()) && tIgual.equals(lt.get(i + 1).getToken()))
+                        val = lt.get(i + 2).getLexema().getPalavra();
+                    if (tTipos.contains(lt.get(i - 1).getToken()))
+                        tipo = lt.get(i - 1).getToken().getIdToken().replace("t", "");
+                }
+                addSimbolo(tabela_simbolos, new Simbolo(aux, val, tipo));
             }
+        }
+        /*
+        System.out.println("\n\n\n\n\n\n\n");
+        for (Simbolo t : tabela_simbolos)
+        {
+            System.out.println(t.getCadeia()+" = "+t.getValor());
+        }
+        */
+        return tabela_simbolos;
+    }
 
-            if (fespecial)//achou um caracter especial
+    private static void addSimbolo(List<Simbolo> tabela_simbolos, Simbolo simbolo)
+    {
+        Simbolo aux;
+
+        if (simbolo.getToken().equals(tIdentificador))
+        {
+            int index = tabela_simbolos.indexOf(simbolo);
+            if (index != -1)
             {
-                if (code[pos] != '"')
-                    cadeia.append(code[pos]);
+                aux = tabela_simbolos.get(index);
+                if (simbolo.getTipo().isEmpty())
+                    tabela_simbolos.add(simbolo);
                 else
                 {
-                    //consome de " até outro " ou \n(erro)
-                    if (consomeString(code, cadeia))
-                    {
-                        //achou uma string
-                    } else
-                    {
-                        //achou um erro
-                    }
+                    erros.add(Erro.getError(Erro.variavel_Ja_Declarada, simbolo.getMatch().getLexema()));
                 }
-                //System.out.println(cadeia.toString());
-                addRepostaLexico(new Lexema(cadeia.toString(), posParagrafo, posLinha));
-                cadeia.setLength(0);
-            }
-
-        }
-        return null;
-    }
-
-    /*
-int main()
-{
-    double x = 543.56;
-    string s = "skbdkslb slndbçs smpn"
-}
-     */
-    private void consomeCaracteres(char[] code)
-    {
-        while (pos < code.length && caracteresIgnorados.contains(code[pos]))
-        {
-            if (code[pos] == '\n')
+            } else if (simbolo.getTipo().isEmpty())
             {
-                posParagrafo++;
-                posLinha = 0;
+                erros.add(Erro.getError(Erro.variavelNaoDeclarada, simbolo.getMatch().getLexema()));
             } else
-                posLinha++;
-            pos++;
-        }
-    }
-
-    private boolean consomeString(char[] code, StringBuilder cadeia)
-    {
-        int posini = pos;
-        cadeia.append(code[pos++]);
-        posLinha++;
-        while (pos < code.length && code[pos] != '"' && code[pos] != '\n')
-        {
-            cadeia.append(code[pos++]);
-            posLinha++;
-        }
-        if (code[pos] == '"')
-        {
-            cadeia.append(code[pos++]);
-            posLinha++;
+                tabela_simbolos.add(simbolo);
         } else
-        {
-            try
-            {
-                Erro error = (Erro) Erro.tokenFinalDeCadeiaInesperada.clone();
-                error.setLexema(new Lexema(cadeia.toString(), posParagrafo, posini));
-                addErro(error);
-                return false;
-            } catch (CloneNotSupportedException ex)
-            {
-                System.out.println("Erro Compilador> " + ex.getMessage());
-            }
-            erros.add(Erro.tokenNaoEncontrado);
-        }
-        return true;
-    }
-
-    private void addErro(Erro e)
-    {
-        erros.add(e);
-    }
-
-    private void addMatch(Match m)
-    {
-        lexemas_tokens_correspondidos.add(m);
-    }
-
-    private void addRepostaLexico(Lexema cadeia)
-    {
-        Object resposta = al_lexica.analise(cadeia);
-        if (resposta instanceof Erro)
-        {
-            Erro e = (Erro) resposta;
-            erros.add(e);
-            //System.out.println(e.getLexema() + " = Erro:> " + e.getMensagem());
-        } else if (resposta instanceof Match)
-        {
-            Match m = (Match) resposta;
-            lexemas_tokens_correspondidos.add(m);
-            //System.out.println(m.getLexema().getLexema() + " = " + m.getToken().getIdToken());
-        }
+            tabela_simbolos.add(simbolo);
     }
 }

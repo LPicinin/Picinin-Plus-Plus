@@ -57,7 +57,7 @@
             <tabs>
                 <Tab style="-fx-background-radius: 5;" text="Análise Sintática">
                     <content>
-                        <ListView fx:id="lvErros_Avisos" prefHeight="200.0" prefWidth="200.0" />
+                        <ListView fx:id="lvErros_Avisos" onMouseClicked="#evtErroAviso" prefHeight="200.0" prefWidth="200.0" />
                     </content>
                 </Tab>
                 <Tab style="-fx-background-radius: 5;" text="Análise Léxica">

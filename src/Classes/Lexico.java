@@ -7,18 +7,18 @@ package Classes;
 
 import Classes.Controle.Erro;
 import Classes.Controle.Match;
+import java.util.Arrays;
 
 /**
  *
  * @author luish
  */
-public class Lexico extends Analisador
+public class Lexico extends Constantes
 {
 
-    @Override
     public Object analise(Lexema lex)
     {
-        String palavra = lex.getLexema();
+        String palavra = lex.getPalavra();
         //System.out.println(palavra);
         boolean naoAchou = true;
         int i;
@@ -31,9 +31,130 @@ public class Lexico extends Analisador
             return new Match(lex, Token.tokens.get(i - 1));
         } else
         {
-            Erro e = new Erro(404, "Token não encontrado", lex);
-            return e;
+            return Erro.getError(Erro.tokenNaoEncontrado, lex);
         }
     }
 
+    public void analise()
+    {
+        int i;
+        posParagrafo = 0;
+        posLinha = 0;
+        StringBuilder cadeia = new StringBuilder();
+        boolean fespecial = true;
+
+        //percorre o código até o fim do código
+        for (pos = 0; pos < code.length; pos++)
+        {
+            //consome espaços, tabs e quebras de linha
+            consomeCaracteres(code);
+            i = pos;
+            //monta cadeia até um caracter especial ou ignorado
+            while (i < code.length && !(fespecial = caracteresEspeciais.contains(code[i])) && !caracteresIgnorados.contains(code[i]))
+            {
+                cadeia.append(code[i]);
+                i++;
+            }
+            pos = i;
+            if (cadeia.length() > 0)//achou uma cadeia
+            {
+                //System.out.println(cadeia.toString());
+                addRepostaLexico(new Lexema(cadeia.toString(), posParagrafo, posLinha));
+                //al_lexica.analise(cadeia.toString());
+                cadeia.setLength(0);
+            }
+
+            if (fespecial)//achou um caracter especial
+            {
+                if (code[pos] != '"')
+                {
+                    cadeia.append(code[pos]);
+                }
+                else
+                {
+                    //consome de " até outro " ou \n(erro)
+                    if (consomeString(code, cadeia))
+                    {
+                        //achou uma string
+                    } else
+                    {
+                        //achou um erro
+                    }
+                    pos--;
+                }
+                //System.out.println(cadeia.toString());
+                addRepostaLexico(new Lexema(cadeia.toString(), posParagrafo, posLinha));
+                cadeia.setLength(0);
+            }
+        }
+    }
+
+    private void consomeCaracteres(char[] code)
+    {
+        while (pos < code.length && caracteresIgnorados.contains(code[pos]))
+        {
+            if (code[pos] == '\n')
+            {
+                posParagrafo++;
+                posLinha = 0;
+            } else
+                posLinha++;
+            pos++;
+        }
+    }
+
+    private boolean consomeString(char[] code, StringBuilder cadeia)
+    {
+        int posini = pos;
+        cadeia.append(code[pos++]);
+        posLinha++;
+        while (pos < code.length && code[pos] != '"' && code[pos] != '\n')
+        {
+            cadeia.append(code[pos++]);
+            posLinha++;
+        }
+        if (code[pos] == '"')
+        {
+            cadeia.append(code[pos++]);
+            posLinha++;
+        } else
+        {
+            try
+            {
+                Erro error = (Erro) Erro.tokenFinalDeCadeiaInesperada.clone();
+                error.setLexema(new Lexema(cadeia.toString(), posParagrafo, posini));
+                addErro(error);
+                return false;
+            } catch (CloneNotSupportedException ex)
+            {
+                System.out.println("Erro Compilador> " + ex.getMessage());
+            }
+            erros.add(Erro.tokenNaoEncontrado);
+        }
+        return true;
+    }
+    
+    private void addRepostaLexico(Lexema cadeia)
+    {
+        Object resposta = analise(cadeia);
+        if (resposta instanceof Erro)
+        {
+            Erro e = (Erro) resposta;
+            erros.add(e);
+        } else if (resposta instanceof Match)
+        {
+            Match m = (Match) resposta;
+            lexemas_tokens_correspondidos.add(m);
+        }
+    }
+    
+    private void addErro(Erro e)
+    {
+        erros.add(e);
+    }
+
+    private void addMatch(Match m)
+    {
+        lexemas_tokens_correspondidos.add(m);
+    }
 }

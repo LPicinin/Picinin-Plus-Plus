@@ -5,6 +5,9 @@
  */
 package Classes;
 
+import Classes.Controle.Erro;
+import Classes.Controle.Match;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,5 +22,7 @@ public abstract class Constantes
     protected static int posLinha;
     protected static char[] code;
     protected static final List<Character> caracteresIgnorados = Arrays.asList('\n', ' ', '\t');
-    protected static final List<Character> caracteresEspeciais = Arrays.asList('(', ')', ';', '{', '}', '\"');//caracteres que separam tokens e não sao os especiais
+    protected static final List<Character> caracteresEspeciais = Arrays.asList('(', ')', ';', '{', '}', '\"', '+', '-', '*', '/');//caracteres que separam tokens e não sao os especiais
+    protected static List<Match> lexemas_tokens_correspondidos = new ArrayList<>();
+    protected static List<Erro> erros = new ArrayList<>();
 }

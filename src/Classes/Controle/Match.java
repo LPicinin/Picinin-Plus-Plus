@@ -44,4 +44,10 @@ public class Match
         this.token = token;
     }
 
+    @Override
+    public String toString()
+    {
+        return "Match{" + "lexema=" + lexema + ", token=" + token + "}\n";
+    }
+
 }

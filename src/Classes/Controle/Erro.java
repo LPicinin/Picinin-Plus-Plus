@@ -16,6 +16,8 @@ public class Erro extends Controle
 
     public static final Erro tokenNaoEncontrado = new Erro(404, "Não foi possível encontrar um token correspondente");
     public static final Erro tokenFinalDeCadeiaInesperada = new Erro(405, "character final esperado");
+    public static final Erro variavelNaoDeclarada = new Erro(406, "Variavel não declarada");
+    public static final Erro variavel_Ja_Declarada = new Erro(407, "Variavel já declarada");
 
     public Erro(int codigo, String mensagem)
     {
@@ -26,7 +28,10 @@ public class Erro extends Controle
     {
         super(codigo, mensagem, lexema);
     }
-
+    public static Erro getError(Erro e, Lexema lexema)
+    {
+        return new Erro(e.codigo, e.mensagem, lexema);
+    }
     @Override
     public String toString()
     {

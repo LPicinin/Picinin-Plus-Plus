@@ -9,10 +9,9 @@ package Classes;
  *
  * @author luish
  */
-public class Semantico extends Analisador
+public class Semantico extends Constantes
 {
 
-    @Override
     public Object analise(Lexema lex)
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

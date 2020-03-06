@@ -12,25 +12,25 @@ package Classes;
 public class Lexema
 {
 
-    private String lexema;
+    private String palavra;
     private int posParagrafo;
     private int posLinha;
 
-    public Lexema(String lexema, int posParagrafo, int posLinha)
+    public Lexema(String palavra, int posParagrafo, int posLinha)
     {
-        this.lexema = lexema;
+        this.palavra = palavra;
         this.posParagrafo = posParagrafo;
         this.posLinha = posLinha;
     }
 
-    public String getLexema()
+    public String getPalavra()
     {
-        return lexema;
+        return palavra;
     }
 
-    public void setLexema(String lexema)
+    public void setPalavra(String palavra)
     {
-        this.lexema = lexema;
+        this.palavra = palavra;
     }
 
     public int getPosParagrafo()
@@ -56,7 +56,7 @@ public class Lexema
     @Override
     public String toString()
     {
-        return lexema;
+        return palavra;
     }
 
 }
