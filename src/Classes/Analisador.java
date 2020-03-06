@@ -9,8 +9,7 @@ package Classes;
  *
  * @author luish
  */
-public interface Analisador
+public abstract class Analisador extends Constantes
 {
-
-    public Object analise(Lexema lex);
+    public abstract Object analise(Lexema lex);
 }

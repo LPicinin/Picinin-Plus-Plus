@@ -12,7 +12,7 @@ import Classes.Controle.Match;
  *
  * @author luish
  */
-public class Lexico implements Analisador
+public class Lexico extends Analisador
 {
 
     @Override

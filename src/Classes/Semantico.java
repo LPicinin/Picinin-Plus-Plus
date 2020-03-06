@@ -9,7 +9,7 @@ package Classes;
  *
  * @author luish
  */
-public class Semantico implements Analisador
+public class Semantico extends Analisador
 {
 
     @Override

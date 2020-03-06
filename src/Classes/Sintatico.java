@@ -8,30 +8,21 @@ package Classes;
 import Classes.Controle.Erro;
 import Classes.Controle.Match;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author luish
  */
-public class Sintatico implements Analisador
+public class Sintatico extends Analisador
 {
 
     private Lexico al_lexica;
     private Stack<String> pilha_simbolos;
     private List<Match> lexemas_tokens_correspondidos;
     private List<Erro> erros;
-
-    private char[] code;
-    private final List<Character> caracteresIgnorados = Arrays.asList('\n', ' ', '\t');
-    private final List<Character> caracteresEspeciais = Arrays.asList('(', ')', ';', '{', '}', '\"');//caracteres que separam tokens e não sao os especiais
-    private int pos;
-    private int posParagrafo;
-    private int posLinha;
+    
 
     public Sintatico()
     {
