@@ -72,8 +72,9 @@ public class Sintatico implements Analisador
     }
 
     @Override
-    public List<Object> analise(String codeString)
+    public List<Object> analise(Lexema lex)
     {
+        String codeString = lex.getLexema();
         int i;
         posParagrafo = 0;
         posLinha = 0;
@@ -97,7 +98,7 @@ public class Sintatico implements Analisador
             if (cadeia.length() > 0)//achou uma cadeia
             {
                 //System.out.println(cadeia.toString());
-                addRepostaLexico(cadeia.toString());
+                addRepostaLexico(new Lexema(cadeia.toString(), posParagrafo, posLinha));
                 //al_lexica.analise(cadeia.toString());
                 cadeia.setLength(0);
             }
@@ -118,7 +119,7 @@ public class Sintatico implements Analisador
                     }
                 }
                 //System.out.println(cadeia.toString());
-                addRepostaLexico(cadeia.toString());
+                addRepostaLexico(new Lexema(cadeia.toString(), posParagrafo, posLinha));
                 cadeia.setLength(0);
             }
 
@@ -188,9 +189,9 @@ int main()
         lexemas_tokens_correspondidos.add(m);
     }
 
-    private void addRepostaLexico(String cadeia)
+    private void addRepostaLexico(Lexema cadeia)
     {
-        Object resposta = al_lexica.analise(cadeia.toString());
+        Object resposta = al_lexica.analise(cadeia);
         if (resposta instanceof Erro)
         {
             Erro e = (Erro) resposta;

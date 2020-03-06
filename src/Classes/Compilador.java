@@ -35,7 +35,7 @@ public class Compilador
     {
         erros_avisos = new ArrayList<>();
         al_sintatico = new Sintatico();
-        al_sintatico.analise(code);
+        al_sintatico.analise(new Lexema(code, 0, 0));
         erros_avisos = new ArrayList<>(al_sintatico.getErros());
         matchs = new ArrayList<>(al_sintatico.getLexemas_tokens_correspondidos());
     }

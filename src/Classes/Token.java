@@ -20,8 +20,8 @@ public class Token
     /**
      * números Decimais, exemplo 666
      */
-    public static final Token tValor_Inteiro = new Token("tNum", "(-|\\+)*\\d+");
-    public static final Token tValor_Decimal = new Token("tNum", "(-|\\+)*\\d+\\.\\d+");
+    public static final Token tValor_Inteiro = new Token("tInteiro", "(-|\\+)*\\d+");
+    public static final Token tValor_Decimal = new Token("tDecimal", "(-|\\+)*\\d+\\.\\d+");
     /**
      * números Hexadecimais, exemplo xA45F6 ou XA45F6
      */

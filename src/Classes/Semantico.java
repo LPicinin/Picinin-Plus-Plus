@@ -13,7 +13,7 @@ public class Semantico implements Analisador
 {
 
     @Override
-    public Object analise(String code)
+    public Object analise(Lexema lex)
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

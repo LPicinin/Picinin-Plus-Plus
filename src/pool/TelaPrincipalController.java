@@ -5,6 +5,7 @@
  */
 package pool;
 
+import Classes.Controle.Match;
 import Classes.Lexema;
 import Classes.Token;
 import Controladora.CtrCompilador;
@@ -26,6 +27,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import org.fxmisc.richtext.CodeArea;
 import view.MyAlert;
@@ -126,6 +128,19 @@ public class TelaPrincipalController implements Initializable
             System.out.println(token.getIdToken() + " - " + token.getRegex());
         }
                  */
+    }
+
+    @FXML
+    private void evtPularParaLexema(MouseEvent event)
+    {
+        if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1)
+        {
+            Object o = tabela.getSelectionModel().getSelectedItem();
+            Match m = (Match) o;
+            caCodigo.requestFocus();
+            caCodigo.position(m.getLexema().getPosParagrafo(), m.getLexema().getPosLinha());
+            
+        }
     }
 
 }

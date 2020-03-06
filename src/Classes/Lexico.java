@@ -16,8 +16,9 @@ public class Lexico implements Analisador
 {
 
     @Override
-    public Object analise(String palavra)
+    public Object analise(Lexema lex)
     {
+        String palavra = lex.getLexema();
         //System.out.println(palavra);
         boolean naoAchou = true;
         int i;
@@ -27,10 +28,10 @@ public class Lexico implements Analisador
         }
         if (!naoAchou)
         {
-            return new Match(new Lexema(palavra, 0, 0), Token.tokens.get(i - 1));
+            return new Match(lex, Token.tokens.get(i - 1));
         } else
         {
-            Erro e = new Erro(404, "Token não encontrado", new Lexema(palavra, 0, 0));
+            Erro e = new Erro(404, "Token não encontrado", lex);
             return e;
         }
     }

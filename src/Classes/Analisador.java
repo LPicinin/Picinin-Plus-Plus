@@ -12,5 +12,5 @@ package Classes;
 public interface Analisador
 {
 
-    public Object analise(String code);
+    public Object analise(Lexema lex);
 }

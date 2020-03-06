@@ -140,7 +140,7 @@
                                 <Insets top="5.0" />
                             </VBox.margin>
                         </CheckBox>
-                        <TableView fx:id="tabela" prefHeight="1000.0" prefWidth="200.0" style="-fx-background-radius: 5;">
+                        <TableView fx:id="tabela" onMouseClicked="#evtPularParaLexema" prefHeight="1000.0" prefWidth="200.0" style="-fx-background-radius: 5;">
                             <columns>
                                 <TableColumn fx:id="colCadeia" prefWidth="75.0" style="-fx-background-radius: 2;" text="Cadeia" />
                                 <TableColumn fx:id="colToken" prefWidth="75.0" style="-fx-background-radius: 2;" text="Token" />
