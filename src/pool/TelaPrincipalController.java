@@ -127,12 +127,6 @@ public class TelaPrincipalController implements Initializable
         else
             MyAlert.erro("Não Compilou!!!").show();
         */
-        /*
-        for (Token token : Token.tokens)
-        {
-            System.out.println(token.getIdToken() + " - " + token.getRegex());
-        }
-                 */
     }
 
     @FXML
