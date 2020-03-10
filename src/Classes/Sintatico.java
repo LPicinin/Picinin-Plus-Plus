@@ -8,8 +8,11 @@ package Classes;
 import Classes.Controle.Erro;
 import Classes.Controle.Match;
 import Classes.Controle.Simbolo;
+import Classes.RecursosTabelaSintatica.Regra;
 import static Classes.Token.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
@@ -21,7 +24,7 @@ public class Sintatico extends Constantes
 {
 
     private Lexico al_lexica;
-    private Stack<String> pilha_simbolos;
+    private Stack<Match> pilha_simbolos;
 
     public Sintatico(String codeString)
     {
@@ -38,12 +41,12 @@ public class Sintatico extends Constantes
         erros = new ArrayList<>();
     }
 
-    public Stack<String> getPilha_simbolos()
+    public Stack<Match> getPilha_simbolos()
     {
         return pilha_simbolos;
     }
 
-    public void setPilha_simbolos(Stack<String> pilha_simbolos)
+    public void setPilha_simbolos(Stack<Match> pilha_simbolos)
     {
         this.pilha_simbolos = pilha_simbolos;
     }
@@ -82,7 +85,7 @@ public class Sintatico extends Constantes
         List<Simbolo> tabela_simbolos = new ArrayList<>();
         List<Match> lt = lexemas_tokens_correspondidos;
         Match aux;
-        
+
         for (int i = 0; i < lt.size(); i++)
         {
             aux = lt.get(i);
@@ -114,14 +117,13 @@ public class Sintatico extends Constantes
         {
             System.out.println(t.getCadeia()+" = "+t.getValor());
         }
-        */
+         */
         return tabela_simbolos;
     }
 
-    private static void addSimbolo(List<Simbolo> tabela_simbolos, Simbolo simbolo)
+    private void addSimbolo(List<Simbolo> tabela_simbolos, Simbolo simbolo)
     {
         Simbolo aux;
-
         if (simbolo.getToken().equals(tIdentificador))
         {
             int index = tabela_simbolos.indexOf(simbolo);
@@ -142,4 +144,25 @@ public class Sintatico extends Constantes
         } else
             tabela_simbolos.add(simbolo);
     }
+
+    private Stack<Match> geraPilhaEntrada()
+    {
+        Stack<Match> pilha_simbolos = new Stack<>();
+        pilha_simbolos.add(new Match(new Lexema("§", 0, 0), Token.tVazio));
+        List<Match> l = lexemas_tokens_correspondidos;
+        for (int i = l.size()-1; i > 0; i++)
+        {
+            pilha_simbolos.add(l.get(i));
+        }
+        return pilha_simbolos;
+    }
+    //Sem tabela
+    private void geraAnaliseSintatica()
+    {
+        Stack<Match> pilha_entrada = geraPilhaEntrada();
+        Stack<Token> pilha = new Stack<>();
+        
+        //e aqui o show começa
+    }
+    
 }

@@ -63,7 +63,8 @@ public class Token
                     tValor_Null, 
                     tValor_OctaDecimal, 
                     tValor_String));
-    /*new Token("tValor",
+    
+    public static final Token tValorGeneric = new Token("tValorGeneric",
             "(" + tValor_Bool.regex + ")|("
             + tValor_Char.regex + ")|("
             + tValor_Inteiro.regex + ")|("
@@ -72,7 +73,7 @@ public class Token
             + tValor_Null.regex + ")|("
             + tValor_OctaDecimal.regex + ")|("
             + tValor_String.regex + ")");
-     */
+     
 
     public static final Token tIdentificador = new Token("tId", "([A-Za-z])+(\\d)*([A-Za-z])*");
 
@@ -118,16 +119,16 @@ public class Token
     public static final Token tIgual = new Token("tIgual", "=");
     public static final Token tPontoVirgula = new Token("tPontoVirgula", ";");
 
-    /* SAVE DE SEGURANÇA
-        public static final List<Token> tokens = new ArrayList<Token>(
-            Arrays.asList(tValor_Generic,
-                    tOpLogico, 
-                    tOpRelacional, 
-                    tOperadores, 
-                    tPalavraReservada,
-                    tIdentificador, 
-                    tComentario));
-     */
+    //repeticao e condicao
+    public static final Token tIf = new Token("tIf", "if");
+    public static final Token tElse = new Token("tElse", "else");
+    public static final Token tWhile = new Token("tWhile", "while");
+    public static final Token tFor = new Token("tFor", "for");
+    
+    //tokens de controle do compilador
+    public static final Token tOR_contole = new Token("|", "");
+    public static final Token tVazio = new Token("§", "vazio");
+    
     public static final List<Token> tokens = new ArrayList<Token>(
             Arrays.asList(tInicio_Linguagem,
                     tValor_Bool,
@@ -152,8 +153,14 @@ public class Token
                     tBool,
                     tString,
                     tChar,
+                    tIf,
+                    tElse,
+                    tFor,
+                    tWhile,
                     tPalavraReservada,
                     tIdentificador,
+                    /*apartir daqui são tokens de controle*/
+                    tOR_contole,
                     tComentario));
 
     private String idToken;

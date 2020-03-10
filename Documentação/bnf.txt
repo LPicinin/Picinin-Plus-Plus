@@ -30,7 +30,7 @@ char-valor					= . //todos os caracteres
 
 null-valor					= "null"		
 
-declaracao-variavel 		= tipo id ['=' valor] ';' 
+declaracao-variavel 		= tipo id ['=' valor] ';'
 atribuicao					= id '=' (valor | operacao) ';'
 
 //+,-,*,/
