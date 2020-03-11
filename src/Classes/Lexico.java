@@ -7,7 +7,6 @@ package Classes;
 
 import Classes.Controle.Erro;
 import Classes.Controle.Match;
-import java.util.Arrays;
 
 /**
  *
@@ -15,7 +14,7 @@ import java.util.Arrays;
  */
 public class Lexico extends Constantes
 {
-
+    private int pos;
     public Object analise(Lexema lex)
     {
         String palavra = lex.getPalavra();
@@ -31,7 +30,8 @@ public class Lexico extends Constantes
             return new Match(lex, Token.tokens.get(i - 1));
         } else
         {
-            return Erro.getError(Erro.tokenNaoEncontrado, lex);
+            return new Match(lex, Token.tNaoReconhecido);
+            //return Erro.getError(Erro.tokenNaoEncontrado, lex);
         }
     }
 

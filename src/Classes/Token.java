@@ -63,18 +63,17 @@ public class Token
                     tValor_Null, 
                     tValor_OctaDecimal, 
                     tValor_String));
-    
-    public static final Token tValorGeneric = new Token("tValorGeneric",
-            "(" + tValor_Bool.regex + ")|("
-            + tValor_Char.regex + ")|("
-            + tValor_Inteiro.regex + ")|("
-            + tValor_Decimal.regex + ")|("
-            + tValor_HexaDecimal.regex + ")|("
-            + tValor_Null.regex + ")|("
-            + tValor_OctaDecimal.regex + ")|("
-            + tValor_String.regex + ")");
-     
-
+/*
+    public static final List<Token> tValorGeneric = new ArrayList<Token>(
+            Arrays.asList(tValor_Bool,
+                    tValor_Char,
+                    tValor_Inteiro,
+                    tValor_Decimal,
+                    tValor_HexaDecimal,
+                    tValor_Null,
+                    tValor_OctaDecimal,
+                    tValor_String));
+    */
     public static final Token tIdentificador = new Token("tId", "([A-Za-z])+(\\d)*([A-Za-z])*");
 
     /**
@@ -127,7 +126,8 @@ public class Token
     
     //tokens de controle do compilador
     public static final Token tOR_contole = new Token("|", "");
-    public static final Token tVazio = new Token("§", "vazio");
+    public static final Token tVazio = new Token("vazio", "§");
+    public static final Token tNaoReconhecido = new Token("tInexistente", "");
     
     public static final List<Token> tokens = new ArrayList<Token>(
             Arrays.asList(tInicio_Linguagem,
@@ -160,7 +160,6 @@ public class Token
                     tPalavraReservada,
                     tIdentificador,
                     /*apartir daqui são tokens de controle*/
-                    tOR_contole,
                     tComentario));
 
     private String idToken;

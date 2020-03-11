@@ -5,15 +5,16 @@
  */
 package Classes;
 
+import Classes.Controle.Controle;
 import Classes.Controle.Erro;
 import Classes.Controle.Match;
 import Classes.Controle.Simbolo;
-import Classes.RecursosTabelaSintatica.Regra;
+import Classes.Controle.TipoAnalise;
 import static Classes.Token.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Stack;
 
 /**
@@ -23,8 +24,14 @@ import java.util.Stack;
 public class Sintatico extends Constantes
 {
 
+    private Stack<Match> pilha_entrada;
+    private Stack<Token> pilha;
+    private Queue<Match> fila_sugestoes;
+    //private List<Match> listaTokens;
+
     private Lexico al_lexica;
     private Stack<Match> pilha_simbolos;
+    private int posToken;//para consumir os tokens extraidos pela analise lexica
 
     public Sintatico(String codeString)
     {
@@ -76,6 +83,13 @@ public class Sintatico extends Constantes
 
         al_lexica = new Lexico();
         al_lexica.analise();
+        try
+        {
+            geraAnaliseSintatica();
+        } catch (Exception ex)
+        {
+            System.out.println(ex.getMessage() + "\n" + ex.getCause());
+        }
 
         return geraTabelaSimbolos();
     }
@@ -111,13 +125,6 @@ public class Sintatico extends Constantes
                 addSimbolo(tabela_simbolos, new Simbolo(aux, val, tipo));
             }
         }
-        /*
-        System.out.println("\n\n\n\n\n\n\n");
-        for (Simbolo t : tabela_simbolos)
-        {
-            System.out.println(t.getCadeia()+" = "+t.getValor());
-        }
-         */
         return tabela_simbolos;
     }
 
@@ -147,22 +154,171 @@ public class Sintatico extends Constantes
 
     private Stack<Match> geraPilhaEntrada()
     {
-        Stack<Match> pilha_simbolos = new Stack<>();
-        pilha_simbolos.add(new Match(new Lexema("§", 0, 0), Token.tVazio));
+        pilha_entrada = new Stack<>();
+        //pilha_simbolos.add(new Match(new Lexema("§", 0, 0), Token.tVazio));
         List<Match> l = lexemas_tokens_correspondidos;
-        for (int i = l.size()-1; i > 0; i++)
+        for (int i = l.size() - 1; i >= 0; i--)
         {
-            pilha_simbolos.add(l.get(i));
+            pilha_entrada.push(l.get(i));
         }
-        return pilha_simbolos;
+        return pilha_entrada;
     }
+
     //Sem tabela
     private void geraAnaliseSintatica()
     {
-        Stack<Match> pilha_entrada = geraPilhaEntrada();
-        Stack<Token> pilha = new Stack<>();
-        
+        pilha_entrada = geraPilhaEntrada();
+        //pilha = new Stack<>();
+        //System.out.println(pilha_entrada.peek()+" - "+pilha_entrada.pop());
+        fila_sugestoes = new LinkedList<>();
+        int max = lexemas_tokens_correspondidos.size();
+        posToken = 0;
+        analisar(TipoAnalise.a_inicioPrograma);
+        Token t;
+        boolean flag = true;
+        while (posToken < max && !pilha_entrada.isEmpty())
+        {
+            for (Token tv : Token.tTipos)
+            {
+                if (pilha_entrada.peek().getLexema().getPalavra().matches(tv.getRegex()))
+                {
+                    flag = false;
+                    Controle retorno = analisar(TipoAnalise.ca_declaracao);
+                    if (retorno != null && retorno instanceof Erro)
+                    {
+                        erros.add((Erro) retorno);
+                    }
+                    break;
+                }
+            }
+            
+            for (TipoAnalise ta : TipoAnalise.listaAnalises)
+            {
+                if (ta.getFirst().equals(pilha_entrada.peek().getToken()))
+                {
+                    flag = false;
+                    Controle retorno = analisar(ta.getCodigo());
+                    if (retorno != null && retorno instanceof Erro)
+                    {
+                        erros.add((Erro) retorno);
+                    }
+                    break;
+                }
+            }
+            if (!flag)
+            {
+                System.out.println("Nenhuma regra para firs = " + pilha_entrada.peek().getLexema().getPalavra());
+            }
+        }
         //e aqui o show começa
     }
-    
+
+    private Controle analisar(int tipoAnalise)
+    {
+        Controle c = null;
+        switch (tipoAnalise)
+        {
+            case TipoAnalise.a_inicioPrograma:
+                c = al_inicioPrograma();
+                break;
+            case TipoAnalise.ca_declaracao:
+                c = al_declaracao();
+                break;
+            case TipoAnalise.a_chaves:
+
+                break;
+            case TipoAnalise.ca_atribuicao:
+
+                break;
+            case TipoAnalise.ca_for:
+
+                break;
+            case TipoAnalise.ca_while:
+
+                break;
+            case TipoAnalise.a_parenteses:
+
+                break;
+            case TipoAnalise.ca_naoReconhecido:
+                c = al_Token_naoReconhecido();
+                break;
+        }
+        return c;
+    }
+
+    private Controle al_inicioPrograma()
+    {
+        if (pilha_entrada.size() - 2 < 0)
+        {
+            return regraNaoCompletada();
+        }
+
+        if (pilha_entrada.pop().getToken().equals(Token.tInicio_Linguagem)
+                && pilha_entrada.pop().getToken().equals(Token.tIdentificador)
+                && pilha_entrada.pop().getToken().equals(Token.tChave_abre))
+        {
+            return null;
+        }
+        return Erro.getError(Erro.Inicio_da_Linguagem, pilha_entrada.peek().getLexema());
+    }
+
+    private Controle al_Token_naoReconhecido()
+    {
+        posToken++;
+        Erro error = Erro.getError(Erro.tokenNaoEncontrado, pilha_entrada.pop().getLexema());
+        buscaTokenDeConexao();
+        return error;
+    }
+
+    private void buscaTokenDeConexao()
+    {
+        while (!pilha_entrada.isEmpty() && token_De_Conexao.contains(pilha_entrada.pop()))
+        {
+            posToken++;
+        }
+    }
+
+    private Controle al_declaracao()
+    {
+
+        if (pilha_entrada.size() - 3 < 0)
+        {
+            return regraNaoCompletada();
+        } else
+        {
+            Token[] t = new Token[5];
+            t[0] = pilha_entrada.pop().getToken();
+            t[1] = pilha_entrada.pop().getToken();
+            t[2] = pilha_entrada.pop().getToken();
+
+            if (Token.tTipos.contains(t[0])
+                    && t[1].equals(Token.tIdentificador)
+                    && t[2].equals(Token.tPontoVirgula))
+            {
+                return null;
+            } else if (pilha_entrada.size() - 2 > 0 && t[2].equals(Token.tIgual))
+            {
+                t[3] = pilha_entrada.pop().getToken();
+                t[4] = pilha_entrada.pop().getToken();
+                if (Token.tTipos.contains(t[0])
+                        && t[1].equals(Token.tIdentificador)
+                        && t[2].equals(Token.tIgual)
+                        && Token.tValores.contains(t[3])
+                        && t[4].equals(Token.tPontoVirgula))
+                {
+                    return null;
+                }
+            }
+            return regraNaoCompletada();
+        }
+    }
+
+    private Controle regraNaoCompletada()
+    {
+        Erro error = Erro.getError(Erro.naoCompletado, pilha_entrada.pop().getLexema());
+        buscaTokenDeConexao();
+        posToken++;
+        return error;
+    }
+
 }
