@@ -69,6 +69,11 @@ public class Lexico extends Constantes
                 if (code[pos] != '"')
                 {
                     cadeia.append(code[pos]);
+                    if((code[pos] == '<' || code[pos] == '>') && code[pos+1] == '=')
+                    {
+                        cadeia.append(code[pos+1]);
+                        pos++;
+                    }
                 }
                 else
                 {

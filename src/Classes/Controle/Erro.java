@@ -20,6 +20,7 @@ public class Erro extends Controle
     public static final Erro variavel_Ja_Declarada = new Erro(407, "Variavel já declarada");
     public static final Erro Inicio_da_Linguagem = new Erro(408, "Inicio de linguagem não condizente com o especificado");
     public static final Erro naoCompletado = new Erro(409, "Inicio condinzente com a linguagem mas não competada");
+    public static final Erro expressaoIlegal = new Erro(410, "Expressão Irregular detectada!!");
 
     public Erro(int codigo, String mensagem)
     {

@@ -92,16 +92,28 @@ public class Token
      * and e or
      */
     public static final Token tOpLogico = new Token("tOperadorLogico", "or|and");
+    public static final Token tOpLogOR = new Token("tOperOR", "or");
+    public static final Token tOpLogAND = new Token("tOperAND", "or|and");
 
     /**
      * Operadores relacionais: > , >= , < , <= , == e !=
      */
-    public static final Token tOpRelacional = new Token("tRelacional", ">|>=|<|<=|==|!=");
+    //public static final Token tOpRelacional = new Token("tRelacional", ">|>=|<|<=|==|!=");
+    public static final Token tOpDiferente = new Token("tOpDiferente", "!=");
+    public static final Token tOpIgual = new Token("tOpIgual", "==");
+    public static final Token tOpMenor = new Token("tOpMenor", "<");
+    public static final Token tOpMaior = new Token("tOpMaior", ">");
+    public static final Token tOpMenorE = new Token("tOpMenorE", "<=");
+    public static final Token tOpMaiorE = new Token("tOpMaiorE", ">=");
 
     /**
      * Operadores Aritmeticos: + , - , * e /
      */
-    public static final Token tOperadores = new Token("tOperadores", "\\+|-|\\*|/");
+    public static final Token tOper_soma = new Token("tOper+", "\\+");
+    public static final Token tOper_menos = new Token("tOper-", "-");
+    public static final Token tOper_multiplicacao = new Token("tOper*", "\\*");
+    public static final Token tOper_divisao = new Token("tOper/", "/");
+    public static final List<Token> tOperadores = new ArrayList<>(Arrays.asList(tOper_soma, tOper_menos, tOper_multiplicacao, tOper_divisao, tOpLogOR, tOpLogAND, tOpDiferente, tOpIgual, tOpMenor, tOpMaior, tOpMenorE, tOpMaiorE));
 
     /**
      * Todas as palavras reservadas da linguagem: bool, char, double, else,
@@ -145,9 +157,18 @@ public class Token
                     tChave_fecha,
                     tIgual,
                     tPontoVirgula,
-                    tOpLogico,
-                    tOpRelacional,
-                    tOperadores,
+                    tOpLogOR,
+                    tOpLogAND,
+                    tOpDiferente, 
+                    tOpIgual, 
+                    tOpMenorE, 
+                    tOpMaiorE,
+                    tOpMenor, 
+                    tOpMaior, 
+                    tOper_soma, 
+                    tOper_menos, 
+                    tOper_multiplicacao, 
+                    tOper_divisao,
                     tINT,
                     tDouble,
                     tBool,

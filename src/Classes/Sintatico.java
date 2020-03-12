@@ -25,17 +25,17 @@ public class Sintatico extends Constantes
 {
 
     private Stack<Match> pilha_entrada;
-    private Stack<Token> pilha;
+    //private Stack<Token> pilha;
     private Queue<Match> fila_sugestoes;
     //private List<Match> listaTokens;
 
     private Lexico al_lexica;
-    private Stack<Match> pilha_simbolos;
+    //private Stack<Match> pilha_simbolos;
     private int posToken;//para consumir os tokens extraidos pela analise lexica
 
     public Sintatico(String codeString)
     {
-        pilha_simbolos = new Stack<>();
+        //pilha_simbolos = new Stack<>();
         lexemas_tokens_correspondidos = new ArrayList<>();
         erros = new ArrayList<>();
         code = codeString.toCharArray();
@@ -43,11 +43,12 @@ public class Sintatico extends Constantes
 
     public Sintatico()
     {
-        pilha_simbolos = new Stack<>();
+        //pilha_simbolos = new Stack<>();
         lexemas_tokens_correspondidos = new ArrayList<>();
         erros = new ArrayList<>();
     }
 
+    /*
     public Stack<Match> getPilha_simbolos()
     {
         return pilha_simbolos;
@@ -57,7 +58,7 @@ public class Sintatico extends Constantes
     {
         this.pilha_simbolos = pilha_simbolos;
     }
-
+     */
     public List<Match> getLexemas_tokens_correspondidos()
     {
         return lexemas_tokens_correspondidos;
@@ -175,39 +176,39 @@ public class Sintatico extends Constantes
         posToken = 0;
         analisar(TipoAnalise.a_inicioPrograma);
         Token t;
-        boolean flag = true;
+        boolean flag;
         while (posToken < max && !pilha_entrada.isEmpty())
         {
-            for (Token tv : Token.tTipos)
+            flag = true;
+            if (Token.tTipos.contains(pilha_entrada.peek().getToken()))
             {
-                if (pilha_entrada.peek().getLexema().getPalavra().matches(tv.getRegex()))
+                flag = false;
+                Controle retorno = analisar(TipoAnalise.ca_declaracao);
+                if (retorno != null && retorno instanceof Erro)
                 {
-                    flag = false;
-                    Controle retorno = analisar(TipoAnalise.ca_declaracao);
-                    if (retorno != null && retorno instanceof Erro)
+                    erros.add((Erro) retorno);
+                }
+                //break;
+            } else
+            {
+                for (TipoAnalise ta : TipoAnalise.listaAnalises)
+                {
+                    if (ta.getFirst().equals(pilha_entrada.peek().getToken()))
                     {
-                        erros.add((Erro) retorno);
+                        flag = false;
+                        Controle retorno = analisar(ta.getCodigo());
+                        if (retorno != null && retorno instanceof Erro)
+                        {
+                            erros.add((Erro) retorno);
+                        }
+                        break;
                     }
-                    break;
                 }
             }
-            
-            for (TipoAnalise ta : TipoAnalise.listaAnalises)
-            {
-                if (ta.getFirst().equals(pilha_entrada.peek().getToken()))
-                {
-                    flag = false;
-                    Controle retorno = analisar(ta.getCodigo());
-                    if (retorno != null && retorno instanceof Erro)
-                    {
-                        erros.add((Erro) retorno);
-                    }
-                    break;
-                }
-            }
-            if (!flag)
+            if (flag)
             {
                 System.out.println("Nenhuma regra para firs = " + pilha_entrada.peek().getLexema().getPalavra());
+                buscaTokenDeConexao();
             }
         }
         //e aqui o show começa
@@ -224,14 +225,14 @@ public class Sintatico extends Constantes
             case TipoAnalise.ca_declaracao:
                 c = al_declaracao();
                 break;
+            case TipoAnalise.ca_atribuicao:
+                c = al_atribuicao();
+                break;
             case TipoAnalise.a_chaves:
 
                 break;
-            case TipoAnalise.ca_atribuicao:
-
-                break;
             case TipoAnalise.ca_for:
-
+                c = al_for();
                 break;
             case TipoAnalise.ca_while:
 
@@ -284,20 +285,24 @@ public class Sintatico extends Constantes
         if (pilha_entrada.size() - 3 < 0)
         {
             return regraNaoCompletada();
-        } else
+        }
         {
-            Token[] t = new Token[5];
-            t[0] = pilha_entrada.pop().getToken();
-            t[1] = pilha_entrada.pop().getToken();
-            t[2] = pilha_entrada.pop().getToken();
+            Match[] t = new Match[5];
+            t[0] = pilha_entrada.pop();
+            t[1] = pilha_entrada.pop();
+            t[2] = pilha_entrada.pop();
 
-            if (Token.tTipos.contains(t[0])
-                    && t[1].equals(Token.tIdentificador)
-                    && t[2].equals(Token.tPontoVirgula))
+            if (Token.tTipos.contains(t[0].getToken())
+                    && t[1].getToken().equals(Token.tIdentificador)
+                    && t[2].getToken().equals(Token.tPontoVirgula))
             {
                 return null;
-            } else if (pilha_entrada.size() - 2 > 0 && t[2].equals(Token.tIgual))
+            } else if (pilha_entrada.size() - 2 > 0 && t[2].getToken().equals(Token.tIgual))
             {
+                pilha_entrada.push(t[2]);
+                pilha_entrada.push(t[1]);
+                return al_atribuicao();
+                /*
                 t[3] = pilha_entrada.pop().getToken();
                 t[4] = pilha_entrada.pop().getToken();
                 if (Token.tTipos.contains(t[0])
@@ -308,9 +313,75 @@ public class Sintatico extends Constantes
                 {
                     return null;
                 }
+                 */
             }
             return regraNaoCompletada();
         }
+    }
+
+    private Controle al_atribuicao()
+    {
+        boolean erro = true;
+        ArrayList<Match> r = new ArrayList<>();
+        Match aux;
+        if (pilha_entrada.size() >= 4)
+        {
+            r.add(pilha_entrada.pop());
+            r.add(pilha_entrada.pop());
+            r.add(pilha_entrada.pop());
+            if (r.get(0).getToken().equals(Token.tIdentificador) && r.get(1).getToken().equals(Token.tIgual))
+            {
+                if (Token.tValores.contains(r.get(2).getToken()) || r.get(2).getToken().equals(Token.tIdentificador))//pode ser Muita Coisa
+                {
+                    //atribuicao Simples
+                    if (pilha_entrada.peek().getToken().equals(Token.tPontoVirgula))
+                    {
+                        pilha_entrada.pop();//retira o ;
+                        erro = false;
+                    } else//possivel operacao - tem que resolver
+                    {
+                        if (!pilha_entrada.isEmpty()
+                                && (pilha_entrada.peek().getToken().equals(Token.tParenteses_abre)
+                                || Token.tOperadores.contains(pilha_entrada.peek().getToken())))
+                        {
+                            boolean OperacaoValida = true;
+                            for (aux = pilha_entrada.pop(); !pilha_entrada.isEmpty() && !pilha_entrada.peek().getToken().equals(Token.tPontoVirgula) && OperacaoValida; aux = pilha_entrada.pop())
+                            {
+                                //se é ((id ou valor) e operador) ou (operador e abre parentese) ou (operador e (id ou valor))
+                                if ((((aux.getToken().equals(Token.tIdentificador) || Token.tValores.contains(aux.getToken())))
+                                        && Token.tOperadores.contains(pilha_entrada.peek().getToken()))
+                                        || ((Token.tOperadores.contains(aux.getToken())
+                                        && pilha_entrada.peek().getToken().equals(Token.tParenteses_abre)))
+                                        || (Token.tOperadores.contains(aux.getToken()))
+                                        && (pilha_entrada.peek().getToken().equals(Token.tIdentificador) || Token.tValores.contains(pilha_entrada.peek().getToken())))
+                                {
+                                    OperacaoValida = true;
+                                } else
+                                {
+                                    OperacaoValida = false;
+                                    erro = true;
+                                }
+                            }
+                            if (OperacaoValida)
+                            {
+                                if (pilha_entrada.peek().getToken().equals(Token.tPontoVirgula))
+                                    pilha_entrada.pop();
+                                return null;
+                            }
+                            return Erro.getError(Erro.expressaoIlegal, aux.getLexema());
+                        }
+                    }
+                } else
+                    erro = true;
+            } else
+                erro = true;
+        } else
+            erro = true;
+
+        if (erro)
+            return Erro.getError(Erro.tokenFinalDeCadeiaInesperada, pilha_entrada.peek().getLexema());
+        else
+            return null;
     }
 
     private Controle regraNaoCompletada()
@@ -321,4 +392,159 @@ public class Sintatico extends Constantes
         return error;
     }
 
+    private Controle al_for()
+    {
+        Controle retorno = null;
+        Match m = pilha_entrada.pop();
+        if (m.getToken().equals(Token.tFor))
+        {
+            m = pilha_entrada.pop();
+            if (m.getToken().equals(Token.tParenteses_abre) && !pilha_entrada.isEmpty())
+            {
+                //parte da declaracao
+                if (!pilha_entrada.peek().getToken().equals(Token.tPontoVirgula))
+                {
+                    if (Token.tTipos.contains(pilha_entrada.peek().getToken()))
+                    {
+                        retorno = al_declaracao();
+                    } else if (pilha_entrada.peek().getToken().equals(Token.tIdentificador))
+                    {
+                        retorno = al_atribuicao();
+                    }
+                    if (retorno instanceof Erro)
+                    {
+                        return retorno;
+                    }
+                } else
+                {
+                    pilha_entrada.pop();
+                }
+                
+                if (!pilha_entrada.isEmpty())
+                {
+                    //parteDaExpressao
+                    retorno = al_expressao();
+                }
+                else
+                {
+                    return regraNaoCompletada();
+                }
+                    
+                if (retorno instanceof Erro)
+                {
+                    return retorno;
+                }
+                if (!pilha_entrada.isEmpty())
+                {
+                    //parte da atribuicao
+                    retorno = al_atribuicao2();
+                }
+                else
+                {
+                    return regraNaoCompletada();
+                }
+            }
+        }
+        if(pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
+            pilha_entrada.pop();
+        return null;
+    }
+
+    private Controle al_expressao()
+    {
+        Match aux;
+
+        boolean OperacaoValida = true;
+        for (aux = pilha_entrada.pop(); !pilha_entrada.isEmpty() && !pilha_entrada.peek().getToken().equals(Token.tPontoVirgula) && OperacaoValida; aux = pilha_entrada.pop())
+        {
+            //se encontrar parentese fechado apenas consome o seu token
+            if (aux.getToken().equals(Token.tParenteses_fecha))
+                OperacaoValida = true;
+            //se é ((id ou valor) e operador) ou (operador e abre parentese) ou (operador e (id ou valor))
+            else if ((((aux.getToken().equals(Token.tIdentificador) || Token.tValores.contains(aux.getToken())))
+                    && Token.tOperadores.contains(pilha_entrada.peek().getToken()))
+                    || ((Token.tOperadores.contains(aux.getToken())
+                    && pilha_entrada.peek().getToken().equals(Token.tParenteses_abre)))
+                    || (Token.tOperadores.contains(aux.getToken()))
+                    && (pilha_entrada.peek().getToken().equals(Token.tIdentificador) || Token.tValores.contains(pilha_entrada.peek().getToken())))
+            {
+                OperacaoValida = true;
+            } else
+            {
+                OperacaoValida = false;
+            }
+        }
+        if (OperacaoValida)
+        {
+            if (pilha_entrada.peek().getToken().equals(Token.tPontoVirgula))
+                pilha_entrada.pop();
+            return null;
+        }
+        return Erro.getError(Erro.expressaoIlegal, aux.getLexema());
+    }
+
+    private Controle al_atribuicao2()
+    {
+        boolean erro = true;
+        ArrayList<Match> r = new ArrayList<>();
+        Match aux;
+        if (pilha_entrada.size() >= 4)
+        {
+            r.add(pilha_entrada.pop());
+            r.add(pilha_entrada.pop());
+            r.add(pilha_entrada.pop());
+            if (r.get(0).getToken().equals(Token.tIdentificador) && r.get(1).getToken().equals(Token.tIgual))
+            {
+                if (Token.tValores.contains(r.get(2).getToken()) || r.get(2).getToken().equals(Token.tIdentificador))//pode ser Muita Coisa
+                {
+                    //atribuicao Simples
+                    if (pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
+                    {
+                        pilha_entrada.pop();//retira o ;
+                        erro = false;
+                    } else//possivel operacao - tem que resolver
+                    {
+                        if (!pilha_entrada.isEmpty()
+                                && (pilha_entrada.peek().getToken().equals(Token.tParenteses_abre)
+                                || Token.tOperadores.contains(pilha_entrada.peek().getToken())))
+                        {
+                            boolean OperacaoValida = true;
+                            for (aux = pilha_entrada.pop(); !pilha_entrada.isEmpty() && !pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha) && OperacaoValida; aux = pilha_entrada.pop())
+                            {
+                                //se é ((id ou valor) e operador) ou (operador e abre parentese) ou (operador e (id ou valor))
+                                if ((((aux.getToken().equals(Token.tIdentificador) || Token.tValores.contains(aux.getToken())))
+                                        && Token.tOperadores.contains(pilha_entrada.peek().getToken()))
+                                        || ((Token.tOperadores.contains(aux.getToken())
+                                        && pilha_entrada.peek().getToken().equals(Token.tParenteses_abre)))
+                                        || (Token.tOperadores.contains(aux.getToken()))
+                                        && (pilha_entrada.peek().getToken().equals(Token.tIdentificador) || Token.tValores.contains(pilha_entrada.peek().getToken())))
+                                {
+                                    OperacaoValida = true;
+                                } else
+                                {
+                                    OperacaoValida = false;
+                                    erro = true;
+                                }
+                            }
+                            if (OperacaoValida)
+                            {
+                                if (pilha_entrada.peek().getToken().equals(Token.tPontoVirgula))
+                                    pilha_entrada.pop();
+                                return null;
+                            }
+                            return Erro.getError(Erro.expressaoIlegal, aux.getLexema());
+                        }
+                    }
+                } else
+                    erro = true;
+            } else
+                erro = true;
+        } else
+            erro = true;
+
+        if (erro)
+            return Erro.getError(Erro.tokenFinalDeCadeiaInesperada, pilha_entrada.peek().getLexema());
+        else
+            return null;
+    }
 }
