@@ -268,6 +268,8 @@ public class Sintatico extends Constantes
                 pilha_entrada.pop();
                 if(pilha_entrada.peek().getToken().equals(Token.tChave_abre))
                 {
+                    //retira chave da pilha
+                    pilha_entrada.pop();
                     return null;
                 }
                 else
@@ -574,16 +576,20 @@ public class Sintatico extends Constantes
     private Controle al_while() 
     {
         Controle retorno = null;
+        
         Match m = pilha_entrada.pop();
         if (m.getToken().equals(Token.tWhile))
         {
             if(pilha_entrada.peek().getToken().equals(Token.tParenteses_abre))
             {
-                pilha_entrada.pop();
-                retorno = al_expressao_boolean();
-                if(retorno == null && pilha_entrada.pop().getToken().equals(Token.tParenteses_fecha))
+                m = pilha_entrada.pop();
+                if(retorno == null && pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
                 {
                     return null;
+                }
+                else
+                {
+                    retorno = al_expressao_boolean();
                 }
             }
             else
@@ -598,10 +604,32 @@ public class Sintatico extends Constantes
     private Controle al_expressao_boolean() 
     {
         Controle c = null;
-        Match pop = pilha_entrada.pop();
-        if(Token.tValor_Bool.equals(pilha_entrada.peek()))
+        Match aux = pilha_entrada.pop();
+        if(Token.tValor_Bool.equals(aux.getToken()) && pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
         {
-            
+            return null;
+        }
+        else
+        {
+            while (!pilha_entrada.isEmpty() && 
+                    !pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha) && 
+                    pilha_entrada.size()-3 >= 0)
+            {      
+                //se valor(true ou false) e (operadorLogico) e valor(true ou false)
+                if(!((aux.getToken().equals(Token.tValor_Bool) || 
+                        aux.getToken().equals(Token.tIdentificador)) && 
+                        
+                        (Token.tOpLogicos.contains((aux = pilha_entrada.pop()).getToken()) ||
+                        Token.tOpRelacional.contains(aux.getToken())) &&
+                        
+                        (pilha_entrada.peek().getToken().equals(Token.tValor_Bool) || 
+                        pilha_entrada.peek().getToken().equals(Token.tIdentificador))))
+                {
+                    c = Erro.getError(Erro.expressaoIlegal, pilha_entrada.peek().getLexema());
+                    break;
+                }
+                //aux = pilha_entrada.pop();
+            }
         }
         return c;
     }
