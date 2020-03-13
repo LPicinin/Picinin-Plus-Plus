@@ -17,6 +17,7 @@ public class Match
 
     private Lexema lexema;
     private Token token;
+    private int posLista;
 
     public Match(Lexema lexema, Token token)
     {
@@ -42,6 +43,16 @@ public class Match
     public void setToken(Token token)
     {
         this.token = token;
+    }
+
+    public int getPosLista()
+    {
+        return posLista;
+    }
+
+    public void setPosLista(int posLista)
+    {
+        this.posLista = posLista;
     }
 
     @Override

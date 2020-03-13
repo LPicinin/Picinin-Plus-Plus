@@ -92,6 +92,12 @@ public class Lexico extends Constantes
                 cadeia.setLength(0);
             }
         }
+        //atualiza index de Match
+        int c = 0;
+        for (Match l : lexemas_tokens_correspondidos)
+        {
+            l.setPosLista(c++);
+        }
     }
 
     private void consomeCaracteres(char[] code)

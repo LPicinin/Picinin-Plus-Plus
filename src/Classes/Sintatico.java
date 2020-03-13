@@ -122,9 +122,13 @@ public class Sintatico extends Constantes
                 {
                     //o +2 é pra pular atribuição
                     if (i + 2 < lt.size() && tValores.contains(lt.get(i + 2).getToken()) && tIgual.equals(lt.get(i + 1).getToken()))
+                    {
                         val = lt.get(i + 2).getLexema().getPalavra();
+                    }
                     if (tTipos.contains(lt.get(i - 1).getToken()))
+                    {
                         tipo = lt.get(i - 1).getToken().getIdToken().replace("t", "");
+                    }
                 }
                 addSimbolo(tabela_simbolos, new Simbolo(aux, val, tipo));
             }
@@ -142,8 +146,9 @@ public class Sintatico extends Constantes
             {
                 aux = tabela_simbolos.get(index);
                 if (simbolo.getTipo().isEmpty())
+                {
                     tabela_simbolos.add(simbolo);
-                else
+                } else
                 {
                     erros.add(Erro.getError(Erro.variavel_Ja_Declarada, simbolo.getMatch().getLexema()));
                 }
@@ -151,9 +156,13 @@ public class Sintatico extends Constantes
             {
                 erros.add(Erro.getError(Erro.variavelNaoDeclarada, simbolo.getMatch().getLexema()));
             } else
+            {
                 tabela_simbolos.add(simbolo);
+            }
         } else
+        {
             tabela_simbolos.add(simbolo);
+        }
     }
 
     private Stack<Match> geraPilhaEntrada()
@@ -179,8 +188,12 @@ public class Sintatico extends Constantes
         posToken = 0;
         Controle c = analisar(TipoAnalise.a_inicioPrograma);
         if (c != null)
+        {
             erros.add(Erro.getError(Erro.Inicio_da_Linguagem, c.getLexema()));
-        c = analisar(TipoAnalise.a_chaves);
+        }
+        analisar(TipoAnalise.a_chaves);
+        //analisar(TipoAnalise.ca_else);
+
         boolean flag;
         while (posToken < max && !pilha_entrada.isEmpty())
         {
@@ -252,6 +265,13 @@ public class Sintatico extends Constantes
                 c = al_if();
                 break;
             case TipoAnalise.ca_else:
+                c = al_else();
+                break;
+            case TipoAnalise.ca_chaveAbre:
+                pilha_entrada.pop();
+                break;
+            case TipoAnalise.ca_chaveFecha:
+                pilha_entrada.pop();
                 break;
         }
         return c;
@@ -329,18 +349,6 @@ public class Sintatico extends Constantes
                 pilha_entrada.push(t[2]);
                 pilha_entrada.push(t[1]);
                 return al_atribuicao();
-                /*
-                t[3] = pilha_entrada.pop().getToken();
-                t[4] = pilha_entrada.pop().getToken();
-                if (Token.tTipos.contains(t[0])
-                        && t[1].equals(Token.tIdentificador)
-                        && t[2].equals(Token.tIgual)
-                        && Token.tValores.contains(t[3])
-                        && t[4].equals(Token.tPontoVirgula))
-                {
-                    return null;
-                }
-                 */
             }
             return regraNaoCompletada();
         }
@@ -392,23 +400,34 @@ public class Sintatico extends Constantes
                             if (OperacaoValida)
                             {
                                 if (pilha_entrada.peek().getToken().equals(Token.tPontoVirgula))
+                                {
                                     pilha_entrada.pop();
+                                }
                                 return null;
                             }
                             return Erro.getError(Erro.expressaoIlegal, aux.getLexema());
                         }
                     }
                 } else
+                {
                     erro = true;
+                }
             } else
+            {
                 erro = true;
+            }
         } else
+        {
             erro = true;
+        }
 
         if (erro)
+        {
             return Erro.getError(Erro.tokenFinalDeCadeiaInesperada, pilha_entrada.peek().getLexema());
-        else
+        } else
+        {
             return null;
+        }
     }
 
     private Controle al_for()
@@ -463,7 +482,9 @@ public class Sintatico extends Constantes
             }
         }
         if (pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
+        {
             pilha_entrada.pop();
+        }
         return null;
     }
 
@@ -476,8 +497,9 @@ public class Sintatico extends Constantes
         {
             //se encontrar parentese fechado apenas consome o seu token
             if (aux.getToken().equals(Token.tParenteses_fecha))
+            {
                 OperacaoValida = true;
-            //se é ((id ou valor) e operador) ou (operador e abre parentese) ou (operador e (id ou valor))
+            } //se é ((id ou valor) e operador) ou (operador e abre parentese) ou (operador e (id ou valor))
             else if ((((aux.getToken().equals(Token.tIdentificador) || Token.tValores.contains(aux.getToken())))
                     && Token.tOperadores.contains(pilha_entrada.peek().getToken()))
                     || ((Token.tOperadores.contains(aux.getToken())
@@ -494,7 +516,9 @@ public class Sintatico extends Constantes
         if (OperacaoValida)
         {
             if (pilha_entrada.peek().getToken().equals(Token.tPontoVirgula))
+            {
                 pilha_entrada.pop();
+            }
             return null;
         }
         return Erro.getError(Erro.expressaoIlegal, aux.getLexema());
@@ -546,23 +570,34 @@ public class Sintatico extends Constantes
                             if (OperacaoValida)
                             {
                                 if (pilha_entrada.peek().getToken().equals(Token.tPontoVirgula))
+                                {
                                     pilha_entrada.pop();
+                                }
                                 return null;
                             }
                             return Erro.getError(Erro.expressaoIlegal, aux.getLexema());
                         }
                     }
                 } else
+                {
                     erro = true;
+                }
             } else
+            {
                 erro = true;
+            }
         } else
+        {
             erro = true;
+        }
 
         if (erro)
+        {
             return Erro.getError(Erro.tokenFinalDeCadeiaInesperada, pilha_entrada.peek().getLexema());
-        else
+        } else
+        {
             return null;
+        }
     }
 
     private Controle al_while()
@@ -583,9 +618,13 @@ public class Sintatico extends Constantes
                     retorno = al_expressao_boolean();
                 }
             } else
+            {
                 retorno = Erro.getError(Erro.expressaoIlegal, pilha_entrada.peek().getLexema());
+            }
         } else
+        {
             retorno = Erro.getError(Erro.naoCompletado, pilha_entrada.peek().getLexema());
+        }
         if (retorno == null && pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
         {
             //retira o fecha parenteses
@@ -618,7 +657,9 @@ public class Sintatico extends Constantes
                     c = Erro.getError(Erro.expressaoIlegal, pilha_entrada.peek().getLexema());
                     break;
                 } else
+                {
                     aux = pilha_entrada.pop();
+                }
 
                 //aux = pilha_entrada.pop();
             }
@@ -630,18 +671,19 @@ public class Sintatico extends Constantes
     {
         Controle res = null;
         Match aux = pilha_entrada.pop();
-        if(aux.getToken().equals(Token.tIf) && pilha_entrada.pop().getToken().equals(Token.tParenteses_abre))
+        if (aux.getToken().equals(Token.tIf) && pilha_entrada.pop().getToken().equals(Token.tParenteses_abre))
         {
             res = al_expressao_boolean();
-            if(res == null && pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
+            if (res == null && pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
             {
                 //tira ) da pilha
                 pilha_entrada.pop();
             }
-        }
-        else
+        } else
+        {
             return regraNaoCompletada(aux);
-        
+        }
+
         return res;
     }
 
@@ -652,8 +694,8 @@ public class Sintatico extends Constantes
         posToken++;
         return error;
     }
-    
-     private Controle regraNaoCompletada()
+
+    private Controle regraNaoCompletada()
     {
         Erro error = Erro.getError(Erro.naoCompletado, pilha_entrada.pop().getLexema());
         buscaTokenDeConexao();
@@ -668,25 +710,32 @@ public class Sintatico extends Constantes
         Stack<Match> fecha = new Stack<>();
         for (Match l : lexemas_tokens_correspondidos)
         {
-            if(l.getToken().equals(Token.tChave_abre))
+            if (l.getToken().equals(Token.tChave_abre))
+            {
                 abre.push(l);
-            else if(l.getToken().equals(Token.tChave_fecha))
+            } else if (l.getToken().equals(Token.tChave_fecha))
+            {
                 fecha.push(l);
+            }
         }
-        if(abre.size() == fecha.size())
+        if (abre.size() == fecha.size())
+        {
             return null;
+        }
         for (int i = 0; i < abre.size() && !fecha.isEmpty(); i++)
         {
             abre.pop();
             fecha.pop();
         }
-        
-        if(fecha.isEmpty())
+
+        if (fecha.isEmpty())
+        {
             res = Erro.getError(Erro.chavesFaltantes, abre.peek().getLexema());
-        else
+        } else
+        {
             res = Erro.getError(Erro.chavesFaltantes, fecha.peek().getLexema());
-        
-        
+        }
+
         for (Match cf : fecha)
         {
             erros.add(Erro.getError(Erro.chavesFaltantes, cf.getLexema()));
@@ -695,7 +744,7 @@ public class Sintatico extends Constantes
         {
             erros.add(Erro.getError(Erro.chavesFaltantes, ca.getLexema()));
         }
-        
+
         return res;
     }
 
@@ -706,25 +755,32 @@ public class Sintatico extends Constantes
         Stack<Match> fecha = new Stack<>();
         for (Match l : lexemas_tokens_correspondidos)
         {
-            if(l.getToken().equals(Token.tParenteses_abre))
+            if (l.getToken().equals(Token.tParenteses_abre))
+            {
                 abre.push(l);
-            else if(l.getToken().equals(Token.tParenteses_fecha))
+            } else if (l.getToken().equals(Token.tParenteses_fecha))
+            {
                 fecha.push(l);
+            }
         }
-        if(abre.size() == fecha.size())
+        if (abre.size() == fecha.size())
+        {
             return null;
+        }
         for (int i = 0; i < abre.size() && !fecha.isEmpty(); i++)
         {
             abre.pop();
             fecha.pop();
         }
-        
-        if(fecha.isEmpty())
+
+        if (fecha.isEmpty())
+        {
             res = Erro.getError(Erro.parenteseFaltante, abre.peek().getLexema());
-        else
+        } else
+        {
             res = Erro.getError(Erro.parenteseFaltante, fecha.peek().getLexema());
-        
-        
+        }
+
         for (Match cf : fecha)
         {
             erros.add(Erro.getError(Erro.parenteseFaltante, cf.getLexema()));
@@ -733,7 +789,53 @@ public class Sintatico extends Constantes
         {
             erros.add(Erro.getError(Erro.parenteseFaltante, ca.getLexema()));
         }
-        
+
         return res;
+    }
+
+    private Controle al_else()
+    {
+        int index;
+        Match m = pilha_entrada.pop();
+        Controle res = null;
+        Stack<Match> fecha = new Stack<>();
+        
+        if (m.getToken().equals(Token.tElse) && !pilha_entrada.isEmpty())
+        {
+            index = m.getPosLista();
+            m = pilha_entrada.pop();
+            if(m.getToken().equals(Token.tChave_abre) && verificaIf_antes_else(index))
+            {
+                return null;
+            }   
+        }
+        return new Erro(Erro.expressaoIlegal.getCodigo(), "palavra 'if' era esperado antes do 'else'", m.getLexema());
+    }
+
+    private boolean verificaIf_antes_else(int index)
+    {
+        boolean flag = true;
+        Stack<Match> fecha = new Stack<>();
+        List<Match> listaLexTok = lexemas_tokens_correspondidos;
+        for (int i = index-1; i > 0 && flag; i--)
+        {
+            if(fecha.isEmpty() && listaLexTok.get(i).getToken().equals(Token.tIf))
+            {
+                flag = false;
+            }
+            else if(listaLexTok.get(i).getToken().equals(Token.tChave_fecha))
+            {
+                fecha.push(listaLexTok.get(i));
+            }
+            else if(!fecha.isEmpty() && listaLexTok.get(i).getToken().equals(Token.tChave_abre))
+            {
+                fecha.pop();
+            }/*
+            else if(fecha.isEmpty() && listaLexTok.get(i).getToken().equals(Token.tIf))
+            {
+                flag = false;
+            }*/
+        }
+        return !flag;
     }
 }
