@@ -112,7 +112,11 @@ public class Sintatico extends Constantes
             {
                 String val = "";
                 String tipo = "";
-                if (i - 1 >= 0 && lt.get(i - 1).getToken().equals(tInicio_Linguagem))
+                if(i == 0 && !lt.get(0).getToken().equals(Token.tInicio_Linguagem))
+                {
+                    
+                }
+                else if (i - 1 >= 0 && lt.get(i - 1).getToken().equals(tInicio_Linguagem))
                 {
                     tipo = lt.get(i - 1).getToken().getIdToken().replace("t", "");
                 } else
@@ -174,7 +178,9 @@ public class Sintatico extends Constantes
         fila_sugestoes = new LinkedList<>();
         int max = lexemas_tokens_correspondidos.size();
         posToken = 0;
-        analisar(TipoAnalise.a_inicioPrograma);
+        Controle c = analisar(TipoAnalise.a_inicioPrograma);
+        if(c!= null)
+            erros.add(Erro.getError(Erro.Inicio_da_Linguagem, c.getLexema()));
         Token t;
         boolean flag;
         while (posToken < max && !pilha_entrada.isEmpty())
@@ -235,7 +241,7 @@ public class Sintatico extends Constantes
                 c = al_for();
                 break;
             case TipoAnalise.ca_while:
-
+                c = al_while();
                 break;
             case TipoAnalise.a_parenteses:
 
@@ -254,11 +260,28 @@ public class Sintatico extends Constantes
             return regraNaoCompletada();
         }
 
-        if (pilha_entrada.pop().getToken().equals(Token.tInicio_Linguagem)
-                && pilha_entrada.pop().getToken().equals(Token.tIdentificador)
-                && pilha_entrada.pop().getToken().equals(Token.tChave_abre))
+        if (pilha_entrada.peek().getToken().equals(Token.tInicio_Linguagem))
         {
-            return null;
+            pilha_entrada.pop();
+            if(pilha_entrada.peek().getToken().equals(Token.tIdentificador))
+            {
+                pilha_entrada.pop();
+                if(pilha_entrada.peek().getToken().equals(Token.tChave_abre))
+                {
+                    return null;
+                }
+                else
+                {
+                    
+                }
+            }
+            else
+            {
+                
+            }
+        }
+        while(!pilha_entrada.isEmpty() && !pilha_entrada.pop().getToken().equals(Token.tChave_abre))
+        {
         }
         return Erro.getError(Erro.Inicio_da_Linguagem, pilha_entrada.peek().getLexema());
     }
@@ -546,5 +569,40 @@ public class Sintatico extends Constantes
             return Erro.getError(Erro.tokenFinalDeCadeiaInesperada, pilha_entrada.peek().getLexema());
         else
             return null;
+    }
+
+    private Controle al_while() 
+    {
+        Controle retorno = null;
+        Match m = pilha_entrada.pop();
+        if (m.getToken().equals(Token.tWhile))
+        {
+            if(pilha_entrada.peek().getToken().equals(Token.tParenteses_abre))
+            {
+                pilha_entrada.pop();
+                retorno = al_expressao_boolean();
+                if(retorno == null && pilha_entrada.pop().getToken().equals(Token.tParenteses_fecha))
+                {
+                    return null;
+                }
+            }
+            else
+                retorno = Erro.getError(Erro.expressaoIlegal, pilha_entrada.peek().getLexema());
+        }
+        else
+            retorno = Erro.getError(Erro.naoCompletado, pilha_entrada.peek().getLexema());
+        
+        return retorno;
+    }
+
+    private Controle al_expressao_boolean() 
+    {
+        Controle c = null;
+        Match pop = pilha_entrada.pop();
+        if(Token.tValor_Bool.equals(pilha_entrada.peek()))
+        {
+            
+        }
+        return c;
     }
 }
