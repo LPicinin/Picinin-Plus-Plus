@@ -12,7 +12,7 @@ package Classes;
 public class Semantico extends Constantes
 {
 
-    public Object analise(Lexema lex)
+    public Object analise(String codigo)
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

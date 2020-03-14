@@ -82,6 +82,7 @@ public class TelaPrincipalController implements Initializable
                 + "{\n"
                 + "    double x = 543.56;\n"
                 + "    string s = \"skbdkslb slndbçs smpn\";\n"
+                + "    while(x<s)\n"
                 + "}");
         
         caCodigo.setStyleClass(5, 10, "erro");
