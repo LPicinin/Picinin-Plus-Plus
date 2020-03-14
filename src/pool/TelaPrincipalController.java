@@ -5,15 +5,13 @@
  */
 package pool;
 
-import Classes.Controle.Controle;
 import Classes.Controle.Erro;
-import Classes.Controle.Match;
-import Classes.Controle.Simbolo;
-import Classes.Lexema;
 import Classes.Token;
 import Controladora.CtrCompilador;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.utils.FontAwesomeIconFactory;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import util.CodeAreaInit;
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,8 +25,6 @@ import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
@@ -38,12 +34,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
+import javax.swing.Timer;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -168,17 +164,18 @@ public class TelaPrincipalController implements Initializable
             css = "-fx-border-color:red; -fx-border-width: 3;";
 
         pnCodigo.setStyle(css);
-        new java.util.Timer().schedule(
-                new java.util.TimerTask()
+
+        Timer timer = new Timer(1000, new ActionListener()
         {
             @Override
-            public void run()
+            public void actionPerformed(ActionEvent e)
             {
                 pnCodigo.setStyle("");
             }
-        },
-                1000
-        );
+        });
+        timer.setRepeats(false); // Only execute once
+        timer.start();
+
         /*
         if (lvErros_Avisos.getItems().size() == 0)
             MyAlert.compilou("Compilou!!!").show();
