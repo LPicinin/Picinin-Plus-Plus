@@ -23,6 +23,7 @@ public class Erro extends Controle
     public static final Erro expressaoIlegal = new Erro(410, "Expressão Irregular detectada!!");
     public static final Erro chavesFaltantes = new Erro(411, "{ ou } esperado");
     public static final Erro parenteseFaltante = new Erro(411, "( ou ) esperado");
+    public static final Erro codigo_Escopo_fora_do_fluxo = new Erro(666, "Escopo fora do fluxo de execução detectado!!!");
 
     public Erro(int codigo, String mensagem)
     {

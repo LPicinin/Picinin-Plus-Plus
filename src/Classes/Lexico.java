@@ -14,7 +14,9 @@ import Classes.Controle.Match;
  */
 public class Lexico extends Constantes
 {
+
     private int pos;
+
     public Object analise(Lexema lex)
     {
         String palavra = lex.getPalavra();
@@ -55,42 +57,50 @@ public class Lexico extends Constantes
                 cadeia.append(code[i]);
                 i++;
             }
-            pos = i;
-            if (cadeia.length() > 0)//achou uma cadeia
+            if (i < code.length)
             {
-                //System.out.println(cadeia.toString());
-                addRepostaLexico(new Lexema(cadeia.toString(), posParagrafo, posLinha));
-                //al_lexica.analise(cadeia.toString());
-                cadeia.setLength(0);
-            }
-
-            if (fespecial)//achou um caracter especial
-            {
-                if (code[pos] != '"')
+                pos = i;
+                if (code[i] == '\n')
+                    posParagrafo++;
+                if (cadeia.length() > 0)//achou uma cadeia
                 {
-                    cadeia.append(code[pos]);
-                    if((code[pos] == '<' || code[pos] == '>') && code[pos+1] == '=')
-                    {
-                        cadeia.append(code[pos+1]);
-                        pos++;
-                    }
+                    //System.out.println(cadeia.toString());
+                    addRepostaLexico(cadeia.toString());
+                    //al_lexica.analise(cadeia.toString());
+                    cadeia.setLength(0);
                 }
-                else
+
+                if (fespecial)//achou um caracter especial
                 {
-                    //consome de " até outro " ou \n(erro)
-                    if (consomeString(code, cadeia))
+                    if (code[pos] != '"')
                     {
-                        //achou uma string
+                        cadeia.append(code[pos]);
+                        posLinha++;
+                        if ((code[pos] == '<' || code[pos] == '>') && pos + 1 < code.length && code[pos + 1] == '=')
+                        {
+                            cadeia.append(code[pos + 1]);
+                            pos++;
+                            posLinha++;
+                        }
                     } else
                     {
-                        //achou um erro
+                        //consome de " até outro " ou \n(erro)
+                        if (consomeString(code, cadeia))
+                        {
+                            //achou uma string
+                        } else
+                        {
+                            //achou um erro
+                        }
+                        pos--;
                     }
-                    pos--;
+                    //System.out.println(cadeia.toString());
+                    addRepostaLexico(cadeia.toString());
+                    cadeia.setLength(0);
                 }
-                //System.out.println(cadeia.toString());
-                addRepostaLexico(new Lexema(cadeia.toString(), posParagrafo, posLinha));
-                cadeia.setLength(0);
+                posLinha++;
             }
+
         }
         //atualiza index de Match
         int c = 0;
@@ -98,6 +108,7 @@ public class Lexico extends Constantes
         {
             l.setPosLista(c++);
         }
+
     }
 
     private void consomeCaracteres(char[] code)
@@ -144,10 +155,12 @@ public class Lexico extends Constantes
         }
         return true;
     }
-    
-    private void addRepostaLexico(Lexema cadeia)
+
+    private void addRepostaLexico(String cadeia)
     {
-        Object resposta = analise(cadeia);
+        posLinha += cadeia.length();
+        Lexema lex = new Lexema(cadeia.toString(), posParagrafo, posLinha);
+        Object resposta = analise(lex);
         if (resposta instanceof Erro)
         {
             Erro e = (Erro) resposta;
@@ -158,7 +171,7 @@ public class Lexico extends Constantes
             lexemas_tokens_correspondidos.add(m);
         }
     }
-    
+
     private void addErro(Erro e)
     {
         erros.add(e);

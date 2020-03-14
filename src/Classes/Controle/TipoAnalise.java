@@ -27,6 +27,7 @@ public class TipoAnalise
     public final static int ca_else = 9;
     public final static int ca_chaveAbre = 10;
     public final static int ca_chaveFecha = 11;
+    public final static int ca_codigoForaDoEscopo = 12;
     
     private static final TipoAnalise a_for = new TipoAnalise(Token.tFor, ca_for);
     private static final TipoAnalise a_while = new TipoAnalise(Token.tWhile, ca_while);
@@ -37,6 +38,7 @@ public class TipoAnalise
     private static final TipoAnalise a_else = new TipoAnalise(Token.tElse, ca_else);
     private static final TipoAnalise a_chaveAbre = new TipoAnalise(Token.tChave_abre, ca_chaveAbre);
     private static final TipoAnalise a_chaveFecha = new TipoAnalise(Token.tChave_fecha, ca_chaveFecha);
+    private static final TipoAnalise a_codigoForaDoEscopo = new TipoAnalise(null, ca_codigoForaDoEscopo);
    
     
     public final static List<TipoAnalise> listaAnalises = 
@@ -48,6 +50,7 @@ public class TipoAnalise
             a_else,
             a_chaveAbre,
             a_chaveFecha);
+    
     private Token first;
     private int codigo;
 
