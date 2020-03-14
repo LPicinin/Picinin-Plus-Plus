@@ -91,9 +91,9 @@ public class Token
     /**
      * and e or
      */
-    public static final Token tOpLogico = new Token("tOperadorLogico", "or|and");
     public static final Token tOpLogOR = new Token("tOperOR", "or");
     public static final Token tOpLogAND = new Token("tOperAND", "or|and");
+    public static final List<Token> tOpLogicos = new ArrayList<>(Arrays.asList(tOpLogAND, tOpLogOR));
 
     /**
      * Operadores relacionais: > , >= , < , <= , == e !=
@@ -105,7 +105,8 @@ public class Token
     public static final Token tOpMaior = new Token("tOpMaior", ">");
     public static final Token tOpMenorE = new Token("tOpMenorE", "<=");
     public static final Token tOpMaiorE = new Token("tOpMaiorE", ">=");
-
+    public static final List<Token> tOpRelacional = new ArrayList<>(
+            Arrays.asList(tOpDiferente, tOpIgual, tOpMenor, tOpMaior, tOpMenorE, tOpMaiorE));
     /**
      * Operadores Aritmeticos: + , - , * e /
      */
