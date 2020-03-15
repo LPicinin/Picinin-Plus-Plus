@@ -6,6 +6,7 @@
 package pool;
 
 import Classes.Controle.Erro;
+import Classes.Lexema;
 import Classes.Token;
 import Controladora.CtrCompilador;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -36,6 +37,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -202,17 +204,16 @@ public class TelaPrincipalController implements Initializable
     @FXML
     private void evtErroAviso(MouseEvent event)
     {
-        /*
+        
         if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1)
         {
             Object o = lvErros_Avisos.getSelectionModel().getSelectedItem();
             Erro e = (Erro) o;
             Lexema l = e.getLexema();
             caCodigo.requestFocus();
-            caCodigo.position(l.getPosParagrafo(), l.getPosLinha());
-            new Alert(Alert.AlertType.INFORMATION, l.getPalavra()+" EM "+l.getPosParagrafo()+" - "+l.getPosLinha(), ButtonType.OK).show();
+            caCodigo.moveTo(l.getPosParagrafo(), 0);
         }
-         */
+         
     }
 
     private static StyleSpans<Collection<String>> computeHighlighting(Erro text)

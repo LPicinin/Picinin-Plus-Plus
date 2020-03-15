@@ -16,7 +16,7 @@ public abstract class Controle implements Cloneable
 
     protected int codigo;
     protected String mensagem;
-    private Lexema lexema;
+    protected Lexema lexema;
 
     public Controle()
     {
