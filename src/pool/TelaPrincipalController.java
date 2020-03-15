@@ -10,11 +10,12 @@ import Classes.Token;
 import Controladora.CtrCompilador;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.utils.FontAwesomeIconFactory;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import util.CodeAreaInit;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.time.LocalTime;
@@ -26,6 +27,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -39,7 +41,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
-import javax.swing.Timer;
+import javafx.stage.FileChooser;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -157,31 +159,26 @@ public class TelaPrincipalController implements Initializable
         processaErros();
 
         String css;
+        Label l;
         if (CtrCompilador.instancia().getCompilador().getErros_avisos().isEmpty())
         {
             css = "-fx-border-color:green; -fx-border-width: 3;";
+            l = new Label("Compilado com sucesso!!");
+            l.setTextFill(Paint.valueOf("#00ff00"));
+            
         } else
-            css = "-fx-border-color:red; -fx-border-width: 3;";
-
-        pnCodigo.setStyle(css);
-
-        Timer timer = new Timer(1000, new ActionListener()
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                pnCodigo.setStyle("");
-            }
-        });
-        timer.setRepeats(false); // Only execute once
-        timer.start();
-
-        /*
-        if (lvErros_Avisos.getItems().size() == 0)
-            MyAlert.compilou("Compilou!!!").show();
-        else
-            MyAlert.erro("Não Compilou!!!").show();
-         */
+            css = "-fx-border-color:red; -fx-border-width: 3;";
+            l = new Label("Não pode ser compilado!!");
+            l.setTextFill(Paint.valueOf("#ff0000"));
+        }
+            
+        
+        lvErros_Avisos.getItems().add(l);
+        lvErros_Avisos.setStyle(css);
+        
+        
+        
     }
 
     @FXML
@@ -252,6 +249,35 @@ public class TelaPrincipalController implements Initializable
                 }
                 pnerros.getChildren().get(erro.getLexema().getPosParagrafo()).setVisible(true);
             }
+        }
+    }
+
+    @FXML
+    private void evtabrirArquivo(MouseEvent event)
+    {
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Abrir Código!!!");
+        fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Formatos Suportados", ".ppp"));
+        File arq = fc.showOpenDialog(null);
+        if(arq != null)
+        {
+            try
+            {
+                BufferedReader br = new BufferedReader(new FileReader(arq));
+                String line = br.readLine();
+                String code = "";
+                while(line != null)
+                {
+                    code+=line+"\n";
+                    line = br.readLine();
+                }
+                caCodigo.replaceText(code);
+                
+            } catch (IOException ex)
+            {
+                System.out.println("Erro ao abrir arquivo: "+ex.getMessage());
+            }
+            
         }
     }
 }

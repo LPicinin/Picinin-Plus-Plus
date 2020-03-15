@@ -162,7 +162,7 @@ FOLLOW(operador-relacional) = {(a-zA-Z)+}
 
 
 
-
+for(int i = 10; i < 45; i = i+1)
 
 
 

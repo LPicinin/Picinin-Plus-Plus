@@ -125,7 +125,7 @@ public class Sintatico extends Constantes
                     {
                         val = lt.get(i + 2).getLexema().getPalavra();
                     }
-                    /*
+                    
                     else  if(i + 3 < lt.size() && 
                             tValores.contains(lt.get(i + 3).getToken()) && 
                             tIgual.equals(lt.get(i + 1).getToken()) && 
@@ -133,7 +133,7 @@ public class Sintatico extends Constantes
                     {
                         val = lt.get(i + 2).getLexema().getPalavra() + lt.get(i + 3).getLexema().getPalavra();
                     }
-                    */
+                    
                     if (tTipos.contains(lt.get(i - 1).getToken()))
                     {
                         tipo = lt.get(i - 1).getToken().getIdToken().replace("t", "");
@@ -377,6 +377,11 @@ public class Sintatico extends Constantes
         {
             r.add(pilha_entrada.pop());
             r.add(pilha_entrada.pop());
+            //consome sinal
+            while(!pilha_entrada.isEmpty() && pilha_entrada.peek().getToken().equals(Token.tOper_menos) || pilha_entrada.peek().getToken().equals(Token.tOper_soma))
+            {
+                aux = pilha_entrada.pop();
+            }
             r.add(pilha_entrada.pop());
             if (r.get(0).getToken().equals(Token.tIdentificador) && r.get(1).getToken().equals(Token.tIgual))
             {

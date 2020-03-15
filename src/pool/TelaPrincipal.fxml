@@ -55,19 +55,9 @@
     <bottom>
         <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
             <tabs>
-                <Tab style="-fx-background-radius: 5;" text="Análise Sintática">
+                <Tab style="-fx-background-radius: 5;" text="Saída">
                     <content>
                         <ListView fx:id="lvErros_Avisos" onMouseClicked="#evtErroAviso" prefHeight="200.0" prefWidth="200.0" />
-                    </content>
-                </Tab>
-                <Tab style="-fx-background-radius: 5;" text="Análise Léxica">
-                    <content>
-                        <TextArea prefHeight="200.0" prefWidth="200.0" />
-                    </content>
-                </Tab>
-                <Tab style="-fx-background-radius: 5;" text="Análise Semântica">
-                    <content>
-                        <TextArea prefHeight="200.0" prefWidth="200.0" />
                     </content>
                 </Tab>
                 <Tab style="-fx-background-radius: 5;" text="Terminal">
@@ -98,7 +88,7 @@
                     <children>
                         <HBox alignment="CENTER_LEFT" maxHeight="46.0" minWidth="30.0" prefHeight="41.0" prefWidth="694.0" spacing="5.0">
                             <children>
-                                <Button alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
+                                <Button alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#evtabrirArquivo" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
                                     <graphic>
                                         <FontAwesomeIconView fill="WHITE" glyphName="FOLDER_OPEN_ALT" size="25" />
                                     </graphic>
@@ -133,7 +123,7 @@
             <HBox fx:id="pnCodigo" style="-fx-border-color: red; -fx-border-width: 0;" BorderPane.alignment="CENTER">
                <children>
                   <VBox fx:id="pnerros" prefHeight="200.0" prefWidth="100.0" spacing="3.0" />
-                      <CodeArea fx:id="caCodigo" prefHeight="400.0" prefWidth="800.0" stylesheets="@../css/editor_style.css" />
+                      <CodeArea fx:id="caCodigo" prefHeight="2000.0" prefWidth="2000.0" stylesheets="@../css/editor_style.css" />
                </children>
             </HBox>
             </center>
