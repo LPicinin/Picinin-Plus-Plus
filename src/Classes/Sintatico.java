@@ -125,6 +125,15 @@ public class Sintatico extends Constantes
                     {
                         val = lt.get(i + 2).getLexema().getPalavra();
                     }
+                    /*
+                    else  if(i + 3 < lt.size() && 
+                            tValores.contains(lt.get(i + 3).getToken()) && 
+                            tIgual.equals(lt.get(i + 1).getToken()) && 
+                            (tOper_menos.equals(lt.get(i + 2).getToken()) || tOper_soma.equals(lt.get(i + 2).getToken())))
+                    {
+                        val = lt.get(i + 2).getLexema().getPalavra() + lt.get(i + 3).getLexema().getPalavra();
+                    }
+                    */
                     if (tTipos.contains(lt.get(i - 1).getToken()))
                     {
                         tipo = lt.get(i - 1).getToken().getIdToken().replace("t", "");

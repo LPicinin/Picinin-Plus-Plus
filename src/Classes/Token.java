@@ -44,6 +44,7 @@ public class Token
      * true, false
      */
     public static final Token tValor_Bool = new Token("tBool", "true|false");
+    public static final Token tValor_Cientific = new Token("tCientific", "[+-]?\\d(\\.\\d+)?[Ee][+-]?\\d+");
 
     /**
      * null
@@ -55,7 +56,8 @@ public class Token
      * hexadecimal nulo, octadecimal, string, etc.. Valores VERDADEIROS
      */
     public static final List<Token> tValores = new ArrayList<>(
-            Arrays.asList(tValor_Bool, 
+            Arrays.asList(tValor_Bool,
+                    tValor_Cientific,
                     tValor_Char, 
                     tValor_Inteiro, 
                     tValor_Decimal, 
@@ -145,6 +147,7 @@ public class Token
     public static final List<Token> tokens = new ArrayList<Token>(
             Arrays.asList(tInicio_Linguagem,
                     tValor_Bool,
+                    tValor_Cientific,
                     tValor_Char,
                     tValor_Inteiro,
                     tValor_Decimal,
