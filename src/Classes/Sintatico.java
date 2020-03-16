@@ -124,16 +124,14 @@ public class Sintatico extends Constantes
                     if (i + 2 < lt.size() && tValores.contains(lt.get(i + 2).getToken()) && tIgual.equals(lt.get(i + 1).getToken()))
                     {
                         val = lt.get(i + 2).getLexema().getPalavra();
-                    }
-                    
-                    else  if(i + 3 < lt.size() && 
-                            tValores.contains(lt.get(i + 3).getToken()) && 
-                            tIgual.equals(lt.get(i + 1).getToken()) && 
-                            (tOper_menos.equals(lt.get(i + 2).getToken()) || tOper_soma.equals(lt.get(i + 2).getToken())))
+                    } else if (i + 3 < lt.size()
+                            && tValores.contains(lt.get(i + 3).getToken())
+                            && tIgual.equals(lt.get(i + 1).getToken())
+                            && (tOper_menos.equals(lt.get(i + 2).getToken()) || tOper_soma.equals(lt.get(i + 2).getToken())))
                     {
                         val = lt.get(i + 2).getLexema().getPalavra() + lt.get(i + 3).getLexema().getPalavra();
                     }
-                    
+
                     if (tTipos.contains(lt.get(i - 1).getToken()))
                     {
                         tipo = lt.get(i - 1).getToken().getIdToken().replace("t", "");
@@ -208,7 +206,11 @@ public class Sintatico extends Constantes
         while (posToken < max && !pilha_entrada.isEmpty())
         {
             flag = true;
-            if (Token.tTipos.contains(pilha_entrada.peek().getToken()))
+            if(Token.tOperadores.contains(pilha_entrada.peek().getToken()))
+            {
+                erros.add(Erro.getError(Erro.expressaoIlegal, pilha_entrada.peek().getLexema()));
+            }
+            else if (Token.tTipos.contains(pilha_entrada.peek().getToken()))
             {
                 flag = false;
                 Controle retorno = analisar(TipoAnalise.ca_declaracao);
@@ -378,7 +380,7 @@ public class Sintatico extends Constantes
             r.add(pilha_entrada.pop());
             r.add(pilha_entrada.pop());
             //consome sinal
-            while(!pilha_entrada.isEmpty() && pilha_entrada.peek().getToken().equals(Token.tOper_menos) || pilha_entrada.peek().getToken().equals(Token.tOper_soma))
+            while (!pilha_entrada.isEmpty() && pilha_entrada.peek().getToken().equals(Token.tOper_menos) || pilha_entrada.peek().getToken().equals(Token.tOper_soma))
             {
                 aux = pilha_entrada.pop();
             }
@@ -542,6 +544,7 @@ public class Sintatico extends Constantes
         }
         return Erro.getError(Erro.expressaoIlegal, aux.getLexema());
     }
+
     private Controle al_expressao2()
     {
         Match aux;
@@ -656,35 +659,23 @@ public class Sintatico extends Constantes
 
     private Controle al_while()
     {
-        Controle retorno = null;
-
-        Match m = pilha_entrada.pop();
-        if (m.getToken().equals(Token.tWhile))
+        Controle res = null;
+        Match aux = pilha_entrada.pop();
+        if (aux.getToken().equals(Token.tWhile) && pilha_entrada.pop().getToken().equals(Token.tParenteses_abre))
         {
-            if (pilha_entrada.peek().getToken().equals(Token.tParenteses_abre))
+            //res = al_expressao_boolean();
+            res = al_expressao2();
+            if (res == null && pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
             {
-                m = pilha_entrada.pop();
-                if (retorno == null && pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
-                {
-                    return null;
-                } else
-                {
-                    retorno = al_expressao_boolean();
-                }
-            } else
-            {
-                retorno = Erro.getError(Erro.expressaoIlegal, pilha_entrada.peek().getLexema());
+                //tira ) da pilha
+                pilha_entrada.pop();
             }
         } else
         {
-            retorno = Erro.getError(Erro.naoCompletado, pilha_entrada.peek().getLexema());
+            return regraNaoCompletada(aux);
         }
-        if (retorno == null && pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
-        {
-            //retira o fecha parenteses
-            pilha_entrada.pop();
-        }
-        return retorno;
+
+        return res;
     }
 
     private Controle al_expressao_boolean()
@@ -840,8 +831,8 @@ public class Sintatico extends Constantes
         Controle res = null;
         Stack<Match> fecha = new Stack<>();
 
-        if (m.getToken().equals(Token.tElse) && !pilha_entrada.isEmpty() 
-                && lexemas_tokens_correspondidos.get(m.getPosLista()-1).getToken().equals(Token.tChave_fecha))
+        if (m.getToken().equals(Token.tElse) && !pilha_entrada.isEmpty()
+                && lexemas_tokens_correspondidos.get(m.getPosLista() - 1).getToken().equals(Token.tChave_fecha))
         {
             index = m.getPosLista();
             m = pilha_entrada.pop();
@@ -869,8 +860,7 @@ public class Sintatico extends Constantes
             } else if (!fecha.isEmpty() && listaLexTok.get(i).getToken().equals(Token.tChave_abre))
             {
                 fecha.pop();
-            }
-            else if(listaLexTok.get(i).getToken().equals(Token.tElse))
+            } else if (listaLexTok.get(i).getToken().equals(Token.tElse))
             {
                 i = 0;
             }
@@ -887,11 +877,11 @@ public class Sintatico extends Constantes
     {
         int i = 0;
         Integer lin_erro = null;
-        
+
         List<Match> l = lexemas_tokens_correspondidos;
-        for (i = l.size()-1; i > 0 && !l.get(i).getToken().equals(Token.tChave_fecha); i--)
+        for (i = l.size() - 1; i > 0 && !l.get(i).getToken().equals(Token.tChave_fecha); i--)
         {
-            if(lin_erro == null || lin_erro > l.get(i).getLexema().getPosParagrafo())
+            if (lin_erro == null || lin_erro > l.get(i).getLexema().getPosParagrafo())
             {
                 lin_erro = l.get(i).getLexema().getPosParagrafo();
                 erros.add(Erro.getError(Erro.codigo_Escopo_fora_do_fluxo, l.get(i).getLexema()));

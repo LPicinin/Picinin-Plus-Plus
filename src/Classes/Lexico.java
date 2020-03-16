@@ -60,45 +60,58 @@ public class Lexico extends Constantes
             if (i < code.length)
             {
                 pos = i;
-                if (code[i] == '\n')
+                if (i + 1 < code.length && code[i] == '/' && code[i + 1] == '/')
+                {
+                    while (pos < code.length && code[pos] != '\n')
+                        pos++;
                     posParagrafo++;
-                if (cadeia.length() > 0)//achou uma cadeia
+                    posLinha = 0;
+                } else
                 {
-                    //System.out.println(cadeia.toString());
-                    addRepostaLexico(cadeia.toString());
-                    //al_lexica.analise(cadeia.toString());
-                    cadeia.setLength(0);
-                }
+                    if (code[i] == '\n')
+                        posParagrafo++;
+                    if (cadeia.length() > 0)//achou uma cadeia
+                    {
+                        //System.out.println(cadeia.toString());
+                        addRepostaLexico(cadeia.toString());
+                        //al_lexica.analise(cadeia.toString());
+                        cadeia.setLength(0);
+                    }
 
-                if (fespecial)//achou um caracter especial
-                {
-                    if (code[pos] != '"')
+                    if (fespecial)//achou um caracter especial
                     {
-                        cadeia.append(code[pos]);
-                        posLinha++;
-                        if ((code[pos] == '<' || code[pos] == '>') && pos + 1 < code.length && code[pos + 1] == '=')
+                        if (code[pos] != '"')
                         {
-                            cadeia.append(code[pos + 1]);
-                            pos++;
+                            cadeia.append(code[pos]);
                             posLinha++;
-                        }
-                    } else
-                    {
-                        //consome de " até outro " ou \n(erro)
-                        if (consomeString(code, cadeia))
-                        {
-                            //achou uma string
+                            if (pos + 1 < code.length
+                                    && ((code[pos] == '<' || code[pos] == '>') && code[pos + 1] == '=')
+                                    || (code[i] == '=' && code[i + 1] == '=')
+                                    || (code[i] == '!' && code[i + 1] == '='))
+                            {
+                                cadeia.append(code[pos + 1]);
+                                pos++;
+                                posLinha++;
+                            }
                         } else
                         {
-                            //achou um erro
+                            //consome de " até outro " ou \n(erro)
+                            if (consomeString(code, cadeia))
+                            {
+                                //achou uma string
+                            } else
+                            {
+                                //achou um erro
+                            }
+                            pos--;
                         }
-                        pos--;
+                        //System.out.println(cadeia.toString());
+                        addRepostaLexico(cadeia.toString());
+                        cadeia.setLength(0);
                     }
-                    //System.out.println(cadeia.toString());
-                    addRepostaLexico(cadeia.toString());
-                    cadeia.setLength(0);
+                    posLinha++;
                 }
-                posLinha++;
+
             }
 
         }

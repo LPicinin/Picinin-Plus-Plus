@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -93,23 +94,32 @@ public class TelaPrincipalController implements Initializable
 
         caCodigo.replaceText("main teste\n"
                 + "{\n"
-                + "    double x = 543.56;\n"
+                + "    double dec = 543.56;\n"
+                + "    double cient = 3.45E5;\n"
                 + "    string s = \"skbdkslb slndbçs smpn\";\n"
-                + "    while(x<s)\n"
+                + "    int in = 9;\n"
+                + "    char c = 'A';\n"
+                + "    // int main dnjdn 56 ; fef\n"
+                + "    while(dec<s and 10 <= 90)\n"
                 + "    {\n"
-                + "    \t\n"
+                + "    	\n"
                 + "    }\n"
-                + "    if(x<s)\n"
+                + "    if(dec<s)\n"
                 + "    {\n"
-                + "    \t\n"
+                + "    	\n"
                 + "    }\n"
                 + "    else\n"
                 + "    {\n"
-                + "    \t\n"
+                + "    	\n"
                 + "    }\n"
-                + "    for(int i = x; x < s and s < x; x = x + 1)\n"
+                + "    int i;\n"
+                + "    for(int k = dec; dec < s and s < dec; k = k + 1)\n"
                 + "    {\n"
-                + "    \t\n"
+                + "    	\n"
+                + "    }\n"
+                + "    for(i = dec; dec < s and s < dec; dec = dec + 1)\n"
+                + "    {\n"
+                + "    	\n"
                 + "    }\n"
                 + "}");
 
@@ -167,20 +177,17 @@ public class TelaPrincipalController implements Initializable
             css = "-fx-border-color:green; -fx-border-width: 3;";
             l = new Label("Compilado com sucesso!!");
             l.setTextFill(Paint.valueOf("#00ff00"));
-            
+
         } else
         {
             css = "-fx-border-color:red; -fx-border-width: 3;";
             l = new Label("Não pode ser compilado!!");
             l.setTextFill(Paint.valueOf("#ff0000"));
         }
-            
-        
+
         lvErros_Avisos.getItems().add(l);
         lvErros_Avisos.setStyle(css);
-        
-        
-        
+
     }
 
     @FXML
@@ -204,8 +211,8 @@ public class TelaPrincipalController implements Initializable
     @FXML
     private void evtErroAviso(MouseEvent event)
     {
-        
-        if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1)
+
+        if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1)
         {
             Object o = lvErros_Avisos.getSelectionModel().getSelectedItem();
             Erro e = (Erro) o;
@@ -213,7 +220,7 @@ public class TelaPrincipalController implements Initializable
             caCodigo.requestFocus();
             caCodigo.moveTo(l.getPosParagrafo(), 0);
         }
-         
+
     }
 
     private static StyleSpans<Collection<String>> computeHighlighting(Erro text)
@@ -260,25 +267,44 @@ public class TelaPrincipalController implements Initializable
         fc.setTitle("Abrir Código!!!");
         fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Formatos Suportados", ".ppp"));
         File arq = fc.showOpenDialog(null);
-        if(arq != null)
+        if (arq != null)
         {
             try
             {
                 BufferedReader br = new BufferedReader(new FileReader(arq));
                 String line = br.readLine();
                 String code = "";
-                while(line != null)
+                while (line != null)
                 {
-                    code+=line+"\n";
+                    code += line + "\n";
                     line = br.readLine();
                 }
                 caCodigo.replaceText(code);
-                
+
             } catch (IOException ex)
             {
-                System.out.println("Erro ao abrir arquivo: "+ex.getMessage());
+                System.out.println("Erro ao abrir arquivo: " + ex.getMessage());
             }
-            
+
+        }
+    }
+
+    @FXML
+    private void evtSaveCode(MouseEvent event)
+    {
+        FileChooser fc = new FileChooser();
+        File arq;
+        fc.setInitialDirectory(new File(".."));
+        arq = fc.showSaveDialog(null);
+
+        try
+        {
+            FileWriter writer = new FileWriter(arq); //new FileWriter("MyFile.txt", true);
+            writer.write(caCodigo.getText());
+            writer.close();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
         }
     }
 }
