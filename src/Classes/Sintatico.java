@@ -201,7 +201,10 @@ public class Sintatico extends Constantes
         analisar(TipoAnalise.a_chaves);
         analisar(TipoAnalise.ca_codigoForaDoEscopo);
         //analisar(TipoAnalise.ca_else);
-
+        if (lexemas_tokens_correspondidos.size() == 0)
+        {
+           erros.add(Erro.tokenNaoEncontrado);
+        }
         boolean flag;
         while (posToken < max && !pilha_entrada.isEmpty())
         {

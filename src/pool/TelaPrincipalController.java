@@ -307,4 +307,14 @@ public class TelaPrincipalController implements Initializable
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void evtLimpar(MouseEvent event)
+    {
+        caCodigo.clear();
+        lvErros_Avisos.getItems().clear();
+        tabela.getItems().clear();
+        String css = "-fx-border-color:transparent; -fx-border-width: 3;";
+        lvErros_Avisos.setStyle(css);
+    }
 }

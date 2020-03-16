@@ -113,6 +113,11 @@
                                         <FontAwesomeIconView fill="#0400e8" glyphName="SAVE" size="25" />
                                     </graphic>
                                 </Button>
+                        <Button alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#evtLimpar" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
+                           <graphic>
+                              <FontAwesomeIconView glyphName="ERASER" size="25" />
+                           </graphic>
+                        </Button>
                             </children>
                         </HBox>
                         <Separator prefWidth="200.0" />
