@@ -14,7 +14,6 @@ import de.jensd.fx.glyphs.fontawesome.utils.FontAwesomeIconFactory;
 import util.CodeAreaInit;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -40,7 +39,6 @@ import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
@@ -78,10 +76,6 @@ public class TelaPrincipalController implements Initializable
     private TableColumn<Object, String> colValor;
     @FXML
     private TableColumn<Object, String> colTipo;
-    @FXML
-    private VBox pnerros;
-    @FXML
-    private HBox pnCodigo;
 
     @Override
     public void initialize(URL url, ResourceBundle rb)
@@ -241,21 +235,18 @@ public class TelaPrincipalController implements Initializable
     private void processaErros()
     {
         List<Object> err = CtrCompilador.instancia().getCompilador().getErros_avisos();
-        pnerros.getChildren().clear();
+        int s = caCodigo.getText().split("\n").length;
+        for (int i = 0; i < s; i++)
+        {
+            caCodigo.clearParagraphStyle(i);
+        }
         for (Object interator : err)
         {
             if (interator instanceof Erro)
             {
                 Erro erro = (Erro) interator;
-                while (pnerros.getChildren().size() <= erro.getLexema().getPosParagrafo())
-                {
-                    Text icon = FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.CLOSE);
-                    icon.setFill(Paint.valueOf("#ff0000"));
-                    icon.setVisible(false);
-                    Tooltip.install(icon, new Tooltip(erro.getMensagem()));
-                    pnerros.getChildren().add(icon);
-                }
-                pnerros.getChildren().get(erro.getLexema().getPosParagrafo()).setVisible(true);
+                caCodigo.setParagraphStyle(erro.getLexema().getPosParagrafo(), Collections.singletonList("erro"));
+
             }
         }
     }

@@ -206,7 +206,7 @@ public class Sintatico extends Constantes
            erros.add(Erro.tokenNaoEncontrado);
         }
         boolean flag;
-        while (posToken < max && !pilha_entrada.isEmpty())
+        while (!pilha_entrada.isEmpty())
         {
             flag = true;
             if(Token.tOperadores.contains(pilha_entrada.peek().getToken()))
@@ -339,9 +339,14 @@ public class Sintatico extends Constantes
 
     private void buscaTokenDeConexao()
     {
-        while (!pilha_entrada.isEmpty() && !token_De_Conexao.contains(pilha_entrada.pop()))//talvez retirar a negação
+        while (!pilha_entrada.isEmpty() && !token_De_Conexao.contains(pilha_entrada.peek().getToken()))//talvez retirar a negação
         {
             posToken++;
+            pilha_entrada.pop();
+        }
+        if(!pilha_entrada.isEmpty())
+        {
+            pilha_entrada.pop();
         }
     }
 

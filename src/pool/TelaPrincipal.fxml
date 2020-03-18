@@ -124,14 +124,6 @@
                     </children>
                 </VBox>
             </top>
-            <center>
-            <HBox fx:id="pnCodigo" style="-fx-border-color: red; -fx-border-width: 0;" BorderPane.alignment="CENTER">
-               <children>
-                  <VBox fx:id="pnerros" prefHeight="200.0" prefWidth="100.0" spacing="3.0" />
-                      <CodeArea fx:id="caCodigo" prefHeight="2000.0" prefWidth="2000.0" stylesheets="@../css/editor_style.css" />
-               </children>
-            </HBox>
-            </center>
             <right>
                 <VBox prefHeight="473.0" prefWidth="305.0" spacing="3.0" BorderPane.alignment="CENTER">
                     <children>
@@ -166,6 +158,9 @@
                     </children>
                 </VBox>
             </left>
+         <center>
+                <CodeArea fx:id="caCodigo" prefHeight="2000.0" prefWidth="2000.0" stylesheets="@../css/editor_style.css" BorderPane.alignment="CENTER" />
+         </center>
         </BorderPane>
     </center>
 </BorderPane>

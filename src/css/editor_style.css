@@ -85,3 +85,8 @@
 .caret {
     -fx-stroke: #f8f8f2;
 }
+
+.erro
+{
+    -fx-background-color: #f78b8b;
+}
