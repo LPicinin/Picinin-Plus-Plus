@@ -751,7 +751,7 @@ public class Sintatico extends Constantes
 
     private Controle regraNaoCompletada()
     {
-        Erro error = Erro.getError(Erro.naoCompletado, pilha_entrada.pop().getLexema());
+        Erro error = Erro.getError(Erro.naoCompletado, (pilha_entrada.isEmpty()? new Lexema("Vazio", 0, 0) : pilha_entrada.pop().getLexema()));
         buscaTokenDeConexao();
         posToken++;
         return error;

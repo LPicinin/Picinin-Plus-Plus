@@ -70,6 +70,15 @@ public class Lexico extends Constantes
                 {
                     if (code[i] == '\n')
                         posParagrafo++;
+                    if ((code[i] == '-' || code[i] == '+') && i - 1 >= 0 && i + 1 < code.length && (code[i-1] == 'e' || code[i-1] == 'E') && Character.isDigit(code[i+1]))
+                    {
+                        cadeia.append(code[i]);
+                        while(i+1 < code.length && Character.isDigit(code[i+1]))
+                        {
+                            cadeia.append(code[i+1]);
+                            i++;                                    
+                        }
+                    }
                     if (cadeia.length() > 0)//achou uma cadeia
                     {
                         //System.out.println(cadeia.toString());

@@ -9,8 +9,6 @@ import Classes.Controle.Erro;
 import Classes.Lexema;
 import Classes.Token;
 import Controladora.CtrCompilador;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.jensd.fx.glyphs.fontawesome.utils.FontAwesomeIconFactory;
 import util.CodeAreaInit;
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -34,14 +33,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -88,8 +84,8 @@ public class TelaPrincipalController implements Initializable
 
         caCodigo.replaceText("main teste\n"
                 + "{\n"
+                + "    double cient = 3.45E-5;\n"
                 + "    double dec = 543.56;\n"
-                + "    double cient = 3.45E5;\n"
                 + "    string s = \"skbdkslb slndbçs smpn\";\n"
                 + "    int in = 9;\n"
                 + "    char c = 'A';\n"
@@ -155,9 +151,7 @@ public class TelaPrincipalController implements Initializable
     private void evtCompilar(MouseEvent event)
     {
         CtrCompilador.instancia().Analisar(caCodigo.getText());
-
-        lvErros_Avisos.setItems(FXCollections.observableArrayList(
-                CtrCompilador.instancia().getCompilador().getErros_avisos()));
+        lvErros_Avisos.setItems(FXCollections.observableArrayList(trataErrosDesnecessarios(CtrCompilador.instancia().getCompilador().getErros_avisos())));
 
         tabela.setItems(FXCollections.observableArrayList(
                 CtrCompilador.instancia().getCompilador().getTabela_Simbolos()));
@@ -187,19 +181,7 @@ public class TelaPrincipalController implements Initializable
     @FXML
     private void evtPularParaLexema(MouseEvent event)
     {
-        /*
-        if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1)
-        {
-            Object o = tabela.getSelectionModel().getSelectedItem();
-            if(o!= null)
-            {
-                Match m = ((Simbolo) o).getMatch();
-                Lexema l = m.getLexema();
-                //caCodigo.moveTo(l.getPosParagrafo(), l.getPosLinha());
-                //new Alert(Alert.AlertType.INFORMATION, l.getPalavra() + " EM " + l.getPosParagrafo() + " - " + l.getPosLinha(), ButtonType.OK).show();
-            }
-        }
-         */
+
     }
 
     @FXML
@@ -217,21 +199,6 @@ public class TelaPrincipalController implements Initializable
 
     }
 
-    private static StyleSpans<Collection<String>> computeHighlighting(Erro text)
-    {
-        int lastKwEnd = 0;
-        StyleSpansBuilder<Collection<String>> spansBuilder
-                = new StyleSpansBuilder<>();
-        String styleClass = "erro";
-
-        spansBuilder.add(Collections.emptyList(), text.getLexema().getPosLinha() - text.getLexema().getPalavra().length());
-        spansBuilder.add(Collections.singleton(styleClass), text.getLexema().getPosLinha() - text.getLexema().getPalavra().length());
-        lastKwEnd = text.getLexema().getPosLinha() + text.getLexema().getPalavra().length();
-
-        spansBuilder.add(Collections.emptyList(), text.getLexema().getPosLinha() - text.getLexema().getPalavra().length());
-        return spansBuilder.create();
-    }
-
     private void processaErros()
     {
         List<Object> err = CtrCompilador.instancia().getCompilador().getErros_avisos();
@@ -245,7 +212,8 @@ public class TelaPrincipalController implements Initializable
             if (interator instanceof Erro)
             {
                 Erro erro = (Erro) interator;
-                caCodigo.setParagraphStyle(erro.getLexema().getPosParagrafo(), Collections.singletonList("erro"));
+                if (erro != null)
+                    caCodigo.setParagraphStyle(erro.getLexema().getPosParagrafo(), Collections.singletonList("erro"));
 
             }
         }
@@ -307,5 +275,19 @@ public class TelaPrincipalController implements Initializable
         tabela.getItems().clear();
         String css = "-fx-border-color:transparent; -fx-border-width: 3;";
         lvErros_Avisos.setStyle(css);
+    }
+
+    private List<Object> trataErrosDesnecessarios(List<Object> erros_avisos)
+    {
+        List<Object> mremocao = new ArrayList<>();
+        for (Object erros_aviso : erros_avisos)
+        {
+            if(erros_aviso == null || (erros_aviso instanceof Erro && ((Erro)erros_aviso).getLexema() == null))
+            {
+                mremocao.add(erros_aviso);
+            }
+        }
+        erros_avisos.removeAll(mremocao);
+        return erros_avisos;
     }
 }
