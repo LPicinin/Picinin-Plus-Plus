@@ -19,10 +19,11 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -40,8 +41,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.model.StyleSpans;
-import org.fxmisc.richtext.model.StyleSpansBuilder;
 
 /**
  *
@@ -288,6 +287,7 @@ public class TelaPrincipalController implements Initializable
             }
         }
         erros_avisos.removeAll(mremocao);
+        erros_avisos = Arrays.stream(erros_avisos.toArray()).distinct().collect(Collectors.toList());
         return erros_avisos;
     }
 }
