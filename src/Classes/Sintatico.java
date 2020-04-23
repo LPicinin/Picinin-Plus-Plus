@@ -43,22 +43,10 @@ public class Sintatico extends Constantes
 
     public Sintatico()
     {
-        //pilha_simbolos = new Stack<>();
         lexemas_tokens_correspondidos = new ArrayList<>();
         erros = new ArrayList<>();
     }
 
-    /*
-    public Stack<Match> getPilha_simbolos()
-    {
-        return pilha_simbolos;
-    }
-
-    public void setPilha_simbolos(Stack<Match> pilha_simbolos)
-    {
-        this.pilha_simbolos = pilha_simbolos;
-    }
-     */
     public List<Match> getLexemas_tokens_correspondidos()
     {
         return lexemas_tokens_correspondidos;
@@ -104,7 +92,7 @@ public class Sintatico extends Constantes
         for (int i = 0; i < lt.size(); i++)
         {
             aux = lt.get(i);
-            //System.out.println(aux.getLexema().getPalavra());
+            
             if (!aux.getToken().equals(tIdentificador))
             {
                 addSimbolo(tabela_simbolos, new Simbolo(aux, "", ""));
@@ -240,8 +228,6 @@ public class Sintatico extends Constantes
             }
             if (flag)
             {
-                //System.out.println("Nenhuma regra para firs = " + pilha_entrada.peek().getLexema().getPalavra());
-                //System.out.println("\uD83D\uDE00");
                 buscaTokenDeConexao();
             }
         }

@@ -41,6 +41,6 @@ public class Erro extends Controle
     @Override
     public String toString()
     {
-        return "Erro detectado próximo à \'"+lexema.getPalavra()+"\' na Linha: "+(lexema.getPosParagrafo()+1)+" - " + codigo + " - " + mensagem + "";
+        return "Erro detectado próximo à \'"+lexema.getPalavra()+"\' na Linha: "+(lexema.getPosParagrafo()+1)+" - Erro(" + codigo + ") - " + mensagem + "";
     }
 }
