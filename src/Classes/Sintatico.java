@@ -92,7 +92,7 @@ public class Sintatico extends Constantes
         for (int i = 0; i < lt.size(); i++)
         {
             aux = lt.get(i);
-            
+
             if (!aux.getToken().equals(tIdentificador))
             {
                 addSimbolo(tabela_simbolos, new Simbolo(aux, "", ""));
@@ -191,17 +191,16 @@ public class Sintatico extends Constantes
         //analisar(TipoAnalise.ca_else);
         if (lexemas_tokens_correspondidos.size() == 0)
         {
-           erros.add(Erro.tokenNaoEncontrado);
+            erros.add(Erro.tokenNaoEncontrado);
         }
         boolean flag;
         while (!pilha_entrada.isEmpty())
         {
             flag = true;
-            if(Token.tOperadores.contains(pilha_entrada.peek().getToken()))
+            if (Token.tOperadores.contains(pilha_entrada.peek().getToken()))
             {
                 erros.add(Erro.getError(Erro.expressaoIlegal, pilha_entrada.peek().getLexema()));
-            }
-            else if (Token.tTipos.contains(pilha_entrada.peek().getToken()))
+            } else if (Token.tTipos.contains(pilha_entrada.peek().getToken()))
             {
                 flag = false;
                 Controle retorno = analisar(TipoAnalise.ca_declaracao);
@@ -330,7 +329,7 @@ public class Sintatico extends Constantes
             posToken++;
             pilha_entrada.pop();
         }
-        if(!pilha_entrada.isEmpty())
+        if (!pilha_entrada.isEmpty())
         {
             pilha_entrada.pop();
         }
@@ -395,8 +394,10 @@ public class Sintatico extends Constantes
                                 || Token.tOperadores.contains(pilha_entrada.peek().getToken())))
                         {
                             boolean OperacaoValida = true;
+                            boolean entrouNoFor = false;
                             for (aux = pilha_entrada.pop(); !pilha_entrada.isEmpty() && !pilha_entrada.peek().getToken().equals(Token.tPontoVirgula) && OperacaoValida; aux = pilha_entrada.pop())
                             {
+                                entrouNoFor = true;
                                 //se é ((id ou valor) e operador) ou (operador e abre parentese) ou (operador e (id ou valor))
                                 if ((((aux.getToken().equals(Token.tIdentificador) || Token.tValores.contains(aux.getToken())))
                                         && Token.tOperadores.contains(pilha_entrada.peek().getToken()))
@@ -412,7 +413,7 @@ public class Sintatico extends Constantes
                                     erro = true;
                                 }
                             }
-                            if (OperacaoValida)
+                            if (OperacaoValida && entrouNoFor)
                             {
                                 if (pilha_entrada.peek().getToken().equals(Token.tPontoVirgula))
                                 {
@@ -737,7 +738,7 @@ public class Sintatico extends Constantes
 
     private Controle regraNaoCompletada()
     {
-        Erro error = Erro.getError(Erro.naoCompletado, (pilha_entrada.isEmpty()? new Lexema("Vazio", 0, 0) : pilha_entrada.pop().getLexema()));
+        Erro error = Erro.getError(Erro.naoCompletado, (pilha_entrada.isEmpty() ? new Lexema("Vazio", 0, 0) : pilha_entrada.pop().getLexema()));
         buscaTokenDeConexao();
         posToken++;
         return error;
