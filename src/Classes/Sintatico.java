@@ -25,12 +25,10 @@ public class Sintatico extends Constantes
 {
 
     private Stack<Match> pilha_entrada;
-    //private Stack<Token> pilha;
     private Queue<Match> fila_sugestoes;
-    //private List<Match> listaTokens;
 
     private Lexico al_lexica;
-    //private Stack<Match> pilha_simbolos;
+    private Semantico al_semantico;
     private int posToken;//para consumir os tokens extraidos pela analise lexica
 
     public Sintatico(String codeString)
@@ -72,6 +70,7 @@ public class Sintatico extends Constantes
 
         al_lexica = new Lexico();
         al_lexica.analise();
+        al_semantico = new Semantico();
         try
         {
             geraAnaliseSintatica();
@@ -176,10 +175,9 @@ public class Sintatico extends Constantes
     private void geraAnaliseSintatica()
     {
         pilha_entrada = geraPilhaEntrada();
-        //pilha = new Stack<>();
-        //System.out.println(pilha_entrada.peek()+" - "+pilha_entrada.pop());
+
         fila_sugestoes = new LinkedList<>();
-        int max = lexemas_tokens_correspondidos.size();
+
         posToken = 0;
         Controle c = analisar(TipoAnalise.a_inicioPrograma);
         if (c != null)
@@ -188,8 +186,8 @@ public class Sintatico extends Constantes
         }
         analisar(TipoAnalise.a_chaves);
         analisar(TipoAnalise.ca_codigoForaDoEscopo);
-        //analisar(TipoAnalise.ca_else);
-        if (lexemas_tokens_correspondidos.size() == 0)
+
+        if (lexemas_tokens_correspondidos.isEmpty())
         {
             erros.add(Erro.tokenNaoEncontrado);
         }
@@ -208,11 +206,12 @@ public class Sintatico extends Constantes
                 {
                     erros.add((Erro) retorno);
                 }
-                //break;
             } else
             {
-                for (TipoAnalise ta : TipoAnalise.listaAnalises)
+                boolean flag2 = true;
+                for (int i = 0; flag2 && i < TipoAnalise.listaAnalises.size(); i++)
                 {
+                    TipoAnalise ta = TipoAnalise.listaAnalises.get(i);
                     if (ta.getFirst().equals(pilha_entrada.peek().getToken()))
                     {
                         flag = false;
@@ -221,7 +220,7 @@ public class Sintatico extends Constantes
                         {
                             erros.add((Erro) retorno);
                         }
-                        break;
+                        flag2 = false;
                     }
                 }
             }
@@ -337,7 +336,6 @@ public class Sintatico extends Constantes
 
     private Controle al_declaracao()
     {
-
         if (pilha_entrada.size() - 3 < 0)
         {
             return regraNaoCompletada();

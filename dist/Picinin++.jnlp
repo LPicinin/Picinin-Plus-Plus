@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Pool++.jar" size="3506949" download="eager" />
+    <jar href="Pool++.jar" size="3507729" download="eager" />
     <jar href="lib\commons-codec-1.4.jar" size="58160" download="eager" />
     <jar href="lib\controlsfx-8.40.11.jar" size="985420" download="eager" />
     <jar href="lib\fontawesomefx-commons-8.15.jar" size="20957" download="eager" />

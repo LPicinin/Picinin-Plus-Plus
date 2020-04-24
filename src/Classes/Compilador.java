@@ -23,7 +23,6 @@ public class Compilador
     private List<Object> erros_avisos;
     private List<Object> matchs;
     private Sintatico al_sintatico;
-    private Semantico al_semantico;
     private List<Simbolo> tabela_Simbolos;
 
     public Compilador()

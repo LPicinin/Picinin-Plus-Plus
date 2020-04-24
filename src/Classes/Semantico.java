@@ -5,6 +5,10 @@
  */
 package Classes;
 
+import Classes.Controle.Instrucao;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author luish
@@ -12,9 +16,26 @@ package Classes;
 public class Semantico extends Constantes
 {
 
-    public Object analise(String codigo)
+    private List<Instrucao> instrucoes;
+
+    public Semantico()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        instrucoes = new ArrayList<>();
+    }
+
+    public List<Instrucao> getInstrucoes()
+    {
+        return instrucoes;
+    }
+
+    public void setInstrucoes(List<Instrucao> instrucoes)
+    {
+        this.instrucoes = instrucoes;
+    }
+
+    public Object analise()
+    {
+        return null;
     }
 
 }
