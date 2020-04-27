@@ -14,10 +14,41 @@ import java.util.List;
 public class Conversor
 {
     public final static String declaracao = "toCI_declaracao";
+    public final static String atribuicao = "toCI_atribuicao";
+    public final static String For = "toCI_for";
+    public final static String While = "toCI_while";
+    public final static String Else = "toCI_else";
+    public final static String If = "toCI_if";
     
-    public List<Match> toCI_declaracao()
+    public static List<String> toCI_declaracao(List<Match> cadeia)
     {
         return null;
     }
+    
+    public static List<String> toCI_atribuicao(List<Match> cadeia)
+    {
+        return null;
+    }
+    
+    public static List<String> toCI_for(List<Match> cadeia)
+    {
+        return null;
+    }
+    
+    public static List<String> toCI_while(List<Match> cadeia)
+    {
+        return null;
+    }
+    
+    public static List<String> toCI_if(List<Match> cadeia)
+    {
+        return null;
+    }
+    
+    public static List<String> toCI_else(List<Match> cadeia)
+    {
+        return null;
+    }
+    
 }
 

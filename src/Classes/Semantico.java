@@ -15,7 +15,6 @@ import java.util.List;
  */
 public class Semantico extends Constantes
 {
-
     private List<Instrucao> instrucoes;
 
     public Semantico()
@@ -33,9 +32,17 @@ public class Semantico extends Constantes
         this.instrucoes = instrucoes;
     }
 
-    public Object analise()
+    public boolean addInstrucao(Instrucao ins)
     {
-        return null;
+        return instrucoes.add(ins);
+    }
+
+    void analisar()
+    {
+        instrucoes.forEach((in) ->
+        {
+            System.out.println(in.toString());
+        });
     }
 
 }

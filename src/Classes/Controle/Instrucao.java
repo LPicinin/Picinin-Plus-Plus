@@ -16,6 +16,7 @@ import java.util.List;
  */
 public class Instrucao
 {
+
     private List<Match> cadeia_elementos;
     private Method conversor;
 
@@ -24,12 +25,17 @@ public class Instrucao
         cadeia_elementos = new ArrayList<>();
         try
         {
-            conversor = Conversor.class.getDeclaredMethod(metodoConversor, ArrayList.class);
+            conversor = Conversor.class.getDeclaredMethod(metodoConversor, List.class);
             
-        } catch (Exception ex)
+        } catch (NoSuchMethodException | SecurityException ex)
         {
             System.out.println(ex.getMessage());
         }
+    }
+
+    public void addCadeia_elementos(Match match)
+    {
+        cadeia_elementos.add(match);
     }
 
     public List<Match> getCadeia_elementos()
@@ -37,11 +43,21 @@ public class Instrucao
         return cadeia_elementos;
     }
 
+    public Method getConversor()
+    {
+        return conversor;
+    }
+
+    public void setConversor(Method conversor)
+    {
+        this.conversor = conversor;
+    }
+
     public void setCadeia_elementos(List<Match> cadeia_elementos)
     {
         this.cadeia_elementos = cadeia_elementos;
     }
-    
+
     public List<String> toCodigoIntermediario()
     {
         List<String> ret = null;
@@ -54,4 +70,11 @@ public class Instrucao
         }
         return ret;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Instrucao{" + cadeia_elementos.toString() + "} Método = " + conversor.getName();
+    }
+
 }

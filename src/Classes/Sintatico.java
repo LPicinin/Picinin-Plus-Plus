@@ -6,7 +6,9 @@
 package Classes;
 
 import Classes.Controle.Controle;
+import Classes.Controle.Conversor;
 import Classes.Controle.Erro;
+import Classes.Controle.Instrucao;
 import Classes.Controle.Match;
 import Classes.Controle.Simbolo;
 import Classes.Controle.TipoAnalise;
@@ -30,6 +32,7 @@ public class Sintatico extends Constantes
     private Lexico al_lexica;
     private Semantico al_semantico;
     private int posToken;//para consumir os tokens extraidos pela analise lexica
+    private Instrucao aux_instrucao;
 
     public Sintatico(String codeString)
     {
@@ -67,13 +70,13 @@ public class Sintatico extends Constantes
 
     public List<Simbolo> analise()
     {
-
+        al_semantico = new Semantico();
         al_lexica = new Lexico();
         al_lexica.analise();
-        al_semantico = new Semantico();
         try
         {
             geraAnaliseSintatica();
+            al_semantico.analisar();
         } catch (Exception ex)
         {
             System.out.println(ex.getMessage() + "\n" + ex.getCause());
@@ -228,8 +231,9 @@ public class Sintatico extends Constantes
             {
                 buscaTokenDeConexao();
             }
+            else
+                al_semantico.addInstrucao(aux_instrucao);
         }
-        //e aqui o show começa
     }
 
     private Controle analisar(int tipoAnalise)
@@ -241,18 +245,22 @@ public class Sintatico extends Constantes
                 c = al_inicioPrograma();
                 break;
             case TipoAnalise.ca_declaracao:
+                aux_instrucao = new Instrucao(Conversor.declaracao);
                 c = al_declaracao();
                 break;
             case TipoAnalise.ca_atribuicao:
+                aux_instrucao = new Instrucao(Conversor.atribuicao);
                 c = al_atribuicao();
                 break;
             case TipoAnalise.a_chaves:
                 c = al_chaves();
                 break;
             case TipoAnalise.ca_for:
+                aux_instrucao = new Instrucao(Conversor.For);
                 c = al_for();
                 break;
             case TipoAnalise.ca_while:
+                aux_instrucao = new Instrucao(Conversor.While);
                 c = al_while();
                 break;
             case TipoAnalise.a_parenteses:
@@ -262,9 +270,11 @@ public class Sintatico extends Constantes
                 c = al_Token_naoReconhecido();
                 break;
             case TipoAnalise.ca_If:
+                aux_instrucao = new Instrucao(Conversor.If);
                 c = al_if();
                 break;
             case TipoAnalise.ca_else:
+                aux_instrucao = new Instrucao(Conversor.Else);
                 c = al_else();
                 break;
             case TipoAnalise.ca_chaveAbre:
@@ -340,25 +350,26 @@ public class Sintatico extends Constantes
         {
             return regraNaoCompletada();
         }
-        {
-            Match[] t = new Match[5];
-            t[0] = pilha_entrada.pop();
-            t[1] = pilha_entrada.pop();
-            t[2] = pilha_entrada.pop();
+        Match[] t = new Match[5];
+        t[0] = pilha_entrada.pop();
+        t[1] = pilha_entrada.pop();
+        t[2] = pilha_entrada.pop();
 
-            if (Token.tTipos.contains(t[0].getToken())
-                    && t[1].getToken().equals(Token.tIdentificador)
-                    && t[2].getToken().equals(Token.tPontoVirgula))
-            {
-                return null;
-            } else if (pilha_entrada.size() - 2 > 0 && t[2].getToken().equals(Token.tIgual))
-            {
-                pilha_entrada.push(t[2]);
-                pilha_entrada.push(t[1]);
-                return al_atribuicao();
-            }
-            return regraNaoCompletada();
+        if (Token.tTipos.contains(t[0].getToken())
+                && t[1].getToken().equals(Token.tIdentificador)
+                && t[2].getToken().equals(Token.tPontoVirgula))
+        {
+            aux_instrucao.addCadeia_elementos(t[0]);
+            aux_instrucao.addCadeia_elementos(t[1]);
+            aux_instrucao.addCadeia_elementos(t[2]);
+            return null;
+        } else if (pilha_entrada.size() - 2 > 0 && t[2].getToken().equals(Token.tIgual))
+        {
+            pilha_entrada.push(t[2]);
+            pilha_entrada.push(t[1]);
+            return al_atribuicao();
         }
+        return regraNaoCompletada();
     }
 
     private Controle al_atribuicao()
@@ -370,12 +381,19 @@ public class Sintatico extends Constantes
         {
             r.add(pilha_entrada.pop());
             r.add(pilha_entrada.pop());
+
+            aux_instrucao.addCadeia_elementos(r.get(0));
+            aux_instrucao.addCadeia_elementos(r.get(1));
+
             //consome sinal
             while (!pilha_entrada.isEmpty() && pilha_entrada.peek().getToken().equals(Token.tOper_menos) || pilha_entrada.peek().getToken().equals(Token.tOper_soma))
             {
-                aux = pilha_entrada.pop();
+                aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
+                pilha_entrada.pop();
             }
+            aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
             r.add(pilha_entrada.pop());
+
             if (r.get(0).getToken().equals(Token.tIdentificador) && r.get(1).getToken().equals(Token.tIgual))
             {
                 if (Token.tValores.contains(r.get(2).getToken()) || r.get(2).getToken().equals(Token.tIdentificador))//pode ser Muita Coisa
@@ -383,6 +401,7 @@ public class Sintatico extends Constantes
                     //atribuicao Simples
                     if (pilha_entrada.peek().getToken().equals(Token.tPontoVirgula))
                     {
+                        aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
                         pilha_entrada.pop();//retira o ;
                         erro = false;
                     } else//possivel operacao - tem que resolver
@@ -395,6 +414,7 @@ public class Sintatico extends Constantes
                             boolean entrouNoFor = false;
                             for (aux = pilha_entrada.pop(); !pilha_entrada.isEmpty() && !pilha_entrada.peek().getToken().equals(Token.tPontoVirgula) && OperacaoValida; aux = pilha_entrada.pop())
                             {
+                                aux_instrucao.addCadeia_elementos(aux);
                                 entrouNoFor = true;
                                 //se é ((id ou valor) e operador) ou (operador e abre parentese) ou (operador e (id ou valor))
                                 if ((((aux.getToken().equals(Token.tIdentificador) || Token.tValores.contains(aux.getToken())))
@@ -411,10 +431,12 @@ public class Sintatico extends Constantes
                                     erro = true;
                                 }
                             }
+                            aux_instrucao.addCadeia_elementos(aux);
                             if (OperacaoValida && entrouNoFor)
                             {
                                 if (pilha_entrada.peek().getToken().equals(Token.tPontoVirgula))
                                 {
+                                    aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
                                     pilha_entrada.pop();
                                 }
                                 return null;
@@ -447,9 +469,11 @@ public class Sintatico extends Constantes
     private Controle al_for()
     {
         Controle retorno = null;
+        aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
         Match m = pilha_entrada.pop();
         if (m.getToken().equals(Token.tFor))
         {
+            aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
             m = pilha_entrada.pop();
             if (m.getToken().equals(Token.tParenteses_abre) && !pilha_entrada.isEmpty())
             {
@@ -469,6 +493,7 @@ public class Sintatico extends Constantes
                     }
                 } else
                 {
+                    aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
                     pilha_entrada.pop();
                 }
 
@@ -509,6 +534,7 @@ public class Sintatico extends Constantes
         boolean OperacaoValida = true;
         for (aux = pilha_entrada.pop(); !pilha_entrada.isEmpty() && !pilha_entrada.peek().getToken().equals(Token.tPontoVirgula) && OperacaoValida; aux = pilha_entrada.pop())
         {
+            aux_instrucao.addCadeia_elementos(aux);
             //se encontrar parentese fechado apenas consome o seu token
             if (aux.getToken().equals(Token.tParenteses_fecha))
             {
@@ -527,6 +553,9 @@ public class Sintatico extends Constantes
                 OperacaoValida = false;
             }
         }
+        aux_instrucao.addCadeia_elementos(aux);
+        if(pilha_entrada.peek().getToken().equals(Token.tPontoVirgula))
+            aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
         if (OperacaoValida)
         {
             if (pilha_entrada.peek().getToken().equals(Token.tPontoVirgula))
@@ -541,10 +570,11 @@ public class Sintatico extends Constantes
     private Controle al_expressao2()
     {
         Match aux;
-
+        
         boolean OperacaoValida = true;
         for (aux = pilha_entrada.pop(); !pilha_entrada.isEmpty() && !pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha) && OperacaoValida; aux = pilha_entrada.pop())
         {
+            aux_instrucao.addCadeia_elementos(aux);
             //se encontrar parentese fechado apenas consome o seu token
             if (aux.getToken().equals(Token.tParenteses_fecha))
             {
@@ -563,10 +593,15 @@ public class Sintatico extends Constantes
                 OperacaoValida = false;
             }
         }
+        aux_instrucao.addCadeia_elementos(aux);
+        
+        if(!pilha_entrada.isEmpty() && pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
+            aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
         if (OperacaoValida)
         {
             if (pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
             {
+                aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
                 pilha_entrada.pop();
             }
             return null;
@@ -584,6 +619,11 @@ public class Sintatico extends Constantes
             r.add(pilha_entrada.pop());
             r.add(pilha_entrada.pop());
             r.add(pilha_entrada.pop());
+
+            aux_instrucao.addCadeia_elementos(r.get(0));
+            aux_instrucao.addCadeia_elementos(r.get(1));
+            aux_instrucao.addCadeia_elementos(r.get(2));
+
             if (r.get(0).getToken().equals(Token.tIdentificador) && r.get(1).getToken().equals(Token.tIgual))
             {
                 if (Token.tValores.contains(r.get(2).getToken()) || r.get(2).getToken().equals(Token.tIdentificador))//pode ser Muita Coisa
@@ -591,6 +631,7 @@ public class Sintatico extends Constantes
                     //atribuicao Simples
                     if (pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
                     {
+                        aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
                         pilha_entrada.pop();//retira o ;
                         erro = false;
                     } else//possivel operacao - tem que resolver
@@ -602,6 +643,7 @@ public class Sintatico extends Constantes
                             boolean OperacaoValida = true;
                             for (aux = pilha_entrada.pop(); !pilha_entrada.isEmpty() && !pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha) && OperacaoValida; aux = pilha_entrada.pop())
                             {
+                                aux_instrucao.addCadeia_elementos(aux);
                                 //se é ((id ou valor) e operador) ou (operador e abre parentese) ou (operador e (id ou valor))
                                 if ((((aux.getToken().equals(Token.tIdentificador) || Token.tValores.contains(aux.getToken())))
                                         && Token.tOperadores.contains(pilha_entrada.peek().getToken()))
@@ -617,6 +659,7 @@ public class Sintatico extends Constantes
                                     erro = true;
                                 }
                             }
+                            aux_instrucao.addCadeia_elementos(aux);
                             if (OperacaoValida)
                             {
                                 if (pilha_entrada.peek().getToken().equals(Token.tPontoVirgula))
@@ -653,6 +696,7 @@ public class Sintatico extends Constantes
     private Controle al_while()
     {
         Controle res = null;
+        aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
         Match aux = pilha_entrada.pop();
         if (aux.getToken().equals(Token.tWhile) && pilha_entrada.pop().getToken().equals(Token.tParenteses_abre))
         {
@@ -660,7 +704,7 @@ public class Sintatico extends Constantes
             res = al_expressao2();
             if (res == null && pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
             {
-                //tira ) da pilha
+                aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
                 pilha_entrada.pop();
             }
         } else
@@ -707,7 +751,8 @@ public class Sintatico extends Constantes
 
     private Controle al_if()
     {
-        Controle res = null;
+        Controle res;
+        aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
         Match aux = pilha_entrada.pop();
         if (aux.getToken().equals(Token.tIf) && pilha_entrada.pop().getToken().equals(Token.tParenteses_abre))
         {
@@ -715,6 +760,7 @@ public class Sintatico extends Constantes
             res = al_expressao2();
             if (res == null && pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
             {
+                aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
                 //tira ) da pilha
                 pilha_entrada.pop();
             }
@@ -722,7 +768,6 @@ public class Sintatico extends Constantes
         {
             return regraNaoCompletada(aux);
         }
-
         return res;
     }
 
@@ -805,14 +850,14 @@ public class Sintatico extends Constantes
             res = Erro.getError(Erro.parenteseFaltante, fecha.peek().getLexema());
         }
 
-        for (Match cf : fecha)
+        fecha.forEach((cf) ->
         {
             erros.add(Erro.getError(Erro.parenteseFaltante, cf.getLexema()));
-        }
-        for (Match ca : abre)
+        });
+        abre.forEach((ca) ->
         {
             erros.add(Erro.getError(Erro.parenteseFaltante, ca.getLexema()));
-        }
+        });
 
         return res;
     }
@@ -820,6 +865,7 @@ public class Sintatico extends Constantes
     private Controle al_else()
     {
         int index;
+        aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
         Match m = pilha_entrada.pop();
         Controle res = null;
         Stack<Match> fecha = new Stack<>();
@@ -828,6 +874,7 @@ public class Sintatico extends Constantes
                 && lexemas_tokens_correspondidos.get(m.getPosLista() - 1).getToken().equals(Token.tChave_fecha))
         {
             index = m.getPosLista();
+            aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
             m = pilha_entrada.pop();
             if (m.getToken().equals(Token.tChave_abre) && verificaIf_antes_else(index))
             {
@@ -868,7 +915,7 @@ public class Sintatico extends Constantes
 
     private void al_codigo_fora_do_escopo()
     {
-        int i = 0;
+        int i;
         Integer lin_erro = null;
 
         List<Match> l = lexemas_tokens_correspondidos;

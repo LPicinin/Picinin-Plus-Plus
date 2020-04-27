@@ -58,7 +58,7 @@ public class Match
     @Override
     public String toString()
     {
-        return "Match{" + "lexema=" + lexema + ", token=" + token + "}\n";
+        return lexema.getPalavra();
     }
 
 }
