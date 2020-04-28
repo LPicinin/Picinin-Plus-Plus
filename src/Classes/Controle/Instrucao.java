@@ -19,7 +19,8 @@ public class Instrucao
 
     private List<Match> cadeia_elementos;
     private Method conversor;
-
+    private Integer escopo;
+    
     public Instrucao(String metodoConversor)
     {
         cadeia_elementos = new ArrayList<>();
@@ -36,6 +37,8 @@ public class Instrucao
     public void addCadeia_elementos(Match match)
     {
         cadeia_elementos.add(match);
+        if(escopo == null)
+            escopo = match.getEscopo();
     }
 
     public List<Match> getCadeia_elementos()
@@ -74,7 +77,7 @@ public class Instrucao
     @Override
     public String toString()
     {
-        return "Instrucao{" + cadeia_elementos.toString() + "} Método = " + conversor.getName();
+        return "Instrucao{" + cadeia_elementos.toString() + "}, { Método = " + conversor.getName()+"} Escopo = "+escopo;
     }
 
 }

@@ -17,12 +17,14 @@ public class Match
 
     private Lexema lexema;
     private Token token;
+    private int escopo;
     private int posLista;
 
     public Match(Lexema lexema, Token token)
     {
         this.lexema = lexema;
         this.token = token;
+        escopo = 0;
     }
 
     public Lexema getLexema()
@@ -53,6 +55,16 @@ public class Match
     public void setPosLista(int posLista)
     {
         this.posLista = posLista;
+    }
+
+    public int getEscopo()
+    {
+        return escopo;
+    }
+
+    public void setEscopo(int escopo)
+    {
+        this.escopo = escopo;
     }
 
     @Override

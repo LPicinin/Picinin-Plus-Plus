@@ -165,8 +165,14 @@ public class Sintatico extends Constantes
         pilha_entrada = new Stack<>();
         //pilha_simbolos.add(new Match(new Lexema("§", 0, 0), Token.tVazio));
         List<Match> l = lexemas_tokens_correspondidos;
+        int escopo = 0;
         for (int i = l.size() - 1; i >= 0; i--)
         {
+            if(l.get(i).getToken().equals(Token.tChave_abre))
+                escopo++;
+            else if(l.get(i).getToken().equals(Token.tChave_fecha))
+                escopo--;
+            l.get(i).setEscopo(Math.abs(escopo));
             pilha_entrada.push(l.get(i));
         }
         return pilha_entrada;
