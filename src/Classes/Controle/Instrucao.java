@@ -26,7 +26,7 @@ public class Instrucao
         try
         {
             conversor = Conversor.class.getDeclaredMethod(metodoConversor, List.class);
-            
+
         } catch (NoSuchMethodException | SecurityException ex)
         {
             System.out.println(ex.getMessage());

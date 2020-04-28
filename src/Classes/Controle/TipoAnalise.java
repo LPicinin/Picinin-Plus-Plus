@@ -16,30 +16,30 @@ import java.util.List;
 public class TipoAnalise
 {
 
-    public final static int a_chaves = 0;
-    public final static int a_parenteses = 1;
-    public final static int ca_for = 2;
-    public final static int ca_while = 3;
-    public final static int ca_atribuicao = 4;
-    public final static int a_inicioPrograma = 5;
-    public final static int ca_declaracao = 6;
-    public final static int ca_naoReconhecido = 7;
-    public final static int ca_If = 8;
-    public final static int ca_else = 9;
-    public final static int ca_chaveAbre = 10;
-    public final static int ca_chaveFecha = 11;
-    public final static int ca_codigoForaDoEscopo = 12;
+    public final static int A_CHAVES = 0;
+    public final static int A_PARENTESE = 1;
+    public final static int CA_FOR = 2;
+    public final static int CA_WHILE = 3;
+    public final static int CA_ATRIBUICAO = 4;
+    public final static int A_INICIO_PROGRAMA = 5;
+    public final static int CA_DECLARACAO = 6;
+    public final static int CA_NAO_RECONHECIDO = 7;
+    public final static int CA_IF = 8;
+    public final static int CA_ELSE = 9;
+    public final static int CA_CHAVE_ABRE = 10;
+    public final static int CA_CHAVE_FECHA = 11;
+    public final static int CA_CODIGO_FORA_DO_ESCOPO = 12;
 
-    private static final TipoAnalise a_for = new TipoAnalise(Token.tFor, ca_for);
-    private static final TipoAnalise a_while = new TipoAnalise(Token.tWhile, ca_while);
-    private static final TipoAnalise a_declaracao = new TipoAnalise(Token.tTipo, ca_declaracao);
-    private static final TipoAnalise a_atribuicao = new TipoAnalise(Token.tIdentificador, ca_atribuicao);
-    private static final TipoAnalise a_naoReconhecido = new TipoAnalise(Token.tNaoReconhecido, ca_naoReconhecido);
-    private static final TipoAnalise a_If = new TipoAnalise(Token.tIf, ca_If);
-    private static final TipoAnalise a_else = new TipoAnalise(Token.tElse, ca_else);
-    private static final TipoAnalise a_chaveAbre = new TipoAnalise(Token.tChave_abre, ca_chaveAbre);
-    private static final TipoAnalise a_chaveFecha = new TipoAnalise(Token.tChave_fecha, ca_chaveFecha);
-    private static final TipoAnalise a_codigoForaDoEscopo = new TipoAnalise(null, ca_codigoForaDoEscopo);
+    private static final TipoAnalise a_for = new TipoAnalise(Token.tFor, CA_FOR);
+    private static final TipoAnalise a_while = new TipoAnalise(Token.tWhile, CA_WHILE);
+    private static final TipoAnalise a_declaracao = new TipoAnalise(Token.tTipo, CA_DECLARACAO);
+    private static final TipoAnalise a_atribuicao = new TipoAnalise(Token.tIdentificador, CA_ATRIBUICAO);
+    private static final TipoAnalise a_naoReconhecido = new TipoAnalise(Token.tNaoReconhecido, CA_NAO_RECONHECIDO);
+    private static final TipoAnalise a_If = new TipoAnalise(Token.tIf, CA_IF);
+    private static final TipoAnalise a_else = new TipoAnalise(Token.tElse, CA_ELSE);
+    private static final TipoAnalise a_chaveAbre = new TipoAnalise(Token.tChave_abre, CA_CHAVE_ABRE);
+    private static final TipoAnalise a_chaveFecha = new TipoAnalise(Token.tChave_fecha, CA_CHAVE_FECHA);
+    private static final TipoAnalise a_codigoForaDoEscopo = new TipoAnalise(null, CA_CODIGO_FORA_DO_ESCOPO);
 
     public final static List<TipoAnalise> listaAnalises
             = Arrays.asList(a_for,

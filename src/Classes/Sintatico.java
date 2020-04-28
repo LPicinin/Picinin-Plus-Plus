@@ -33,7 +33,7 @@ public class Sintatico extends Constantes
     private Semantico al_semantico;
     private int posToken;//para consumir os tokens extraidos pela analise lexica
     private Instrucao aux_instrucao;
-
+    
     public Sintatico(String codeString)
     {
         //pilha_simbolos = new Stack<>();
@@ -135,13 +135,11 @@ public class Sintatico extends Constantes
 
     private void addSimbolo(List<Simbolo> tabela_simbolos, Simbolo simbolo)
     {
-        Simbolo aux;
         if (simbolo.getToken().equals(tIdentificador))
         {
             int index = tabela_simbolos.indexOf(simbolo);
             if (index != -1)
             {
-                aux = tabela_simbolos.get(index);
                 if (simbolo.getTipo().isEmpty())
                 {
                     tabela_simbolos.add(simbolo);
@@ -182,13 +180,13 @@ public class Sintatico extends Constantes
         fila_sugestoes = new LinkedList<>();
 
         posToken = 0;
-        Controle c = analisar(TipoAnalise.a_inicioPrograma);
+        Controle c = analisar(TipoAnalise.A_INICIO_PROGRAMA);
         if (c != null)
         {
             erros.add(Erro.getError(Erro.Inicio_da_Linguagem, c.getLexema()));
         }
-        analisar(TipoAnalise.a_chaves);
-        analisar(TipoAnalise.ca_codigoForaDoEscopo);
+        analisar(TipoAnalise.A_CHAVES);
+        analisar(TipoAnalise.CA_CODIGO_FORA_DO_ESCOPO);
 
         if (lexemas_tokens_correspondidos.isEmpty())
         {
@@ -204,7 +202,7 @@ public class Sintatico extends Constantes
             } else if (Token.tTipos.contains(pilha_entrada.peek().getToken()))
             {
                 flag = false;
-                Controle retorno = analisar(TipoAnalise.ca_declaracao);
+                Controle retorno = analisar(TipoAnalise.CA_DECLARACAO);
                 if (retorno != null && retorno instanceof Erro)
                 {
                     erros.add((Erro) retorno);
@@ -231,8 +229,9 @@ public class Sintatico extends Constantes
             {
                 buscaTokenDeConexao();
             }
-            else
+            else if(aux_instrucao != null)
                 al_semantico.addInstrucao(aux_instrucao);
+            aux_instrucao = null;
         }
     }
 
@@ -241,49 +240,49 @@ public class Sintatico extends Constantes
         Controle c = null;
         switch (tipoAnalise)
         {
-            case TipoAnalise.a_inicioPrograma:
+            case TipoAnalise.A_INICIO_PROGRAMA:
                 c = al_inicioPrograma();
                 break;
-            case TipoAnalise.ca_declaracao:
+            case TipoAnalise.CA_DECLARACAO:
                 aux_instrucao = new Instrucao(Conversor.declaracao);
                 c = al_declaracao();
                 break;
-            case TipoAnalise.ca_atribuicao:
+            case TipoAnalise.CA_ATRIBUICAO:
                 aux_instrucao = new Instrucao(Conversor.atribuicao);
                 c = al_atribuicao();
                 break;
-            case TipoAnalise.a_chaves:
+            case TipoAnalise.A_CHAVES:
                 c = al_chaves();
                 break;
-            case TipoAnalise.ca_for:
+            case TipoAnalise.CA_FOR:
                 aux_instrucao = new Instrucao(Conversor.For);
                 c = al_for();
                 break;
-            case TipoAnalise.ca_while:
+            case TipoAnalise.CA_WHILE:
                 aux_instrucao = new Instrucao(Conversor.While);
                 c = al_while();
                 break;
-            case TipoAnalise.a_parenteses:
+            case TipoAnalise.A_PARENTESE:
                 c = al_parenteses();
                 break;
-            case TipoAnalise.ca_naoReconhecido:
+            case TipoAnalise.CA_NAO_RECONHECIDO:
                 c = al_Token_naoReconhecido();
                 break;
-            case TipoAnalise.ca_If:
+            case TipoAnalise.CA_IF:
                 aux_instrucao = new Instrucao(Conversor.If);
                 c = al_if();
                 break;
-            case TipoAnalise.ca_else:
+            case TipoAnalise.CA_ELSE:
                 aux_instrucao = new Instrucao(Conversor.Else);
                 c = al_else();
                 break;
-            case TipoAnalise.ca_chaveAbre:
+            case TipoAnalise.CA_CHAVE_ABRE:
                 pilha_entrada.pop();
                 break;
-            case TipoAnalise.ca_chaveFecha:
+            case TipoAnalise.CA_CHAVE_FECHA:
                 pilha_entrada.pop();
                 break;
-            case TipoAnalise.ca_codigoForaDoEscopo:
+            case TipoAnalise.CA_CODIGO_FORA_DO_ESCOPO:
                 al_codigo_fora_do_escopo();
                 break;
         }
