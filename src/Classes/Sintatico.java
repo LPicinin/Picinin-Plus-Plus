@@ -33,7 +33,7 @@ public class Sintatico extends Constantes
     private Semantico al_semantico;
     private int posToken;//para consumir os tokens extraidos pela analise lexica
     private Instrucao aux_instrucao;
-    
+
     public Sintatico(String codeString)
     {
         //pilha_simbolos = new Stack<>();
@@ -76,7 +76,7 @@ public class Sintatico extends Constantes
         try
         {
             geraAnaliseSintatica();
-            al_semantico.analisar();
+            al_semantico.extrair();
         } catch (Exception ex)
         {
             System.out.println(ex.getMessage() + "\n" + ex.getCause());
@@ -168,9 +168,9 @@ public class Sintatico extends Constantes
         int escopo = 0;
         for (int i = l.size() - 1; i >= 0; i--)
         {
-            if(l.get(i).getToken().equals(Token.tChave_abre))
+            if (l.get(i).getToken().equals(Token.tChave_abre))
                 escopo++;
-            else if(l.get(i).getToken().equals(Token.tChave_fecha))
+            else if (l.get(i).getToken().equals(Token.tChave_fecha))
                 escopo--;
             l.get(i).setEscopo(Math.abs(escopo));
             pilha_entrada.push(l.get(i));
@@ -234,8 +234,7 @@ public class Sintatico extends Constantes
             if (flag)
             {
                 buscaTokenDeConexao();
-            }
-            else if(aux_instrucao != null)
+            } else if (aux_instrucao != null)
                 al_semantico.addInstrucao(aux_instrucao);
             aux_instrucao = null;
         }
@@ -559,7 +558,7 @@ public class Sintatico extends Constantes
             }
         }
         aux_instrucao.addCadeia_elementos(aux);
-        if(pilha_entrada.peek().getToken().equals(Token.tPontoVirgula))
+        if (pilha_entrada.peek().getToken().equals(Token.tPontoVirgula))
             aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
         if (OperacaoValida)
         {
@@ -575,7 +574,7 @@ public class Sintatico extends Constantes
     private Controle al_expressao2()
     {
         Match aux;
-        
+
         boolean OperacaoValida = true;
         for (aux = pilha_entrada.pop(); !pilha_entrada.isEmpty() && !pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha) && OperacaoValida; aux = pilha_entrada.pop())
         {
@@ -599,8 +598,8 @@ public class Sintatico extends Constantes
             }
         }
         aux_instrucao.addCadeia_elementos(aux);
-        
-        if(!pilha_entrada.isEmpty() && pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
+
+        if (!pilha_entrada.isEmpty() && pilha_entrada.peek().getToken().equals(Token.tParenteses_fecha))
             aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
         if (OperacaoValida)
         {

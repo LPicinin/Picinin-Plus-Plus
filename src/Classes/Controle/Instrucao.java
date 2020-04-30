@@ -19,11 +19,13 @@ public class Instrucao
 
     private List<Match> cadeia_elementos;
     private Method conversor;
+    private String nome_conversor;
     private Integer escopo;
     
     public Instrucao(String metodoConversor)
     {
         cadeia_elementos = new ArrayList<>();
+        this.nome_conversor = metodoConversor;
         try
         {
             conversor = Conversor.class.getDeclaredMethod(metodoConversor, List.class);
@@ -54,6 +56,26 @@ public class Instrucao
     public void setConversor(Method conversor)
     {
         this.conversor = conversor;
+    }
+
+    public String getNome_conversor()
+    {
+        return nome_conversor;
+    }
+
+    public void setNome_conversor(String nome_conversor)
+    {
+        this.nome_conversor = nome_conversor;
+    }
+
+    public Integer getEscopo()
+    {
+        return escopo;
+    }
+
+    public void setEscopo(Integer escopo)
+    {
+        this.escopo = escopo;
     }
 
     public void setCadeia_elementos(List<Match> cadeia_elementos)
