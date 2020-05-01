@@ -7,6 +7,7 @@ package Classes.Controle;
 
 import Classes.Lexema;
 import Classes.Token;
+import java.util.Objects;
 
 /**
  *
@@ -71,6 +72,28 @@ public class Match
     public String toString()
     {
         return lexema.getPalavra();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final Match other = (Match) obj;
+        if (!Objects.equals(this.lexema.getPalavra(), other.lexema.getPalavra()))
+            return false;
+        return true;
     }
 
 }

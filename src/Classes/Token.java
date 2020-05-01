@@ -83,11 +83,11 @@ public class Token
      * char
      */
     public static final Token tTipo = new Token("tTipo", "int|double|bool|string|char");
-    public static final Token tINT = new Token("tINT", "int");
-    public static final Token tDouble = new Token("tDOUBLE", "double");
-    public static final Token tBool = new Token("tBOOL", "bool");
-    public static final Token tString = new Token("tSTRING", "string");
-    public static final Token tChar = new Token("tCHAR", "char");
+    public static final Token tINT = new Token("tINT", "int", tValor_Inteiro);
+    public static final Token tDouble = new Token("tDOUBLE", "double", tValor_Decimal, tValor_Inteiro, tValor_Cientific, tValor_HexaDecimal, tValor_OctaDecimal);
+    public static final Token tBool = new Token("tBOOL", "bool", tValor_Bool);
+    public static final Token tString = new Token("tSTRING", "string", tValor_String);
+    public static final Token tChar = new Token("tCHAR", "char", tValor_Char);
     public static final List<Token> tTipos = new ArrayList<>(Arrays.asList(tINT, tDouble, tBool, tString, tChar));
 
     /**
@@ -190,11 +190,20 @@ public class Token
     private String idToken;
     private String regex;
     private Pattern pattern;
+    private Token []gerados;
 
     public Token(String idToken, String regex)
     {
         this.idToken = idToken;
         this.regex = regex;
+        pattern = Pattern.compile(this.regex);
+    }
+    
+    public Token(String idToken, String regex, Token ...gerados)
+    {
+        this.idToken = idToken;
+        this.regex = regex;
+        this.gerados = gerados;
         pattern = Pattern.compile(this.regex);
     }
 
@@ -226,6 +235,16 @@ public class Token
     public void setPattern(Pattern pattern)
     {
         this.pattern = pattern;
+    }
+
+    public Token[] getGerados()
+    {
+        return gerados;
+    }
+
+    public void setGerados(Token[] gerados)
+    {
+        this.gerados = gerados;
     }
 
     @Override

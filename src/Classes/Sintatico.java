@@ -68,6 +68,26 @@ public class Sintatico extends Constantes
         Sintatico.erros = erros;
     }
 
+    public Lexico getAl_lexica()
+    {
+        return al_lexica;
+    }
+
+    public void setAl_lexica(Lexico al_lexica)
+    {
+        this.al_lexica = al_lexica;
+    }
+
+    public Semantico getAl_semantico()
+    {
+        return al_semantico;
+    }
+
+    public void setAl_semantico(Semantico al_semantico)
+    {
+        this.al_semantico = al_semantico;
+    }
+
     public List<Simbolo> analise()
     {
         al_semantico = new Semantico();
@@ -358,12 +378,12 @@ public class Sintatico extends Constantes
         t[0] = pilha_entrada.pop();
         t[1] = pilha_entrada.pop();
         t[2] = pilha_entrada.pop();
-
+        aux_instrucao.addCadeia_elementos(t[0]);
+        
         if (Token.tTipos.contains(t[0].getToken())
                 && t[1].getToken().equals(Token.tIdentificador)
                 && t[2].getToken().equals(Token.tPontoVirgula))
         {
-            aux_instrucao.addCadeia_elementos(t[0]);
             aux_instrucao.addCadeia_elementos(t[1]);
             aux_instrucao.addCadeia_elementos(t[2]);
             return null;

@@ -24,23 +24,39 @@ public class Erro extends Controle
     public static final Erro chavesFaltantes = new Erro(411, "chave esperado");
     public static final Erro parenteseFaltante = new Erro(411, "parentese esperado");
     public static final Erro codigo_Escopo_fora_do_fluxo = new Erro(666, "Escopo fora do fluxo de execução detectado!!!");
+    public static final int valor_nao_compativel = 562;
+
+    private boolean semantico = false;
 
     public Erro(int codigo, String mensagem)
     {
         super(codigo, mensagem);
     }
 
+    public Erro(int codigo, String mensagem, boolean semantico)
+    {
+        super(codigo, mensagem);
+        this.semantico = semantico;
+    }
+
     public Erro(int codigo, String mensagem, Lexema lexema)
     {
         super(codigo, mensagem, lexema);
     }
+    public Erro(int codigo, String mensagem, Lexema lexema, boolean semantico)
+    {
+        super(codigo, mensagem, lexema);
+        this.semantico = semantico;
+    }
+
     public static Erro getError(Erro e, Lexema lexema)
     {
         return new Erro(e.codigo, e.mensagem, lexema);
     }
+
     @Override
     public String toString()
     {
-        return "Erro detectado próximo à \'"+lexema.getPalavra()+"\' na Linha: "+(lexema.getPosParagrafo()+1)+" - Erro(" + codigo + ") - " + mensagem + "";
+        return "Erro detectado próximo à \'" + lexema.getPalavra() + "\' na Linha: " + (lexema.getPosParagrafo() + 1) + " - Erro(" + (semantico ? 8001 : codigo) + ") - " + mensagem + "";
     }
 }

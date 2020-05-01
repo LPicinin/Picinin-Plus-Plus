@@ -39,7 +39,15 @@ public class Compilador
         limpaConstantes();
         al_sintatico = new Sintatico(code);
         tabela_Simbolos = al_sintatico.analise();
-        erros_avisos = new ArrayList<>(al_sintatico.getErros());
+        erros_avisos = new ArrayList<>();
+        al_sintatico.getErros().forEach(in ->
+        {
+            erros_avisos.add(in);
+        });
+        al_sintatico.getAl_semantico().getErros_avisos_semanticos().forEach(in ->
+        {
+            erros_avisos.add(in);
+        });
         matchs = new ArrayList<>(al_sintatico.getLexemas_tokens_correspondidos());
     }
 
