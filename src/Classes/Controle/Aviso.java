@@ -14,6 +14,8 @@ import Classes.Lexema;
 public class Aviso extends Controle
 {
 
+    public static Aviso perca_De_Precisao = new Aviso(152, "Possivel perca de precisão");
+
     public Aviso(int codigo, String mensagem)
     {
         super(codigo, mensagem);
@@ -24,4 +26,14 @@ public class Aviso extends Controle
         super(codigo, mensagem, lexema);
     }
 
+    public static Aviso getAviso(Aviso ab, Lexema lex)
+    {
+        return new Aviso(ab.codigo, ab.mensagem, lex);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Aviso próximo à \'" + lexema.getPalavra() + "\' na Linha: " + (lexema.getPosParagrafo() + 1) + " - Aviso(" + codigo + ") - " + mensagem + "";
+    }
 }

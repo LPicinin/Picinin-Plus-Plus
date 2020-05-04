@@ -5,6 +5,7 @@
  */
 package Classes;
 
+import Classes.Controle.Aviso;
 import Classes.Controle.Controle;
 import Classes.Controle.Conversor;
 import Classes.Controle.Erro;
@@ -13,7 +14,6 @@ import Classes.Controle.Match;
 import Classes.Controle.Simbolo;
 import Controladora.CtrCompilador;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -164,7 +164,11 @@ public class Semantico extends Constantes
     private void buscaErros_Avisos()
     {
         listSimbolos = CtrCompilador.instancia().getCompilador().getTabela_Simbolos();
+        tipagem();
+    }
 
+    private void tipagem()
+    {
         atribuicoes.forEach(in ->
         {
             Token tipo = getTipo(in.getCadeia_elementos().get(0));
@@ -175,27 +179,46 @@ public class Semantico extends Constantes
             for (int i = 2; i < list.size() && !erro; i++)
             {
                 boolean ValorCompativelComTipo = false;
-                
-                if (Token.tValores.contains(list.get(i).getToken()))
+                if (list.get(i).getToken().equals(Token.tIdentificador))
+                {
+                    Token tipo_Da_Variavel = getTipo(list.get(i));
+                    if (!tipo.getIdToken().equals(tipo_Da_Variavel.getIdToken()))
+                    {
+                        erros_avisos_semanticos.add(new Erro(Erro.valor_nao_compativel,
+                                list.get(i).getLexema().getPalavra() + " é do tipo " + tipo_Da_Variavel.getIdToken()
+                                + " que não pode ser convertido para " + tipo.getIdToken(), list.get(i).getLexema()));
+                    }
+
+                } else if (Token.tValores.contains(list.get(i).getToken()))
                 {
                     for (int j = 0; j < vet.length && !ValorCompativelComTipo; j++)
                     {
                         ValorCompativelComTipo = vet[j].equals(list.get(i).getToken());
                     }
-                    if (!ValorCompativelComTipo)
+                    if ((list.get(i).getToken().equals(Token.tDouble) || list.get(i).getToken().equals(Token.tValor_Decimal))
+                        && (tipo.equals(Token.tINT) || tipo.equals(Token.tValor_Inteiro)))
                     {
-                        erros_avisos_semanticos.add(new Erro(Erro.valor_nao_compativel, list.get(i).getLexema().getPalavra()+
-                                " não pode ser convertido para " + tipo.getIdToken(),list.get(i).getLexema()));
+                        erros_avisos_semanticos.add(new Aviso(Aviso.perca_De_Precisao.getCodigo(),
+                                "Possível perda de precisão devido ao tipo de " + list.get(i).getLexema().getPalavra(), list.get(i).getLexema()));
+                    } else if (!ValorCompativelComTipo)
+                    {
+                        erros_avisos_semanticos.add(new Erro(Erro.valor_nao_compativel, list.get(i).getLexema().getPalavra()
+                                + " não pode ser convertido para " + tipo.getIdToken(), list.get(i).getLexema()));
                     }
                 }
             }
         });
+
+        lacos.forEach(in ->
+        {
+            if (in.getCadeia_elementos().get(0).getToken().equals(Token.tFor))
+                quebraFor(in);
+        });
+
     }
 
     private Token getTipo(Match id)
     {
-        if(id.getLexema().getPalavra().equals("c"))
-            System.out.println("i");
         try
         {
             int i;
@@ -203,17 +226,91 @@ public class Semantico extends Constantes
             Token ret = null;
             for (i = 0; i < declaracoes.size() && ret == null; i++)
             {
-                if(declaracoes.get(i).getCadeia_elementos().contains(id))
+                if (declaracoes.get(i).getCadeia_elementos().contains(id))
                 {
                     ret = declaracoes.get(i).getCadeia_elementos().get(0).getToken();
                 }
             }
             return ret;
-            
+
         } catch (Exception ex)
         {
             System.out.println("meh");
             return null;
+        }
+    }
+
+    private void quebraFor(Instrucao in)
+    {
+        List<Match> cadeia_declaracao = new ArrayList<>();
+        List<Match> cadeia_atribuicao = new ArrayList<>();
+        Token tipo;
+
+        int i = 0;
+        while (!in.getCadeia_elementos().get(i).getToken().equals(Token.tPontoVirgula))
+        {
+            cadeia_declaracao.add(in.getCadeia_elementos().get(i));
+            i++;
+        }
+        i++;
+        while (!in.getCadeia_elementos().get(i).getToken().equals(Token.tPontoVirgula))
+        {
+            i++;
+        }
+        i++;
+        while (i < in.getCadeia_elementos().size() && !in.getCadeia_elementos().get(i).getToken().equals(Token.tParenteses_fecha))
+        {
+            cadeia_atribuicao.add(in.getCadeia_elementos().get(i));
+            i++;
+        }
+        List<Match> list = cadeia_declaracao;
+        list.remove(0);
+        list.remove(0);
+        if (Token.tTipos.contains(list.get(0).getToken()))
+        {
+            tipo = list.get(0).getToken();
+            list.remove(0);
+
+        } else
+        {
+            tipo = getTipo(list.get(0));
+        }
+        microTipagem(tipo, list);
+        
+        list = cadeia_atribuicao;
+        Token auxtipo = getTipo(list.get(0));
+        if(auxtipo != null)
+            tipo = auxtipo;
+        
+        microTipagem(tipo, list);
+        
+
+    }
+
+    private void microTipagem(Token tipo, List<Match> list)
+    {
+        Token[] vet = tipo.getGerados();
+
+        for (int j = 0; j < list.size(); j++)
+        {
+            boolean ValorCompativelComTipo = false;
+            if (Token.tValores.contains(list.get(j).getToken()))
+            {
+                for (int k = 0; k < vet.length && !ValorCompativelComTipo; k++)
+                {
+                    ValorCompativelComTipo = vet[k].equals(list.get(j).getToken());
+                }
+                if ((list.get(j).getToken().equals(Token.tDouble) || list.get(j).getToken().equals(Token.tValor_Decimal))
+                        && (tipo.equals(Token.tINT) || tipo.equals(Token.tValor_Inteiro)))
+                {
+                    erros_avisos_semanticos.add(new Aviso(Aviso.perca_De_Precisao.getCodigo(),
+                            "Possível perda de precisão devido ao tipo de " + list.get(j).getLexema().getPalavra(), list.get(j).getLexema()));
+                } else if (!ValorCompativelComTipo)
+                {
+                    erros_avisos_semanticos.add(new Erro(Erro.valor_nao_compativel, list.get(j).getLexema().getPalavra()
+                            + " não pode ser convertido para " + tipo.getIdToken(), list.get(j).getLexema()));
+                }
+            }
         }
     }
 

@@ -93,14 +93,14 @@ public class Sintatico extends Constantes
         al_semantico = new Semantico();
         al_lexica = new Lexico();
         al_lexica.analise();
-        try
+        //try
         {
             geraAnaliseSintatica();
             al_semantico.extrair();
-        } catch (Exception ex)
+        } /*catch (Exception ex)
         {
             System.out.println(ex.getMessage() + "\n" + ex.getCause());
-        }
+        }*/
 
         return geraTabelaSimbolos();
     }

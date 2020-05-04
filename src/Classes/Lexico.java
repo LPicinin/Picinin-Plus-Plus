@@ -78,6 +78,7 @@ public class Lexico extends Constantes
                             cadeia.append(code[i+1]);
                             i++;                                    
                         }
+                        pos = i+1;
                     }
                     if (cadeia.length() > 0)//achou uma cadeia
                     {

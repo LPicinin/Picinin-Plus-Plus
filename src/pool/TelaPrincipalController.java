@@ -5,6 +5,7 @@
  */
 package pool;
 
+import Classes.Controle.Aviso;
 import Classes.Controle.Erro;
 import Classes.Lexema;
 import Classes.Token;
@@ -159,17 +160,25 @@ public class TelaPrincipalController implements Initializable
 
         String css;
         Label l;
+        int qtd_erros = countErros(CtrCompilador.instancia().getCompilador().getErros_avisos());
+        
         if (CtrCompilador.instancia().getCompilador().getErros_avisos().isEmpty())
         {
             css = "-fx-border-color:green; -fx-border-width: 3;";
             l = new Label("Compilado com sucesso!!");
             l.setTextFill(Paint.valueOf("#00ff00"));
 
-        } else
+        } else if(qtd_erros > 0)
         {
             css = "-fx-border-color:red; -fx-border-width: 3;";
             l = new Label("Não pode ser compilado!!");
             l.setTextFill(Paint.valueOf("#ff0000"));
+        }
+        else
+        {
+            css = "-fx-border-color:orange; -fx-border-width: 3;";
+            l = new Label("Compilado com avisos!!");
+            l.setTextFill(Paint.valueOf("#ffa500"));
         }
 
         lvErros_Avisos.getItems().add(l);
@@ -262,7 +271,6 @@ public class TelaPrincipalController implements Initializable
             writer.close();
         } catch (IOException e)
         {
-            e.printStackTrace();
         }
     }
 
@@ -289,5 +297,27 @@ public class TelaPrincipalController implements Initializable
         erros_avisos.removeAll(mremocao);
         erros_avisos = Arrays.stream(erros_avisos.toArray()).distinct().collect(Collectors.toList());
         return erros_avisos;
+    }
+
+    private int countErros(List<Object> ea)
+    {
+        int c = 0;
+        for (Object item : ea)
+        {
+            if(item instanceof Erro)
+                c++;
+        }
+        return c;
+    }
+
+    private int countAvisos(List<Object> ea)
+    {
+        int c = 0;
+        for (Object item : ea)
+        {
+            if(item instanceof Aviso)
+                c++;
+        }
+        return c;
     }
 }
