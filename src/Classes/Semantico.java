@@ -104,6 +104,7 @@ public class Semantico extends Constantes
                     condicoes.add(in);
                     break;
                 case Conversor.For:
+                    declaracoes.add(getdeclar(in));
                     lacos.add(in);
                     break;
                 case Conversor.While:
@@ -164,6 +165,7 @@ public class Semantico extends Constantes
     private void buscaErros_Avisos()
     {
         listSimbolos = CtrCompilador.instancia().getCompilador().getTabela_Simbolos();
+        possiveisOtimizacoes();
         tipagem();
     }
 
@@ -196,7 +198,7 @@ public class Semantico extends Constantes
                         ValorCompativelComTipo = vet[j].equals(list.get(i).getToken());
                     }
                     if ((list.get(i).getToken().equals(Token.tDouble) || list.get(i).getToken().equals(Token.tValor_Decimal))
-                        && (tipo.equals(Token.tINT) || tipo.equals(Token.tValor_Inteiro)))
+                            && (tipo.equals(Token.tINT) || tipo.equals(Token.tValor_Inteiro)))
                     {
                         erros_avisos_semanticos.add(new Aviso(Aviso.perca_De_Precisao.getCodigo(),
                                 "Possível perda de precisão devido ao tipo de " + list.get(i).getLexema().getPalavra(), list.get(i).getLexema()));
@@ -276,14 +278,13 @@ public class Semantico extends Constantes
             tipo = getTipo(list.get(0));
         }
         microTipagem(tipo, list);
-        
+
         list = cadeia_atribuicao;
         Token auxtipo = getTipo(list.get(0));
-        if(auxtipo != null)
+        if (auxtipo != null)
             tipo = auxtipo;
-        
+
         microTipagem(tipo, list);
-        
 
     }
 
@@ -310,6 +311,59 @@ public class Semantico extends Constantes
                     erros_avisos_semanticos.add(new Erro(Erro.valor_nao_compativel, list.get(j).getLexema().getPalavra()
                             + " não pode ser convertido para " + tipo.getIdToken(), list.get(j).getLexema()));
                 }
+            }
+        }
+    }
+
+    private Instrucao getdeclar(Instrucao in)
+    {
+        Instrucao intr = new Instrucao(Conversor.declaracao);
+
+        List<Match> list = in.getCadeia_elementos();
+
+        for (int i = 2; i < list.size(); i++)
+        {
+            intr.addCadeia_elementos(list.get(i));
+        }
+        return intr;
+    }
+
+    private void possiveisOtimizacoes()
+    {
+        int cgeral, catrib, index;
+        Match auxId;
+        for (int i = 0; i < instrucoes.size(); i++)
+        {
+            if (instrucoes.get(i).getNome_conversor().equals(Conversor.declaracao))
+            {
+                auxId = instrucoes.get(i).getCadeia_elementos().get(1);
+
+                cgeral = catrib = 0;
+                for (int j = i + 1; j < instrucoes.size(); j++)
+                {
+                    if (instrucoes.get(j).getCadeia_elementos().contains(auxId))
+                    {
+                        List<Match> list = instrucoes.get(j).getCadeia_elementos();
+                        for (int k = 0; k+1 < list.size(); k++)
+                        {
+                            if(list.get(k).equals(auxId) && 
+                                    list.get(k+1).getToken().equals(Token.tIgual))
+                            {
+                                catrib++;
+                            }
+                        }
+                        if (!instrucoes.get(j).getNome_conversor().equals(Conversor.atribuicao))
+                            cgeral++;
+                    }
+                }
+                if (cgeral == 0)
+                {
+                    erros_avisos_semanticos.add(new Aviso(Aviso.nunca_utilizado.getCodigo(),
+                            auxId.getLexema().getPalavra() + " nunca é utilizado ", auxId.getLexema()));
+                }
+                else if(catrib == 0)
+                    erros_avisos_semanticos.add(new Aviso(Aviso.constante_em_potencial.getCodigo(),
+                            auxId.getLexema().getPalavra() + " é uma constante em potencial", auxId.getLexema()));
             }
         }
     }

@@ -15,6 +15,8 @@ public class Aviso extends Controle
 {
 
     public static Aviso perca_De_Precisao = new Aviso(152, "Possivel perca de precisão");
+    public static Aviso nunca_utilizado = new Aviso(153, "Instrução nunca é utilizada");
+    public static Aviso constante_em_potencial = new Aviso(154, "Instrução é uma constante em potencial");
 
     public Aviso(int codigo, String mensagem)
     {
