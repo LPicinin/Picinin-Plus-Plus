@@ -175,6 +175,7 @@ public class Semantico extends Constantes
         {
             Token tipo = getTipo(in.getCadeia_elementos().get(0));
             Token[] vet = tipo.getGerados();
+            Token tipo_aux;
             List<Match> list = in.getCadeia_elementos();
 
             boolean erro = false;
@@ -193,11 +194,17 @@ public class Semantico extends Constantes
 
                 } else if (Token.tValores.contains(list.get(i).getToken()))
                 {
+                    //por aqui
+                    if (list.get(i).getToken().equals(Token.tIdentificador))
+                        tipo_aux = getTipo(list.get(i));
+                    else
+                        tipo_aux = list.get(i).getToken();
+                    
                     for (int j = 0; j < vet.length && !ValorCompativelComTipo; j++)
                     {
                         ValorCompativelComTipo = vet[j].equals(list.get(i).getToken());
                     }
-                    if ((list.get(i).getToken().equals(Token.tDouble) || list.get(i).getToken().equals(Token.tValor_Decimal))
+                    if ((tipo_aux.equals(Token.tDouble) || tipo_aux.equals(Token.tValor_Decimal))
                             && (tipo.equals(Token.tINT) || tipo.equals(Token.tValor_Inteiro)))
                     {
                         erros_avisos_semanticos.add(new Aviso(Aviso.perca_De_Precisao.getCodigo(),
@@ -224,7 +231,6 @@ public class Semantico extends Constantes
         try
         {
             int i;
-            boolean flag = true;
             Token ret = null;
             for (i = 0; i < declaracoes.size() && ret == null; i++)
             {
@@ -291,17 +297,25 @@ public class Semantico extends Constantes
     private void microTipagem(Token tipo, List<Match> list)
     {
         Token[] vet = tipo.getGerados();
-
-        for (int j = 0; j < list.size(); j++)
+        Token tipo_aux;
+        for (int j = 2; j < list.size(); j++)
         {
             boolean ValorCompativelComTipo = false;
-            if (Token.tValores.contains(list.get(j).getToken()))
+            if (!list.get(j).getLexema().getPalavra().equals(list.get(0).getLexema().getPalavra())
+                    && (Token.tValores.contains(list.get(j).getToken()) || list.get(j).getToken().equals(Token.tIdentificador)))
             {
+
+                if (list.get(j).getToken().equals(Token.tIdentificador))
+                    tipo_aux = getTipo(list.get(j));
+                else
+                    tipo_aux = list.get(j).getToken();
+
                 for (int k = 0; k < vet.length && !ValorCompativelComTipo; k++)
                 {
-                    ValorCompativelComTipo = vet[k].equals(list.get(j).getToken());
+                    ValorCompativelComTipo = vet[k].equals(tipo_aux);
                 }
-                if ((list.get(j).getToken().equals(Token.tDouble) || list.get(j).getToken().equals(Token.tValor_Decimal))
+                if (((list.get(j).getToken().equals(Token.tIdentificador) && getTipo(list.get(j)).equals(Token.tDouble))
+                        || list.get(j).getToken().equals(Token.tValor_Decimal))
                         && (tipo.equals(Token.tINT) || tipo.equals(Token.tValor_Inteiro)))
                 {
                     erros_avisos_semanticos.add(new Aviso(Aviso.perca_De_Precisao.getCodigo(),
@@ -330,7 +344,7 @@ public class Semantico extends Constantes
 
     private void possiveisOtimizacoes()
     {
-        int cgeral, catrib, index;
+        int cgeral, catrib;
         Match auxId;
         for (int i = 0; i < instrucoes.size(); i++)
         {
@@ -344,10 +358,10 @@ public class Semantico extends Constantes
                     if (instrucoes.get(j).getCadeia_elementos().contains(auxId))
                     {
                         List<Match> list = instrucoes.get(j).getCadeia_elementos();
-                        for (int k = 0; k+1 < list.size(); k++)
+                        for (int k = 0; k + 1 < list.size(); k++)
                         {
-                            if(list.get(k).equals(auxId) && 
-                                    list.get(k+1).getToken().equals(Token.tIgual))
+                            if (list.get(k).equals(auxId)
+                                    && list.get(k + 1).getToken().equals(Token.tIgual))
                             {
                                 catrib++;
                             }
@@ -360,8 +374,7 @@ public class Semantico extends Constantes
                 {
                     erros_avisos_semanticos.add(new Aviso(Aviso.nunca_utilizado.getCodigo(),
                             auxId.getLexema().getPalavra() + " nunca é utilizado ", auxId.getLexema()));
-                }
-                else if(catrib == 0)
+                } else if (catrib == 0)
                     erros_avisos_semanticos.add(new Aviso(Aviso.constante_em_potencial.getCodigo(),
                             auxId.getLexema().getPalavra() + " é uma constante em potencial", auxId.getLexema()));
             }

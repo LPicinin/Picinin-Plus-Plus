@@ -83,11 +83,11 @@ public class Token
      * char
      */
     public static final Token tTipo = new Token("tTipo", "int|double|bool|string|char");
-    public static final Token tINT = new Token("tINT", "int", tValor_Inteiro);
-    public static final Token tDouble = new Token("tDOUBLE", "double", tValor_Decimal, tValor_Inteiro, tValor_Cientific, tValor_HexaDecimal, tValor_OctaDecimal);
+    public static final Token tINT = new Token("tINT", "int", tValor_Inteiro, tValor_Decimal, tValor_HexaDecimal, tValor_OctaDecimal);
     public static final Token tBool = new Token("tBOOL", "bool", tValor_Bool);
     public static final Token tString = new Token("tSTRING", "string", tValor_String);
     public static final Token tChar = new Token("tCHAR", "char", tValor_Char);
+    public static final Token tDouble = new Token("tDOUBLE", "double", tValor_Decimal, tValor_Inteiro, tValor_Cientific, tValor_HexaDecimal, tValor_OctaDecimal);
     public static final List<Token> tTipos = new ArrayList<>(Arrays.asList(tINT, tDouble, tBool, tString, tChar));
 
     /**
