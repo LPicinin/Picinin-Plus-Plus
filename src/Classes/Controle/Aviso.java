@@ -36,6 +36,6 @@ public class Aviso extends Controle
     @Override
     public String toString()
     {
-        return "Aviso próximo à \'" + lexema.getPalavra() + "\' na Linha: " + (lexema.getPosParagrafo() + 1) + " - Aviso(" + codigo + ") - " + mensagem + "";
+        return "☻ Aviso próximo à \'" + lexema.getPalavra() + "\' na Linha: " + (lexema.getPosParagrafo() + 1) + " - Aviso(" + codigo + ") - " + mensagem + "";
     }
 }

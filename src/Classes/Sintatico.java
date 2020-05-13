@@ -218,7 +218,7 @@ public class Sintatico extends Constantes
         {
             erros.add(Erro.tokenNaoEncontrado);
         }
-        boolean flag;
+        boolean flag, flag2 = false;
         while (!pilha_entrada.isEmpty())
         {
             flag = true;
@@ -235,7 +235,7 @@ public class Sintatico extends Constantes
                 }
             } else
             {
-                boolean flag2 = true;
+                flag2 = true;
                 for (int i = 0; flag2 && i < TipoAnalise.listaAnalises.size(); i++)
                 {
                     TipoAnalise ta = TipoAnalise.listaAnalises.get(i);
@@ -251,7 +251,9 @@ public class Sintatico extends Constantes
                     }
                 }
             }
-            if (flag)
+            if(flag2)
+                erros.add(Erro.getError(Erro.instrucao_nao_pertencente_ha_linguagem, pilha_entrada.peek().getLexema()));
+            if (flag || flag2)
             {
                 buscaTokenDeConexao();
             } else if (aux_instrucao != null)
@@ -263,6 +265,7 @@ public class Sintatico extends Constantes
     private Controle analisar(int tipoAnalise)
     {
         Controle c = null;
+        
         switch (tipoAnalise)
         {
             case TipoAnalise.A_INICIO_PROGRAMA:
@@ -310,6 +313,9 @@ public class Sintatico extends Constantes
             case TipoAnalise.CA_CODIGO_FORA_DO_ESCOPO:
                 al_codigo_fora_do_escopo();
                 break;
+            default:
+                System.out.println(pilha_entrada.peek().getLexema().getPalavra());
+                break;
         }
         return c;
     }
@@ -334,7 +340,7 @@ public class Sintatico extends Constantes
                     return null;
                 } else
                 {
-
+                    
                 }
             } else
             {
@@ -416,6 +422,11 @@ public class Sintatico extends Constantes
                 pilha_entrada.pop();
             }
             aux_instrucao.addCadeia_elementos(pilha_entrada.peek());
+            
+            if((r.get(0).getToken().equals(Token.tIdentificador) || Token.tValores.contains(r.get(0).getToken())) && r.get(1).getToken().equals(Token.tPontoVirgula))
+                return Erro.getError(Erro.tokenFinalDeCadeiaInesperada, pilha_entrada.peek().getLexema());
+            else if(Token.tValores.contains(r.get(0).getToken()))
+                return Erro.getError(Erro.instrucao_nao_pertencente_ha_linguagem, pilha_entrada.peek().getLexema());
             r.add(pilha_entrada.pop());
 
             if (r.get(0).getToken().equals(Token.tIdentificador) && r.get(1).getToken().equals(Token.tIgual))

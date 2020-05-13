@@ -6,6 +6,7 @@
 package pool;
 
 import Classes.Controle.Aviso;
+import Classes.Controle.Controle;
 import Classes.Controle.Erro;
 import Classes.Lexema;
 import Classes.Token;
@@ -22,10 +23,13 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
@@ -151,30 +155,35 @@ public class TelaPrincipalController implements Initializable
     private void evtCompilar(MouseEvent event)
     {
         CtrCompilador.instancia().Analisar(caCodigo.getText());
-        lvErros_Avisos.setItems(FXCollections.observableArrayList(trataErrosDesnecessarios(CtrCompilador.instancia().getCompilador().getErros_avisos())));
+        ObservableList<Object> oa = FXCollections.observableArrayList(trataErrosDesnecessarios(CtrCompilador.instancia().getCompilador().getErros_avisos()));
+        Set<Object> set = new HashSet<>(oa);
+        oa.clear();
+        oa.addAll(set);
+        
+        lvErros_Avisos.setItems(oa);
 
         tabela.setItems(FXCollections.observableArrayList(
                 CtrCompilador.instancia().getCompilador().getTabela_Simbolos()));
+
         tabela.refresh();
         processaErros();
 
         String css;
         Label l;
         int qtd_erros = countErros(CtrCompilador.instancia().getCompilador().getErros_avisos());
-        
+
         if (CtrCompilador.instancia().getCompilador().getErros_avisos().isEmpty())
         {
             css = "-fx-border-color:green; -fx-border-width: 3;";
             l = new Label("Compilado com sucesso!!");
             l.setTextFill(Paint.valueOf("#00ff00"));
 
-        } else if(qtd_erros > 0)
+        } else if (qtd_erros > 0)
         {
             css = "-fx-border-color:red; -fx-border-width: 3;";
             l = new Label("Não pode ser compilado!!");
             l.setTextFill(Paint.valueOf("#ff0000"));
-        }
-        else
+        } else
         {
             css = "-fx-border-color:orange; -fx-border-width: 3;";
             l = new Label("Compilado com avisos!!");
@@ -210,6 +219,7 @@ public class TelaPrincipalController implements Initializable
     private void processaErros()
     {
         List<Object> err = CtrCompilador.instancia().getCompilador().getErros_avisos();
+
         int s = caCodigo.getText().split("\n").length;
         for (int i = 0; i < s; i++)
         {
@@ -289,7 +299,7 @@ public class TelaPrincipalController implements Initializable
         List<Object> mremocao = new ArrayList<>();
         for (Object erros_aviso : erros_avisos)
         {
-            if(erros_aviso == null || (erros_aviso instanceof Erro && ((Erro)erros_aviso).getLexema() == null))
+            if (erros_aviso == null || (((Controle) erros_aviso).getLexema() == null))
             {
                 mremocao.add(erros_aviso);
             }
@@ -304,7 +314,7 @@ public class TelaPrincipalController implements Initializable
         int c = 0;
         for (Object item : ea)
         {
-            if(item instanceof Erro)
+            if (item instanceof Erro)
                 c++;
         }
         return c;
@@ -315,7 +325,7 @@ public class TelaPrincipalController implements Initializable
         int c = 0;
         for (Object item : ea)
         {
-            if(item instanceof Aviso)
+            if (item instanceof Aviso)
                 c++;
         }
         return c;

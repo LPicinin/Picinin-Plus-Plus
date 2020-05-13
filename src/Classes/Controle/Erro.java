@@ -24,6 +24,7 @@ public class Erro extends Controle
     public static final Erro chavesFaltantes = new Erro(411, "chave esperado");
     public static final Erro parenteseFaltante = new Erro(411, "parentese esperado");
     public static final Erro codigo_Escopo_fora_do_fluxo = new Erro(666, "Escopo fora do fluxo de execução detectado!!!");
+    public static final Erro instrucao_nao_pertencente_ha_linguagem = new Erro(412, "Instrução irregular detectada");
     public static final int valor_nao_compativel = 562;
 
     private boolean semantico = false;
@@ -57,6 +58,6 @@ public class Erro extends Controle
     @Override
     public String toString()
     {
-        return "Erro detectado próximo à \'" + lexema.getPalavra() + "\' na Linha: " + (lexema.getPosParagrafo() + 1) + " - Erro(" + (semantico ? 8001 : codigo) + ") - " + mensagem + "";
+        return "○Erro detectado próximo à \'" + lexema.getPalavra() + "\' na Linha: " + (lexema.getPosParagrafo() + 1) + " - Erro(" + (semantico ? 8001 : codigo) + ") - " + mensagem + "";
     }
 }
