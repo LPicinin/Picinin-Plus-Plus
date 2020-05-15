@@ -83,12 +83,12 @@ public class Instrucao
         this.cadeia_elementos = cadeia_elementos;
     }
 
-    public List<String> toCodigoIntermediario()
+    public List<InstrucaoIntermediaria> toCodigoIntermediario()
     {
-        List<String> ret = null;
+        List<InstrucaoIntermediaria> ret = null;
         try
         {
-            ret = (List<String>) conversor.invoke(Conversor.class, cadeia_elementos);
+            ret = (List<InstrucaoIntermediaria>) conversor.invoke(Conversor.class, cadeia_elementos);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
         {
             System.out.println(e.getMessage());

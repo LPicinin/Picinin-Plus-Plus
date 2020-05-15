@@ -20,32 +20,32 @@ public class Conversor
     public final static String Else = "toCI_else";
     public final static String If = "toCI_if";
     
-    public static List<String> toCI_declaracao(List<Match> cadeia)
+    public static List<InstrucaoIntermediaria> toCI_declaracao(List<Match> cadeia)
     {
         return null;
     }
     
-    public static List<String> toCI_atribuicao(List<Match> cadeia)
+    public static List<InstrucaoIntermediaria> toCI_atribuicao(List<Match> cadeia)
     {
         return null;
     }
     
-    public static List<String> toCI_for(List<Match> cadeia)
+    public static List<InstrucaoIntermediaria> toCI_for(List<Match> cadeia)
     {
         return null;
     }
     
-    public static List<String> toCI_while(List<Match> cadeia)
+    public static List<InstrucaoIntermediaria> toCI_while(List<Match> cadeia)
     {
         return null;
     }
     
-    public static List<String> toCI_if(List<Match> cadeia)
+    public static List<InstrucaoIntermediaria> toCI_if(List<Match> cadeia)
     {
         return null;
     }
     
-    public static List<String> toCI_else(List<Match> cadeia)
+    public static List<InstrucaoIntermediaria> toCI_else(List<Match> cadeia)
     {
         return null;
     }
