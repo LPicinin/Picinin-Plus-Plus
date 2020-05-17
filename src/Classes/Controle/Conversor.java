@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -53,10 +51,31 @@ public class Conversor
     {
         
         Token tipoOriginal = intr.getCadeia_elementos().get(0).getToken();
-        List<Match> listPrincipal = intr.getCadeia_elementos();
+        List<Match> listPrincipal = new ArrayList<>(intr.getCadeia_elementos());
+        if(listPrincipal.get(0).getToken().equals(Token.tIdentificador) && 
+                listPrincipal.get(1).getToken().equals(Token.tIgual))
+        {
+            listPrincipal.remove(0);
+            listPrincipal.remove(0);
+        }
         retiraPontoVirgula(listPrincipal);
         List<InstrucaoIntermediaria> result = new ArrayList<>();
         HashMap map = new HashMap();
+        HashMap map_oper = new HashMap();
+        map.put('&', "and");
+        map.put('|', "or");
+        map.put('>', ">");
+        map.put('<', "<");
+        map.put('•', ">=");
+        map.put('○', "<=");
+        map.put('♦', "!=");
+        map.put('=', "==");
+        Iterator iterator = map.keySet().iterator();
+        while(iterator.hasNext())
+        {
+            char next = (char)iterator.next();
+            map_oper.put(map.get(next), next);
+        }
         
         List<Match> auxlist = new ArrayList<>();
         
@@ -94,6 +113,10 @@ public class Conversor
                         }
                         maux.getLexema().setPalavra(aux + "");
                     }
+                    else if(Token.tOpRelacional.contains(in.getToken()) || Token.tOpLogicos.contains(in.getToken()))//operador lógico
+                    {
+                        maux.getLexema().setPalavra(map_oper.get(in.getLexema().getPalavra()).toString());
+                    }
                     auxlist.add(maux);
                     
                 } catch (CloneNotSupportedException ex)
@@ -108,7 +131,7 @@ public class Conversor
             {
                 exp_aux.append(in.getLexema().getPalavra());
             });
-            String exp = exp_aux.toString();
+            String exp = exp_aux.toString().replaceAll("\\)|\\(", "");
             
             ArvoreTresEnderecos arv = new ArvoreTresEnderecos();
             String aux;
@@ -156,7 +179,27 @@ public class Conversor
     
     public static List<InstrucaoIntermediaria> toCI_if(Instrucao intr)
     {
-        return null;
+        List<InstrucaoIntermediaria> result = new ArrayList<>();
+        List<Match> lprincipal = new ArrayList<>(intr.getCadeia_elementos());
+        List<Match> laux = new ArrayList<>();
+        lprincipal.remove(0);//tira o if
+        if (lprincipal.get(0).getToken().equals(Token.tParenteses_abre))
+            lprincipal.remove(0);//tira o (
+        
+        lprincipal.add(0, new Match(new Lexema("=", 0, 0), Token.tIgual));
+        lprincipal.add(0, new Match(new Lexema("vif", 0, 0), Token.tIdentificador));
+        Instrucao int_aux = new Instrucao(atribuicao);
+        int_aux.setCadeia_elementos(lprincipal);
+        
+        result.addAll(toCI_atribuicao(int_aux));
+        laux.add(new Match(new Lexema("if", 0, 0), Token.tIf));
+        laux.add(new Match(new Lexema("vif", 0, 0), Token.tIdentificador));
+        laux.add(new Match(new Lexema("goto" + 0, 0, 0), Token.tgoto));
+        
+        InstrucaoIntermediaria ii = new InstrucaoIntermediaria(laux, If, intr.getEscopo());
+        
+        result.add(ii);
+        return result;
     }
     
     public static List<InstrucaoIntermediaria> toCI_else(Instrucao intr)
@@ -181,7 +224,7 @@ public class Conversor
         
         listPrincipal.forEach(in ->
         {
-            if(in.getToken().equals(Token.tPontoVirgula))
+            if (in.getToken().equals(Token.tPontoVirgula))
                 mremocao.add(in);
         });
         listPrincipal.removeAll(mremocao);

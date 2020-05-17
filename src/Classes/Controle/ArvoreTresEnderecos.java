@@ -25,7 +25,32 @@ public class ArvoreTresEnderecos
         },
         {
             '-', '2'
+        },
+        {
+            '&', '6'
+        },
+        {
+            '|', '7'
+        },
+        {
+            '>', '5'
+        },
+        {
+            '<', '5'
+        },
+        {
+            '•', '5'//maior igual
+        },
+        {
+            '○', '5'//menor igual
+        },
+        {
+            '=', '5'//igual
+        },
+        {
+            '♦', '5'//diferente
         }
+            
     };
 
     private static int precedenceOf(String t)
@@ -46,7 +71,7 @@ public class ArvoreTresEnderecos
         List<String> list = new ArrayList<>();
         int i, j, opc = 0;
         char token;
-        boolean processed[];
+        boolean processed[], flag;
         String[][] operators = new String[10][2];
         String temp;
         processed = new boolean[expr.length()];
@@ -55,14 +80,15 @@ public class ArvoreTresEnderecos
         for (i = 0; i < expr.length(); i++)
         {
             token = expr.charAt(i);
-            for (j = 0; j < precedence.length; j++)
+            flag = true;
+            for (j = 0; j < precedence.length && flag; j++)
             {
                 if (token == precedence[j][0])
                 {
                     operators[opc][0] = token + "";
                     operators[opc][1] = i + "";
                     opc++;
-                    break;
+                    flag = false;
                 }
             }
         }

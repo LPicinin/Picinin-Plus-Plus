@@ -50,6 +50,7 @@ public class Token
      * null
      */
     public static final Token tValor_Null = new Token("tNull", "null|NULL");
+    public static final Token tgoto = new Token("tGoto", "goto \\d*");
 
     /**
      * valor generico - pode ser um Valor inteiro, decimal, booleano,
