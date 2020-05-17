@@ -28,7 +28,7 @@ public class Instrucao
         this.nome_conversor = metodoConversor;
         try
         {
-            conversor = Conversor.class.getDeclaredMethod(metodoConversor, List.class);
+            conversor = Conversor.class.getDeclaredMethod(metodoConversor, Instrucao.class);
 
         } catch (NoSuchMethodException | SecurityException ex)
         {
@@ -81,6 +81,8 @@ public class Instrucao
     public void setCadeia_elementos(List<Match> cadeia_elementos)
     {
         this.cadeia_elementos = cadeia_elementos;
+        if(escopo == null && !this.cadeia_elementos.isEmpty())
+            escopo = cadeia_elementos.get(0).getEscopo();
     }
 
     public List<InstrucaoIntermediaria> toCodigoIntermediario()
@@ -88,7 +90,7 @@ public class Instrucao
         List<InstrucaoIntermediaria> ret = null;
         try
         {
-            ret = (List<InstrucaoIntermediaria>) conversor.invoke(Conversor.class, cadeia_elementos);
+            ret = (List<InstrucaoIntermediaria>) conversor.invoke(Conversor.class, this);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
         {
             System.out.println(e.getMessage());

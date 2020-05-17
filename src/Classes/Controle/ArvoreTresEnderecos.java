@@ -5,7 +5,9 @@ package Classes.Controle;
 	Author: Surajit Karmakar		Author Link: https://www.facebook.com/surajit.3528
 	www.pracspedia.com
  */
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ArvoreTresEnderecos
 {
@@ -39,8 +41,9 @@ public class ArvoreTresEnderecos
         return -1;
     }
 
-    public void build(String expr)
+    public List<String> build(String expr)
     {
+        List<String> list = new ArrayList<>();
         int i, j, opc = 0;
         char token;
         boolean processed[];
@@ -48,7 +51,7 @@ public class ArvoreTresEnderecos
         String temp;
         processed = new boolean[expr.length()];
         Arrays.fill(processed, false);
-        
+
         for (i = 0; i < expr.length(); i++)
         {
             token = expr.charAt(i);
@@ -63,7 +66,7 @@ public class ArvoreTresEnderecos
                 }
             }
         }
-        
+
         for (i = opc - 1; i >= 0; i--)
         {
             for (j = 0; j < i; j++)
@@ -79,7 +82,7 @@ public class ArvoreTresEnderecos
                 }
             }
         }
-        
+
         for (i = 0; i < opc; i++)
         {
             j = Integer.parseInt(operators[i][1] + "");
@@ -116,8 +119,9 @@ public class ArvoreTresEnderecos
             {
                 op2 = expr.charAt(j + 1) + "";
             }
-            System.out.println("t" + (i + 1) + " = " + op1 + operators[i][0] + op2);
+            list.add("t" + (i + 1) + " = " + op1 + " " + operators[i][0] + " " + op2);
             processed[j] = processed[j - 1] = processed[j + 1] = true;
         }
+        return list;
     }
 }

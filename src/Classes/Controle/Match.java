@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @author luish
  */
-public class Match
+public class Match implements Cloneable
 {
 
     private Lexema lexema;
@@ -94,6 +94,15 @@ public class Match
         if (!Objects.equals(this.lexema.getPalavra(), other.lexema.getPalavra()))
             return false;
         return true;
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException
+    {
+        return new Match(new Lexema(lexema.getPalavra(),
+                lexema.getPosParagrafo(),
+                lexema.getPosLinha()),
+                token);
     }
 
 }

@@ -10,6 +10,7 @@ import Classes.Controle.Controle;
 import Classes.Controle.Conversor;
 import Classes.Controle.Erro;
 import Classes.Controle.Instrucao;
+import Classes.Controle.InstrucaoIntermediaria;
 import Classes.Controle.Match;
 import Classes.Controle.Simbolo;
 import Controladora.CtrCompilador;
@@ -32,6 +33,7 @@ public class Semantico extends Constantes
     private List<Instrucao> lacos;
     private List<Instrucao> condicoes;
     private List<Simbolo> listSimbolos;
+    private List<InstrucaoIntermediaria> lci;
 
     public Semantico()
     {
@@ -69,7 +71,7 @@ public class Semantico extends Constantes
 
         fragmentar_Instrucoes();
         buscaErros_Avisos();
-
+        conversaoCI();//---------------------------------------------------------------------------
         return erros_avisos_semanticos;
     }
 
@@ -177,7 +179,7 @@ public class Semantico extends Constantes
             Token[] vet = tipo.getGerados();
             Token tipo_aux;
             List<Match> list = in.getCadeia_elementos();
-            if(list.get(0).getLexema().equals("in"))
+            if (list.get(0).getLexema().equals("in"))
                 System.out.println("hum");
             boolean erro = false;
             for (int i = 2; i < list.size() && !erro; i++)
@@ -186,14 +188,13 @@ public class Semantico extends Constantes
                 if (list.get(i).getToken().equals(Token.tIdentificador))
                 {
                     Token tipo_Da_Variavel = getTipo(list.get(i));
-                    if(((list.get(i).getToken().equals(Token.tIdentificador) && getTipo(list.get(i)).equals(Token.tDouble))
-                        || list.get(i).getToken().equals(Token.tValor_Decimal))
-                        && (tipo.equals(Token.tINT) || tipo.equals(Token.tValor_Inteiro)))
+                    if (((list.get(i).getToken().equals(Token.tIdentificador) && getTipo(list.get(i)).equals(Token.tDouble))
+                            || list.get(i).getToken().equals(Token.tValor_Decimal))
+                            && (tipo.equals(Token.tINT) || tipo.equals(Token.tValor_Inteiro)))
                     {
                         erros_avisos_semanticos.add(new Aviso(Aviso.perca_De_Precisao.getCodigo(),
-                            "Possível perda de precisão devido ao tipo de " + list.get(i).getLexema().getPalavra(), list.get(i).getLexema()));
-                    }
-                    else if (!tipo.getIdToken().equals(tipo_Da_Variavel.getIdToken()))
+                                "Possível perda de precisão devido ao tipo de " + list.get(i).getLexema().getPalavra(), list.get(i).getLexema()));
+                    } else if (!tipo.getIdToken().equals(tipo_Da_Variavel.getIdToken()))
                     {
                         erros_avisos_semanticos.add(new Erro(Erro.valor_nao_compativel,
                                 list.get(i).getLexema().getPalavra() + " é do tipo " + tipo_Da_Variavel.getIdToken()
@@ -207,7 +208,7 @@ public class Semantico extends Constantes
                         tipo_aux = getTipo(list.get(i));
                     else
                         tipo_aux = list.get(i).getToken();
-                    
+
                     for (int j = 0; j < vet.length && !ValorCompativelComTipo; j++)
                     {
                         ValorCompativelComTipo = vet[j].equals(list.get(i).getToken());
@@ -389,4 +390,34 @@ public class Semantico extends Constantes
         }
     }
 
+    private void conversaoCI()
+    {
+        lci = new ArrayList<>();
+        instrucoes.forEach(in ->
+        {
+            List<InstrucaoIntermediaria> l = in.toCodigoIntermediario();
+            if (l != null)
+            {
+                lci.addAll(l);
+                //só para exibicao
+
+            }
+
+        });
+        lci.forEach(ci ->
+        {
+            System.out.println(showListMatch(ci.getCadeia_elementos()));
+        });
+
+    }
+
+    private String showListMatch(List<Match> list)
+    {
+        StringBuilder sb = new StringBuilder();
+        list.forEach((m) ->
+        {
+            sb.append(m.getLexema().getPalavra()).append(" ");
+        });
+        return sb.toString();
+    }
 }
