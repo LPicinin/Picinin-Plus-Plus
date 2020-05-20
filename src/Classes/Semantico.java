@@ -33,11 +33,13 @@ public class Semantico extends Constantes
     private List<Instrucao> lacos;
     private List<Instrucao> condicoes;
     private List<Simbolo> listSimbolos;
-    private List<InstrucaoIntermediaria> lci;
+    public static List<InstrucaoIntermediaria> lci;
 
     public Semantico()
     {
         instrucoes = new ArrayList<>();
+        if(lci != null)
+            lci.clear();
     }
 
     public List<Instrucao> getInstrucoes()
@@ -392,6 +394,7 @@ public class Semantico extends Constantes
 
     private void conversaoCI()
     {
+        Conversor.goto_aux = 0;
         lci = new ArrayList<>();
         instrucoes.forEach(in ->
         {
@@ -399,14 +402,15 @@ public class Semantico extends Constantes
             if (l != null)
             {
                 lci.addAll(l);
-                //só para exibicao
-
             }
 
         });
         lci.forEach(ci ->
         {
-            System.out.println(showListMatch(ci.getCadeia_elementos()));
+            if(ci.getNome_conversor().equals(Conversor.escIni) || ci.getNome_conversor().equals(Conversor.escFim))
+                System.out.println(ci.getNome_conversor());
+            else
+                System.out.println(showListMatch(ci.getCadeia_elementos()));
         });
 
     }
