@@ -51,6 +51,7 @@ public class Token
      */
     public static final Token tValor_Null = new Token("tNull", "null|NULL");
     public static final Token tgoto = new Token("tGoto", "goto \\d*");
+    public static final Token tgoto_mark = new Token("tMarcadorGoto", "markJMP\\d*");
 
     /**
      * valor generico - pode ser um Valor inteiro, decimal, booleano,

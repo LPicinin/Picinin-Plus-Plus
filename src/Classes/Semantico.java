@@ -15,7 +15,9 @@ import Classes.Controle.Match;
 import Classes.Controle.Simbolo;
 import Controladora.CtrCompilador;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 
 /**
  *
@@ -38,7 +40,7 @@ public class Semantico extends Constantes
     public Semantico()
     {
         instrucoes = new ArrayList<>();
-        if(lci != null)
+        if (lci != null)
             lci.clear();
     }
 
@@ -395,25 +397,71 @@ public class Semantico extends Constantes
     private void conversaoCI()
     {
         Conversor.goto_aux = 0;
+        Stack<Instrucao> pilha = new Stack<>();
         lci = new ArrayList<>();
-        instrucoes.forEach(in ->
+        List<InstrucaoIntermediaria> l = null;
+        for (int i = 0; i < instrucoes.size(); i++)
         {
-            List<InstrucaoIntermediaria> l = in.toCodigoIntermediario();
+            Instrucao in = instrucoes.get(i);
+            
+            switch (in.getNome_conversor())
+            {
+                case Conversor.If:
+                    break;
+                case Conversor.While:
+                    int gaux = Conversor.goto_aux;
+                    l = new ArrayList<>();
+                    l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("markJMP"+gaux, 0, 0), Token.tgoto_mark)), "", 0));
+                    l.addAll(in.toCodigoIntermediario());
+                    l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("goto markJMPEND"+gaux, 0, 0), Token.tgoto)), "", 0));
+                    l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("markJMPA"+gaux, 0, 0), Token.tgoto_mark)), "", 0));
+
+                    i++;
+                    in = instrucoes.get(i);
+                    if(in.getNome_conversor().equals(Conversor.escIni))
+                    {
+                        pilha.push(in);
+                        for (i++; i < instrucoes.size() && !pilha.isEmpty(); i++)
+                        {
+                            in = instrucoes.get(i);
+                            if(in.getNome_conversor().equals(Conversor.escIni))
+                                pilha.push(in);
+                            else if(in.getNome_conversor().equals(Conversor.escFim))
+                                pilha.pop();
+                            else
+                            {
+                                l.addAll(in.toCodigoIntermediario());
+                            }
+                        }
+                        
+                        l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("goto markJMP"+gaux, 0, 0), Token.tgoto)), "", 0));
+                        l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("markJMPEND"+gaux, 0, 0), Token.tgoto_mark)), "", 0));
+                    }
+                    Conversor.goto_aux++;
+                    break;
+                case Conversor.For:
+                    break;
+                default:
+                    l = in.toCodigoIntermediario();
+                    break;
+            }
+            
             if (l != null)
             {
                 lci.addAll(l);
             }
-
-        });
+        }
+        
         lci.forEach(ci ->
         {
-            if(ci.getNome_conversor().equals(Conversor.escIni) || ci.getNome_conversor().equals(Conversor.escFim))
+            if (ci.getNome_conversor().equals(Conversor.escIni) || ci.getNome_conversor().equals(Conversor.escFim))
                 System.out.println(ci.getNome_conversor());
             else
                 System.out.println(showListMatch(ci.getCadeia_elementos()));
         });
 
     }
+    
 
     private String showListMatch(List<Match> list)
     {
