@@ -132,6 +132,10 @@ public class Token
     public static final Token tParenteses_fecha = new Token("tFechaParentese", "\\)");
     public static final Token tChave_abre = new Token("tAbreChave", "\\{");
     public static final Token tChave_fecha = new Token("tFechaChave", "\\}");
+
+    /**
+     * =
+     */
     public static final Token tIgual = new Token("tIgual", "=");
     public static final Token tPontoVirgula = new Token("tPontoVirgula", ";");
 

@@ -173,6 +173,7 @@ public class Semantico extends Constantes
         listSimbolos = CtrCompilador.instancia().getCompilador().getTabela_Simbolos();
         possiveisOtimizacoes();
         tipagem();
+        condicoes();
     }
 
     private void tipagem()
@@ -400,68 +401,74 @@ public class Semantico extends Constantes
         Stack<Instrucao> pilha = new Stack<>();
         lci = new ArrayList<>();
         List<InstrucaoIntermediaria> l = null;
+        int gaux;
         for (int i = 0; i < instrucoes.size(); i++)
         {
             Instrucao in = instrucoes.get(i);
-            
+
             switch (in.getNome_conversor())
             {
                 case Conversor.If:
                     break;
                 case Conversor.While:
-                    int gaux = Conversor.goto_aux;
+                    gaux = Conversor.goto_aux;
                     l = new ArrayList<>();
-                    l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("markJMP"+gaux, 0, 0), Token.tgoto_mark)), "", 0));
+                    l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("markJMP" + gaux, 0, 0), Token.tgoto_mark)), "", 0));
                     l.addAll(in.toCodigoIntermediario());
-                    l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("goto markJMPEND"+gaux, 0, 0), Token.tgoto)), "", 0));
-                    l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("markJMPA"+gaux, 0, 0), Token.tgoto_mark)), "", 0));
+                    l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("goto markJMPEND" + gaux, 0, 0), Token.tgoto)), "", 0));
+                    l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("markJMPA" + gaux, 0, 0), Token.tgoto_mark)), "", 0));
 
                     i++;
                     in = instrucoes.get(i);
-                    if(in.getNome_conversor().equals(Conversor.escIni))
+                    if (in.getNome_conversor().equals(Conversor.escIni))
                     {
                         pilha.push(in);
                         for (i++; i < instrucoes.size() && !pilha.isEmpty(); i++)
                         {
                             in = instrucoes.get(i);
-                            if(in.getNome_conversor().equals(Conversor.escIni))
+                            if (in.getNome_conversor().equals(Conversor.escIni))
                                 pilha.push(in);
-                            else if(in.getNome_conversor().equals(Conversor.escFim))
+                            else if (in.getNome_conversor().equals(Conversor.escFim))
                                 pilha.pop();
                             else
                             {
                                 l.addAll(in.toCodigoIntermediario());
                             }
                         }
-                        
-                        l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("goto markJMP"+gaux, 0, 0), Token.tgoto)), "", 0));
-                        l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("markJMPEND"+gaux, 0, 0), Token.tgoto_mark)), "", 0));
+
+                        l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("goto markJMP" + gaux, 0, 0), Token.tgoto)), "", 0));
+                        l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("markJMPEND" + gaux, 0, 0), Token.tgoto_mark)), "", 0));
                     }
                     Conversor.goto_aux++;
                     break;
                 case Conversor.For:
+                    gaux = Conversor.goto_aux;
+                    Instrucao p1;
+                    Instrucao p2;
+                    Instrucao p3;
                     break;
                 default:
                     l = in.toCodigoIntermediario();
                     break;
             }
-            
+
             if (l != null)
             {
                 lci.addAll(l);
             }
         }
-        
+
         lci.forEach(ci ->
         {
+            /*
             if (ci.getNome_conversor().equals(Conversor.escIni) || ci.getNome_conversor().equals(Conversor.escFim))
                 System.out.println(ci.getNome_conversor());
             else
-                System.out.println(showListMatch(ci.getCadeia_elementos()));
+            */
+            System.out.println(showListMatch(ci.getCadeia_elementos()));
         });
 
     }
-    
 
     private String showListMatch(List<Match> list)
     {
@@ -471,5 +478,45 @@ public class Semantico extends Constantes
             sb.append(m.getLexema().getPalavra()).append(" ");
         });
         return sb.toString();
+    }
+
+    private void condicoes()
+    {
+        List<Token> pc = new ArrayList<>();//permitidos_em_condicoes
+        pc.addAll(Token.tOpLogicos);
+        pc.addAll(Token.tOpRelacional);
+        pc.addAll(Token.tOperadores);
+        pc.addAll(Token.tValores);
+        pc.add(Token.tParenteses_abre);
+        pc.add(Token.tParenteses_fecha);
+        pc.add(Token.tIdentificador);
+        
+        boolean flag = false;
+
+        for (Instrucao in : instrucoes)
+        {
+            List<Match> l = new ArrayList<>(in.getCadeia_elementos());
+            
+            if (in.getNome_conversor().equals(Conversor.While) || 
+                    in.getNome_conversor().equals(Conversor.If) || flag )
+            {
+                
+                for (Match m : l)
+                {
+                    if (m.getToken().equals(Token.tIdentificador))
+                    {
+                        if (getTipo(m).equals(Token.tString))
+                        {
+                            erros_avisos_semanticos.add(new Erro(Erro.valor_nao_compativel,
+                                    "String não pode ser usada em expressões condicionais", m.getLexema()));
+                        }
+                    } else if (m.getToken().equals(Token.tValor_String))
+                    {
+                        erros_avisos_semanticos.add(new Erro(Erro.valor_nao_compativel,
+                                "String não pode ser usada em expressões condicionais", m.getLexema()));
+                    }
+                }
+            }
+        }
     }
 }
