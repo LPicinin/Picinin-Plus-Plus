@@ -411,6 +411,7 @@ public class Semantico extends Constantes
                 case Conversor.If:
                     break;
                 case Conversor.While:
+                    pilha.clear();
                     gaux = Conversor.goto_aux;
                     l = new ArrayList<>();
                     l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("markJMP" + gaux, 0, 0), Token.tgoto_mark)), "", 0));
@@ -442,10 +443,37 @@ public class Semantico extends Constantes
                     Conversor.goto_aux++;
                     break;
                 case Conversor.For:
+                    pilha.clear();
+                    int posNull;
                     gaux = Conversor.goto_aux;
-                    Instrucao p1;
-                    Instrucao p2;
-                    Instrucao p3;
+                    l = in.toCodigoIntermediario();//coloca um null onde o código fica dentro
+                    posNull = l.indexOf(null);
+                    l.remove(posNull);
+                    i++;
+                    in = instrucoes.get(i);
+                    if (in.getNome_conversor().equals(Conversor.escIni))
+                    {
+                        pilha.push(in);
+                        for (i++; i < instrucoes.size() && !pilha.isEmpty(); i++)
+                        {
+                            in = instrucoes.get(i);
+                            if (in.getNome_conversor().equals(Conversor.escIni))
+                                pilha.push(in);
+                            else if (in.getNome_conversor().equals(Conversor.escFim))
+                                pilha.pop();
+                            else
+                            {
+                                List<InstrucaoIntermediaria> laaux = in.toCodigoIntermediario();
+                                int auxpos = posNull+laaux.size();
+                                l.addAll(posNull, laaux);
+                                posNull = auxpos;
+                            }
+                        }
+                    }
+                    l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("goto markJMP" + gaux, 0, 0), Token.tgoto)), "", 0));
+                    l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("markJMPEND" + gaux, 0, 0), Token.tgoto_mark)), "", 0));
+                    Conversor.goto_aux++;
+
                     break;
                 default:
                     l = in.toCodigoIntermediario();
@@ -464,7 +492,7 @@ public class Semantico extends Constantes
             if (ci.getNome_conversor().equals(Conversor.escIni) || ci.getNome_conversor().equals(Conversor.escFim))
                 System.out.println(ci.getNome_conversor());
             else
-            */
+             */
             System.out.println(showListMatch(ci.getCadeia_elementos()));
         });
 
@@ -490,17 +518,17 @@ public class Semantico extends Constantes
         pc.add(Token.tParenteses_abre);
         pc.add(Token.tParenteses_fecha);
         pc.add(Token.tIdentificador);
-        
+
         boolean flag = false;
 
         for (Instrucao in : instrucoes)
         {
             List<Match> l = new ArrayList<>(in.getCadeia_elementos());
-            
-            if (in.getNome_conversor().equals(Conversor.While) || 
-                    in.getNome_conversor().equals(Conversor.If) || flag )
+
+            if (in.getNome_conversor().equals(Conversor.While)
+                    || in.getNome_conversor().equals(Conversor.If) || flag)
             {
-                
+
                 for (Match m : l)
                 {
                     if (m.getToken().equals(Token.tIdentificador))

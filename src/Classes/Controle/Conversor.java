@@ -200,7 +200,8 @@ public class Conversor
         List<Match> p1 = new ArrayList<>();
         List<Match> p2 = new ArrayList<>();
         List<Match> p3 = new ArrayList<>();
-
+        List<Match> laux = new ArrayList<>();
+        
         List<Match> lprincipal = new ArrayList<>(intr.getCadeia_elementos());
 
         lprincipal.remove(0);//retira for
@@ -246,10 +247,24 @@ public class Conversor
         //condição
         p2.add(0, new Match(new Lexema("=", 0, 0), Token.tIgual));
         p2.add(0, new Match(new Lexema("vFor", 0, 0), Token.tIdentificador));
+        
+        
         int2.setCadeia_elementos(p2);
+        
+        
+        result.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("markJMP" + goto_aux, 0, 0), Token.tgoto_mark)), "", 0));
+        
         result.addAll(int2.toCodigoIntermediario());
         
         
+        laux.add(new Match(new Lexema("loop", 0, 0), Token.tFor));
+        laux.add(new Match(new Lexema("vFor", 0, 0), Token.tIdentificador));
+        laux.add(new Match(new Lexema("markJMPA" + goto_aux, 0, 0), Token.tgoto));
+        InstrucaoIntermediaria ii = new InstrucaoIntermediaria(laux, For, intr.getEscopo());
+        result.add(ii);
+        
+        result.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("goto markJMPEND" + goto_aux, 0, 0), Token.tgoto)), "", 0));
+        result.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("markJMPA" + goto_aux, 0, 0), Token.tgoto_mark)), "", 0));
         //escopo/trecho dentro do for
         
         
@@ -257,6 +272,7 @@ public class Conversor
         int3.setCadeia_elementos(p3);
         if(!p3.isEmpty())
         {
+            result.add(null);
             result.addAll(int3.toCodigoIntermediario());
         }
         return result;

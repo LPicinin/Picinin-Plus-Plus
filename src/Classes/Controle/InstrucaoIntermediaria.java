@@ -53,6 +53,12 @@ public class InstrucaoIntermediaria
     {
         this.escopo = escopo;
     }
+
+    @Override
+    public String toString()
+    {
+        return cadeia_elementos.toString();
+    }
     
     
 }
