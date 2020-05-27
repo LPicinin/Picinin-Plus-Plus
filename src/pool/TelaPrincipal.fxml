@@ -4,7 +4,6 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -55,12 +54,17 @@
     <bottom>
         <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
             <tabs>
-                <Tab style="-fx-background-radius: 5;" text="Saída">
+                <Tab style="-fx-background-radius: 5; width: 15;" text="Saída">
                     <content>
                         <ListView fx:id="lvErros_Avisos" onMouseClicked="#evtErroAviso" prefHeight="200.0" prefWidth="200.0" />
                     </content>
                 </Tab>
-                <Tab style="-fx-background-radius: 5;" text="Terminal">
+            <Tab style="-fx-background-radius: 5;" text="    CI    ">
+               <content>
+                  <ListView fx:id="lvCodigoIntermediario" onMouseClicked="#evtErroAviso" prefHeight="200.0" prefWidth="200.0" />
+               </content>
+            </Tab>
+                <Tab style="-fx-background-radius: 5; width: 15;" text="Terminal">
                     <content>
                         <VBox spacing="3.0">
                             <children>
@@ -127,11 +131,6 @@
             <right>
                 <VBox prefHeight="473.0" prefWidth="305.0" spacing="3.0" BorderPane.alignment="CENTER">
                     <children>
-                        <CheckBox fx:id="chExibirTodos" mnemonicParsing="false" text="Exibir todos">
-                            <VBox.margin>
-                                <Insets top="5.0" />
-                            </VBox.margin>
-                        </CheckBox>
                         <TableView fx:id="tabela" onMouseClicked="#evtPularParaLexema" prefHeight="1000.0" prefWidth="200.0" style="-fx-background-radius: 5;">
                             <columns>
                                 <TableColumn fx:id="colCadeia" prefWidth="75.0" style="-fx-background-radius: 2;" text="Cadeia" />

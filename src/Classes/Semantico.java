@@ -16,6 +16,7 @@ import Classes.Controle.Simbolo;
 import Controladora.CtrCompilador;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
@@ -42,6 +43,16 @@ public class Semantico extends Constantes
         instrucoes = new ArrayList<>();
         if (lci != null)
             lci.clear();
+    }
+
+    public static List<InstrucaoIntermediaria> getLci()
+    {
+        return lci;
+    }
+
+    public static void setLci(List<InstrucaoIntermediaria> lci)
+    {
+        Semantico.lci = lci;
     }
 
     public List<Instrucao> getInstrucoes()
@@ -75,7 +86,8 @@ public class Semantico extends Constantes
 
         fragmentar_Instrucoes();
         buscaErros_Avisos();
-        conversaoCI();//---------------------------------------------------------------------------
+        if (countErros(erros_avisos_semanticos) == 0)
+            conversaoCI();
         return erros_avisos_semanticos;
     }
 
@@ -401,6 +413,7 @@ public class Semantico extends Constantes
         Stack<Instrucao> pilha = new Stack<>();
         lci = new ArrayList<>();
         List<InstrucaoIntermediaria> l = null;
+        otimizador();
         int gaux;
         for (int i = 0; i < instrucoes.size(); i++)
         {
@@ -409,6 +422,30 @@ public class Semantico extends Constantes
             switch (in.getNome_conversor())
             {
                 case Conversor.If:
+                    l = in.toCodigoIntermediario();
+                    gaux = Conversor.goto_aux;
+                    i++;
+                    pilha.clear();
+                    in = instrucoes.get(i);
+                    if (in.getNome_conversor().equals(Conversor.escIni))
+                    {
+                        pilha.push(in);
+                        for (i++; i < instrucoes.size() && !pilha.isEmpty(); i++)
+                        {
+                            in = instrucoes.get(i);
+                            if (in.getNome_conversor().equals(Conversor.escIni))
+                                pilha.push(in);
+                            else if (in.getNome_conversor().equals(Conversor.escFim))
+                                pilha.pop();
+                            else
+                            {
+                                l.addAll(in.toCodigoIntermediario());
+                            }
+                        }
+
+                        l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("markJMPEND" + gaux, 0, 0), Token.tgoto_mark)), "", 0));
+                    }
+                    Conversor.goto_aux++;
                     break;
                 case Conversor.While:
                     pilha.clear();
@@ -464,7 +501,7 @@ public class Semantico extends Constantes
                             else
                             {
                                 List<InstrucaoIntermediaria> laaux = in.toCodigoIntermediario();
-                                int auxpos = posNull+laaux.size();
+                                int auxpos = posNull + laaux.size();
                                 l.addAll(posNull, laaux);
                                 posNull = auxpos;
                             }
@@ -474,6 +511,12 @@ public class Semantico extends Constantes
                     l.add(new InstrucaoIntermediaria(Arrays.asList(new Match(new Lexema("markJMPEND" + gaux, 0, 0), Token.tgoto_mark)), "", 0));
                     Conversor.goto_aux++;
 
+                    break;
+                case Conversor.escIni:
+                    l = null;
+                    break;
+                case Conversor.escFim:
+                    l = null;
                     break;
                 default:
                     l = in.toCodigoIntermediario();
@@ -486,18 +529,9 @@ public class Semantico extends Constantes
             }
         }
 
-        lci.forEach(ci ->
-        {
-            /*
-            if (ci.getNome_conversor().equals(Conversor.escIni) || ci.getNome_conversor().equals(Conversor.escFim))
-                System.out.println(ci.getNome_conversor());
-            else
-             */
-            System.out.println(showListMatch(ci.getCadeia_elementos()));
-        });
-
     }
 
+    /*
     private String showListMatch(List<Match> list)
     {
         StringBuilder sb = new StringBuilder();
@@ -507,7 +541,7 @@ public class Semantico extends Constantes
         });
         return sb.toString();
     }
-
+     */
     private void condicoes()
     {
         List<Token> pc = new ArrayList<>();//permitidos_em_condicoes
@@ -546,5 +580,172 @@ public class Semantico extends Constantes
                 }
             }
         }
+    }
+
+    private int countErros(List<Controle> erros_avisos_semanticos)
+    {
+        int c = 0;
+        for (Controle item : erros_avisos_semanticos)
+        {
+            if (item != null && item instanceof Erro)
+                c++;
+        }
+        return c;
+    }
+
+    private void otimizador()
+    {
+        R2();
+        R1();
+        R2();
+        R3();
+        R4();
+        R5();
+        R6();
+        R7();
+    }
+
+    private void R1()//Variaveis só usadas uma vez viram constantes
+    {
+        List<Instrucao> dec = getDeclaracoes();
+        List<Instrucao> atri = getAtribuicoes();
+
+        List<Match> auxList, auxList2;
+        List<Instrucao> mremocao = new ArrayList<>();
+        HashMap map = new HashMap();//para realizar as substituicoes depois
+        Match aux;
+        boolean flag;
+
+        //descarta variaveis que dependem de outras em sua declaração
+        for (Instrucao i : dec)
+        {
+            auxList = i.getCadeia_elementos();
+
+            flag = true;
+            for (int j = 2; j < auxList.size() && flag; j++)
+            {
+                if (auxList.get(j).getToken().equals(Token.tIdentificador))
+                {
+                    flag = false;
+                }
+            }
+
+            for (int j = 0; j < atri.size() && flag; j++)
+            {
+                if (atri.get(j).getCadeia_elementos().get(0).equals(i.getCadeia_elementos().get(1)))
+                    flag = false;
+            }
+            if (!flag)
+                mremocao.add(i);
+        }
+        dec.removeAll(mremocao);
+
+        for (Instrucao elem : dec)
+        {
+            auxList = new ArrayList<>(elem.getCadeia_elementos());
+            Match variavel = auxList.get(1);
+            auxList.remove(0);//tira o tipo
+            auxList.remove(0);//tira a variavel
+            auxList.remove(0);//tira a =
+
+            if (auxList.get(auxList.size() - 1).getToken().equals(Token.tPontoVirgula))
+                auxList.remove(auxList.size() - 1);
+
+            for (Instrucao in : instrucoes)
+            {
+                if (elem != in)
+                {
+                    auxList2 = in.getCadeia_elementos();
+                    int index = auxList2.indexOf(variavel);
+
+                    if (index != -1)
+                    {
+                        in.getCadeia_elementos().remove(index);
+                        in.getCadeia_elementos().addAll(index, auxList);
+                        List<Match> tmp = in.getCadeia_elementos();
+                    }
+                }
+
+            }
+        }
+
+        List<Match> variaveis = new ArrayList<>();
+
+        for (Instrucao i : dec)
+        {
+            variaveis.add(i.getCadeia_elementos().get(1));
+        }
+        int[] vetCount = new int[variaveis.size()];
+
+    }
+
+    private void R2()//Variaveis nunca usadas são removidas
+    {
+        HashMap map = new HashMap();//para realizar as substituicoes depois
+        Match aux;
+        List<Instrucao> dec = getDeclaracoes();
+        List<Instrucao> mremocao = new ArrayList<>();
+
+        int c = 0;
+        for (Instrucao in : dec)
+        {
+            aux = in.getCadeia_elementos().get(1);
+            c = 0;
+            for (Instrucao i : instrucoes)
+            {
+                if (i.getCadeia_elementos().contains(aux))
+                    c++;
+            }
+            if (c <= 1)
+                mremocao.add(in);
+        }
+        instrucoes.removeAll(mremocao);
+    }
+
+    private void R3()//operações entre valores simplificados exemplo: x = 50+50 vira x = 100
+    {
+
+    }
+
+    private void R4()//verificação de constantes em condicionais
+    {
+
+    }
+
+    private void R5()//geração de atribuições equivalentes simplificadas, exemplo: x = y*1 vira x = y
+    {
+
+    }
+
+    private void R6()//eliminação de atibuição desnecessária, exemplo x = x
+    {
+
+    }
+
+    private void R7()
+    {
+
+    }
+
+    private List<Instrucao> getAtribuicoes()
+    {
+        return getPorTipo(Conversor.atribuicao);
+    }
+
+    private List<Instrucao> getDeclaracoes()
+    {
+        return getPorTipo(Conversor.declaracao);
+    }
+
+    private List<Instrucao> getPorTipo(String nomeConversor)
+    {
+        List<Instrucao> aux = new ArrayList<>();
+
+        for (Instrucao i : instrucoes)
+        {
+            if (i.getNome_conversor().equals(nomeConversor))
+                aux.add(i);
+        }
+        return aux;
     }
 }

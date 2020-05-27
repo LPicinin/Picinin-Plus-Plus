@@ -51,6 +51,16 @@ public class Compilador
         matchs = new ArrayList<>(al_sintatico.getLexemas_tokens_correspondidos());
     }
 
+    public Sintatico getAl_sintatico()
+    {
+        return al_sintatico;
+    }
+
+    public void setAl_sintatico(Sintatico al_sintatico)
+    {
+        this.al_sintatico = al_sintatico;
+    }
+
     public String getCode()
     {
         return code;

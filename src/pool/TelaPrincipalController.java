@@ -9,6 +9,7 @@ import Classes.Controle.Aviso;
 import Classes.Controle.Controle;
 import Classes.Controle.Erro;
 import Classes.Lexema;
+import Classes.Semantico;
 import Classes.Token;
 import Controladora.CtrCompilador;
 import util.CodeAreaInit;
@@ -32,7 +33,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
@@ -63,8 +63,6 @@ public class TelaPrincipalController implements Initializable
     @FXML
     private TreeView<File> treeViewArquivos;
     @FXML
-    private CheckBox chExibirTodos;
-    @FXML
     private ListView<Object> lvErros_Avisos;
     @FXML
     private TableView<Object> tabela;
@@ -76,6 +74,8 @@ public class TelaPrincipalController implements Initializable
     private TableColumn<Object, String> colValor;
     @FXML
     private TableColumn<Object, String> colTipo;
+    @FXML
+    private ListView<Object> lvCodigoIntermediario;
 
     @Override
     public void initialize(URL url, ResourceBundle rb)
@@ -99,10 +99,6 @@ public class TelaPrincipalController implements Initializable
                 + "    	\n"
                 + "    }\n"
                 + "    if(dec>=in)\n"
-                + "    {\n"
-                + "    	\n"
-                + "    }\n"
-                + "    else\n"
                 + "    {\n"
                 + "    	\n"
                 + "    }\n"
@@ -192,6 +188,9 @@ public class TelaPrincipalController implements Initializable
 
         lvErros_Avisos.getItems().add(l);
         lvErros_Avisos.setStyle(css);
+        
+        lvCodigoIntermediario.getItems().clear();
+        lvCodigoIntermediario.setItems(FXCollections.observableArrayList(new ArrayList<>(Semantico.getLci())));
 
     }
 

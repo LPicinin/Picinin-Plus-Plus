@@ -1,0 +1,8 @@
+
+1 - Variaveis só usadas uma vez viram constantes
+2 - Variaveis nunca usadas são removidas
+3 - operações entre valores simplificados exemplo: x = 50+50 vira x = 100
+4 - verificação de constantes em condicionais
+5 - geração de atribuições equivalentes simplificadas, exemplo: x = y*1 vira x = y
+6 - eliminação de atibuição desnecessária, exemplo x = x
+7 - 

@@ -6,7 +6,6 @@
 package Classes.Controle;
 
 import Classes.Lexema;
-import javafx.scene.control.Label;
 
 /**
  *

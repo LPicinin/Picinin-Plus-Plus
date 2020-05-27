@@ -96,7 +96,8 @@ public class Sintatico extends Constantes
         try
         {
             geraAnaliseSintatica();
-            al_semantico.extrair();
+            if (erros.isEmpty())
+                al_semantico.extrair();
         } catch (Exception ex)
         {
             System.out.println(ex.getMessage() + "\n" + ex.getMessage());
