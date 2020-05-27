@@ -1,8 +1,46 @@
 
-1 - Variaveis só usadas uma vez viram constantes
-2 - Variaveis nunca usadas são removidas
+1 - Variaveis só usadas uma vez viram constantes*
+2 - Variaveis nunca usadas são removidas*
 3 - operações entre valores simplificados exemplo: x = 50+50 vira x = 100
 4 - verificação de constantes em condicionais
 5 - geração de atribuições equivalentes simplificadas, exemplo: x = y*1 vira x = y
 6 - eliminação de atibuição desnecessária, exemplo x = x
-7 - 
+7 - Retirar ifs vazios
+8 - Retirar whiles vazios
+9 - Retirar fors vazios
+
+
+
+
+
+//testes
+
+main teste
+{
+    double dec = 543.56;
+    
+    if(dec>=90)
+    {
+    	dec = dec+1;
+    }
+    
+}
+
+
+main teste
+{
+    double cient = 3.45E-5;
+    double dec = 543.56;
+    string s = "skbdkslb slndbçs smpn";
+    int in = 9;
+    
+    if(dec>=in)
+    {
+    	in = in + 1;
+    }
+    
+    if(in <= 9)
+    {
+    	dec =  dec - 1;
+    }
+}
