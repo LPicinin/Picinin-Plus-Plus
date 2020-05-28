@@ -103,11 +103,11 @@ public class TelaPrincipalController implements Initializable
                 + "    	\n"
                 + "    }\n"
                 + "    int i;\n"
-                + "    for(int k = dec; dec < s and s < dec; k = k + 1)\n"
+                + "    for(int k = dec; dec < 45 and in < dec; k = k + 1)\n"
                 + "    {\n"
                 + "    	\n"
                 + "    }\n"
-                + "    for(i = dec; dec < s and s < dec; dec = dec + 1)\n"
+                + "    for(i = dec; dec < 874.4 and 64 < dec; dec = dec + 1)\n"
                 + "    {\n"
                 + "    	\n"
                 + "    }\n"
@@ -155,7 +155,7 @@ public class TelaPrincipalController implements Initializable
         Set<Object> set = new HashSet<>(oa);
         oa.clear();
         oa.addAll(set);
-        
+
         lvErros_Avisos.setItems(oa);
 
         tabela.setItems(FXCollections.observableArrayList(
@@ -188,7 +188,7 @@ public class TelaPrincipalController implements Initializable
 
         lvErros_Avisos.getItems().add(l);
         lvErros_Avisos.setStyle(css);
-        
+
         lvCodigoIntermediario.getItems().clear();
         lvCodigoIntermediario.setItems(FXCollections.observableArrayList(new ArrayList<>(Semantico.getLci())));
 

@@ -217,16 +217,14 @@ public class Semantico extends Constantes
                     {
                         erros_avisos_semanticos.add(new Aviso(Aviso.perca_De_Precisao.getCodigo(),
                                 "Possível perda de precisão devido ao tipo de " + list.get(i).getLexema().getPalavra(), list.get(i).getLexema()));
-                    }
-                    else if (!tipo.getIdToken().equals(tipo_Da_Variavel.getIdToken()))
+                    } else if (!tipo.getIdToken().equals(tipo_Da_Variavel.getIdToken()))
                     {
                         erros_avisos_semanticos.add(new Erro(Erro.valor_nao_compativel,
                                 list.get(i).getLexema().getPalavra() + " é do tipo " + tipo_Da_Variavel.getIdToken()
                                 + " que não pode ser convertido para " + tipo.getIdToken(), list.get(i).getLexema()));
                     }
 
-                }
-                else if (Token.tValores.contains(list.get(i).getToken()))
+                } else if (Token.tValores.contains(list.get(i).getToken()))
                 {
                     //por aqui
                     if (list.get(i).getToken().equals(Token.tIdentificador))
@@ -243,8 +241,7 @@ public class Semantico extends Constantes
                     {
                         erros_avisos_semanticos.add(new Aviso(Aviso.perca_De_Precisao.getCodigo(),
                                 "Possível perda de precisão devido ao tipo de " + list.get(i).getLexema().getPalavra(), list.get(i).getLexema()));
-                    }
-                    else if (!ValorCompativelComTipo)
+                    } else if (!ValorCompativelComTipo)
                     {
                         erros_avisos_semanticos.add(new Erro(Erro.valor_nao_compativel, list.get(i).getLexema().getPalavra()
                                 + " não pode ser convertido para " + tipo.getIdToken(), list.get(i).getLexema()));
@@ -276,8 +273,7 @@ public class Semantico extends Constantes
             }
             return ret;
 
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             System.out.println("meh");
             return null;
@@ -315,8 +311,7 @@ public class Semantico extends Constantes
             tipo = list.get(0).getToken();
             list.remove(0);
 
-        }
-        else
+        } else
         {
             tipo = getTipo(list.get(0));
         }
@@ -357,8 +352,7 @@ public class Semantico extends Constantes
                 {
                     erros_avisos_semanticos.add(new Aviso(Aviso.perca_De_Precisao.getCodigo(),
                             "Possível perda de precisão devido ao tipo de " + list.get(j).getLexema().getPalavra(), list.get(j).getLexema()));
-                }
-                else if (!ValorCompativelComTipo)
+                } else if (!ValorCompativelComTipo)
                 {
                     erros_avisos_semanticos.add(new Erro(Erro.valor_nao_compativel, list.get(j).getLexema().getPalavra()
                             + " não pode ser convertido para " + tipo.getIdToken(), list.get(j).getLexema()));
@@ -412,8 +406,7 @@ public class Semantico extends Constantes
                 {
                     erros_avisos_semanticos.add(new Aviso(Aviso.nunca_utilizado.getCodigo(),
                             auxId.getLexema().getPalavra() + " nunca é utilizado ", auxId.getLexema()));
-                }
-                else if (catrib == 0)
+                } else if (catrib == 0)
                     erros_avisos_semanticos.add(new Aviso(Aviso.constante_em_potencial.getCodigo(),
                             auxId.getLexema().getPalavra() + " é uma constante em potencial", auxId.getLexema()));
             }
@@ -562,16 +555,30 @@ public class Semantico extends Constantes
         pc.add(Token.tParenteses_fecha);
         pc.add(Token.tIdentificador);
 
-        boolean flag = false;
-
         for (Instrucao in : instrucoes)
         {
             List<Match> l = new ArrayList<>(in.getCadeia_elementos());
 
             if (in.getNome_conversor().equals(Conversor.While)
-                    || in.getNome_conversor().equals(Conversor.If) || flag)
+                    || in.getNome_conversor().equals(Conversor.For)
+                    || in.getNome_conversor().equals(Conversor.If))
             {
-
+                if(in.getNome_conversor().equals(Conversor.For))
+                {
+                    List<Match> mremocaoAux = new ArrayList<>();
+                    for(int i = 0; i < l.size() && !l.get(i).getToken().equals(Token.tPontoVirgula); i++)
+                    {
+                        mremocaoAux.add(l.get(i));
+                    }
+                    l.removeAll(mremocaoAux);
+                    mremocaoAux.clear();
+                    for (int i = l.size()-1; i > 0 && !l.get(i).getToken().equals(Token.tPontoVirgula); i--)
+                    {
+                        mremocaoAux.add(l.get(i));
+                    }
+                    l.removeAll(mremocaoAux);
+                    retiraPorToken(l, Token.tPontoVirgula);
+                }
                 for (Match m : l)
                 {
                     if (m.getToken().equals(Token.tIdentificador))
@@ -581,8 +588,7 @@ public class Semantico extends Constantes
                             erros_avisos_semanticos.add(new Erro(Erro.valor_nao_compativel,
                                     "String não pode ser usada em expressões condicionais", m.getLexema()));
                         }
-                    }
-                    else if (m.getToken().equals(Token.tValor_String))
+                    } else if (m.getToken().equals(Token.tValor_String))
                     {
                         erros_avisos_semanticos.add(new Erro(Erro.valor_nao_compativel,
                                 "String não pode ser usada em expressões condicionais", m.getLexema()));
@@ -605,9 +611,9 @@ public class Semantico extends Constantes
 
     private void otimizador()
     {
-        R2();
-        R1();
-        R2();
+        R2();//Variaveis nunca usadas são removidas
+        R1();//Variaveis só usadas uma vez viram constantes
+        R2();//Variaveis nunca usadas são removidas
         R3();
         R4();
         R5();
@@ -741,8 +747,7 @@ public class Semantico extends Constantes
                     if (aux.get(j).getToken().equals(Token.tIdentificador))
                     {
                         flag = false;
-                    }
-                    else
+                    } else
                         expressao += aux.get(j).getLexema().getPalavra();
                 }
                 //otimizavel
@@ -752,21 +757,20 @@ public class Semantico extends Constantes
                     {
                         expressao = Util.resolveExpressoes(expressao);
                         aux.clear();
-                        
+
                         if (tipo.getToken().equals(Token.tString))
                             expressao = "\"" + expressao + "\"";
                         else if (tipo.getToken().equals(Token.tChar))
                             expressao = "\'" + expressao + "\'";
-                        else if(tipo.getToken().equals(Token.tINT))
-                            expressao = Integer.toString((int)Double.parseDouble(expressao));
+                        else if (tipo.getToken().equals(Token.tINT))
+                            expressao = Integer.toString((int) Double.parseDouble(expressao));
                         aux.add(tipo);
                         aux.add(auxM);
                         aux.add(igual);
                         aux.add(new Match(new Lexema(expressao, 0, 0), tipo.getToken()));
 
                         i.setCadeia_elementos(aux);
-                    }
-                    catch (ScriptException ex)
+                    } catch (ScriptException ex)
                     {
                         System.out.println("Erro no eval classe Util");
                     }
@@ -792,8 +796,7 @@ public class Semantico extends Constantes
                 if (aux.get(j).getToken().equals(Token.tIdentificador))
                 {
                     flag = false;
-                }
-                else
+                } else
                     expressao += aux.get(j).getLexema().getPalavra();
             }
             //otimizavel
@@ -806,17 +809,16 @@ public class Semantico extends Constantes
                     Token ttipo = getTipo(auxM);
                     if (ttipo.equals(Token.tString))
                         expressao = "\"" + expressao + "\"";
-                    else if(ttipo.equals(Token.tChar))
+                    else if (ttipo.equals(Token.tChar))
                         expressao = "\'" + expressao + "\'";
-                    else if(ttipo.equals(Token.tINT))
-                            expressao = Integer.toString((int)Double.parseDouble(expressao));
+                    else if (ttipo.equals(Token.tINT))
+                        expressao = Integer.toString((int) Double.parseDouble(expressao));
                     aux.add(auxM);
                     aux.add(igual);
                     aux.add(new Match(new Lexema(expressao, 0, 0), ttipo));
 
                     i.setCadeia_elementos(aux);
-                }
-                catch (ScriptException ex)
+                } catch (ScriptException ex)
                 {
                     System.out.println("Erro no eval classe Util");
                 }
@@ -837,7 +839,7 @@ public class Semantico extends Constantes
                 case Conversor.If:
                     aux = new ArrayList<>(i.getCadeia_elementos());
                     break;
-                
+
                 case Conversor.While:
                     aux = new ArrayList<>(i.getCadeia_elementos());
                     break;
@@ -848,10 +850,10 @@ public class Semantico extends Constantes
                         aux.remove(0);
                     aux.remove(0);//retira o ponto e virgula
                     int index = findPorToken(aux, Token.tPontoVirgula);
-                    while(index < aux.size())
+                    while (index < aux.size())
                         aux.remove(index);
                     break;
-                
+
                 default:
                     aux = null;
                     break;
@@ -875,8 +877,7 @@ public class Semantico extends Constantes
                                 mremocao.add(i);
                             }
                         }
-                    }
-                    else
+                    } else
                         mremocao.add(i);
                 }
             }
@@ -885,30 +886,28 @@ public class Semantico extends Constantes
         instrucoes.removeAll(mremocao);
     }
 
-    
-
     private void R5()//eliminação de atibuição desnecessária, exemplo x = x
     {
         List<Instrucao> atr = getAtribuicoes();
         List<Instrucao> mremocao = new ArrayList<>();
-        
+
         for (Instrucao i : atr)
         {
             List<Match> aux = i.getCadeia_elementos();
             retiraPorToken(aux, Token.tPontoVirgula);
-            if(aux.size() == 3)
+            if (aux.size() == 3)
             {
-                if(aux.get(0).getLexema().getPalavra().equals(aux.get(2).getLexema().getPalavra()))
+                if (aux.get(0).getLexema().getPalavra().equals(aux.get(2).getLexema().getPalavra()))
                 {
                     mremocao.add(i);
                 }
             }
         }
-        
+
         instrucoes.removeAll(mremocao);
-        
+
     }
-    
+
     private void R6()//retirar laços while vazios
     {
         List<Instrucao> mremocao = new ArrayList<>();
@@ -917,15 +916,15 @@ public class Semantico extends Constantes
         for (int i = 0; i < size; i++)
         {
             aux = instrucoes.get(i);
-            if(aux.getNome_conversor().equals(Conversor.While))
+            if (aux.getNome_conversor().equals(Conversor.While))
             {
-                if(i+2 < size && instrucoes.get(i+2).getNome_conversor().equals(Conversor.escFim))
+                if (i + 2 < size && instrucoes.get(i + 2).getNome_conversor().equals(Conversor.escFim))
                 {
                     mremocao.add(instrucoes.get(i));
-                    mremocao.add(instrucoes.get(i+1));
-                    mremocao.add(instrucoes.get(i+2));
+                    mremocao.add(instrucoes.get(i + 1));
+                    mremocao.add(instrucoes.get(i + 2));
                 }
-                i+=2;
+                i += 2;
             }
         }
         instrucoes.removeAll(mremocao);
@@ -939,15 +938,15 @@ public class Semantico extends Constantes
         for (int i = 0; i < size; i++)
         {
             aux = instrucoes.get(i);
-            if(aux.getNome_conversor().equals(Conversor.If))
+            if (aux.getNome_conversor().equals(Conversor.If))
             {
-                if(i+2 < size && instrucoes.get(i+2).getNome_conversor().equals(Conversor.escFim))
+                if (i + 2 < size && instrucoes.get(i + 2).getNome_conversor().equals(Conversor.escFim))
                 {
                     mremocao.add(instrucoes.get(i));
-                    mremocao.add(instrucoes.get(i+1));
-                    mremocao.add(instrucoes.get(i+2));
+                    mremocao.add(instrucoes.get(i + 1));
+                    mremocao.add(instrucoes.get(i + 2));
                 }
-                i+=2;
+                i += 2;
             }
         }
         instrucoes.removeAll(mremocao);
@@ -994,7 +993,7 @@ public class Semantico extends Constantes
         int i;
         for (i = 0; i < aux.size() && !aux.get(i).getToken().equals(t); i++)
         {
-            
+
         }
         return i;
     }
@@ -1008,16 +1007,16 @@ public class Semantico extends Constantes
             int count = 0;
             List<Match> auxl = i.getCadeia_elementos();
             String var = auxl.get(1).getLexema().getPalavra();
-            
+
             for (Match m : auxl)
             {
-                if(m.getLexema().getPalavra().equals(var))
+                if (m.getLexema().getPalavra().equals(var))
                     count++;
             }
-            if(count > 1)
+            if (count > 1)
             {
                 erros_avisos_semanticos.add(new Erro(Erro.declaracaoIncorreta,
-                                "Variavel não pode receber de si mesma na declaração", auxl.get(1).getLexema()));
+                        "Variavel não pode receber de si mesma na declaração", auxl.get(1).getLexema()));
             }
         }
     }
