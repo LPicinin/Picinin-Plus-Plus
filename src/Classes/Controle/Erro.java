@@ -26,6 +26,7 @@ public class Erro extends Controle
     public static final Erro codigo_Escopo_fora_do_fluxo = new Erro(666, "Escopo fora do fluxo de execução detectado!!!");
     public static final Erro instrucao_nao_pertencente_ha_linguagem = new Erro(412, "Instrução irregular detectada");
     public static final int valor_nao_compativel = 562;
+    public static final int declaracaoIncorreta = 563;
 
     private boolean semantico = false;
 

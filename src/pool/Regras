@@ -1,4 +1,15 @@
+Regras Implementadas
 
+1 - Variaveis só usadas uma vez viram constantes
+2 - Variaveis nunca usadas são removidas
+3 - operações entre valores simplificados exemplo: x = 50+50 vira x = 100
+4 - verificação de constantes em ifs
+5 - eliminação de atibuição desnecessária, exemplo x = x
+6 - retirar laços while vazios
+7 - retirar ifs vazios
+
+
+Idéias
 1 - Variaveis só usadas uma vez viram constantes*
 2 - Variaveis nunca usadas são removidas*
 3 - operações entre valores simplificados exemplo: x = 50+50 vira x = 100

@@ -391,7 +391,6 @@ public class Sintatico extends Constantes
         t[1] = pilha_entrada.pop();
         t[2] = pilha_entrada.pop();
         aux_instrucao.addCadeia_elementos(t[0]);
-
         if (Token.tTipos.contains(t[0].getToken())
                 && t[1].getToken().equals(Token.tIdentificador)
                 && t[2].getToken().equals(Token.tPontoVirgula))
