@@ -28,7 +28,7 @@ Idéias
 
 main teste
 {
-    double cient = 394.36;
+    double d = 394.36;
     int in = 0;
     string s = "4646";
     char c = 'i';

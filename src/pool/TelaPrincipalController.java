@@ -28,11 +28,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
@@ -41,10 +46,12 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.fxmisc.richtext.CodeArea;
 
 /**
@@ -328,5 +335,24 @@ public class TelaPrincipalController implements Initializable
                 c++;
         }
         return c;
+    }
+
+    @FXML
+    private void evtShowCI(MouseEvent event)
+    {
+        try
+        {
+            Stage stage = new Stage();
+            Parent root = FXMLLoader.load(getClass().getResource("TelaShowCI.fxml"));
+            
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.getIcons().add(new Image("/img/sharingan.gif"));
+            stage.centerOnScreen();
+            stage.show();
+        } catch (IOException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
     }
 }

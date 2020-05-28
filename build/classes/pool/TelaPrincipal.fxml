@@ -61,7 +61,7 @@
                 </Tab>
             <Tab style="-fx-background-radius: 5;" text="    CI    ">
                <content>
-                  <ListView fx:id="lvCodigoIntermediario" onMouseClicked="#evtErroAviso" prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="lvCodigoIntermediario" onMouseClicked="#evtShowCI" prefHeight="200.0" prefWidth="200.0" />
                </content>
             </Tab>
                 <Tab style="-fx-background-radius: 5; width: 15;" text="Terminal">
@@ -92,17 +92,17 @@
                     <children>
                         <HBox alignment="CENTER_LEFT" maxHeight="46.0" minWidth="30.0" prefHeight="41.0" prefWidth="694.0" spacing="5.0">
                             <children>
-                                <Button alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#evtabrirArquivo" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
+                                <Button alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#evtabrirArquivo" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
                                     <graphic>
                                         <FontAwesomeIconView fill="WHITE" glyphName="FOLDER_OPEN_ALT" size="25" />
                                     </graphic>
                                 </Button>
-                                <Button alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
+                                <Button alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
                                     <graphic>
                                         <FontAwesomeIconView fill="#b22f00" glyphName="BUG" size="25" />
                                     </graphic>
                                 </Button>
-                                <Button alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
+                                <Button alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
                                     <graphic>
                                         <FontAwesomeIconView fill="#6f00ff" glyphName="GITHUB" size="25" />
                                     </graphic>
@@ -112,7 +112,7 @@
                                         <FontAwesomeIconView fill="#167500" glyphName="PLAY" size="25" />
                                     </graphic>
                                 </Button>
-                                <Button alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#evtSaveCode" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
+                                <Button alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#evtSaveCode" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 30;" textAlignment="CENTER">
                                     <graphic>
                                         <FontAwesomeIconView fill="#0400e8" glyphName="SAVE" size="25" />
                                     </graphic>
