@@ -32,7 +32,7 @@ public class Semantico extends Constantes
 {
 
     private List<Instrucao> instrucoes;
-    private List<Controle> erros_avisos_semanticos;
+    private static final List<Controle> erros_avisos_semanticos = new ArrayList<>();
 
     //para controle
     private List<Instrucao> declaracoes;
@@ -47,6 +47,7 @@ public class Semantico extends Constantes
         instrucoes = new ArrayList<>();
         if (lci != null)
             lci.clear();
+        erros_avisos_semanticos.clear();
     }
 
     public static List<InstrucaoIntermediaria> getLci()
@@ -79,18 +80,13 @@ public class Semantico extends Constantes
         return erros_avisos_semanticos;
     }
 
-    public void setErros_avisos_semanticos(List<Controle> erros_avisos_semanticos)
-    {
-        this.erros_avisos_semanticos = erros_avisos_semanticos;
-    }
-
     public List<Controle> extrair()
     {
-        erros_avisos_semanticos = new ArrayList<>();
 
         fragmentar_Instrucoes();
         buscaErros_Avisos();
         lci = new ArrayList<>();
+        
         if (countErros(erros_avisos_semanticos) == 0)
             conversaoCI();
         return erros_avisos_semanticos;
@@ -849,9 +845,11 @@ public class Semantico extends Constantes
                     while (!aux.get(0).getToken().equals(Token.tPontoVirgula))
                         aux.remove(0);
                     aux.remove(0);//retira o ponto e virgula
-                    int index = findPorToken(aux, Token.tPontoVirgula);
-                    while (index < aux.size())
-                        aux.remove(index);
+                    List<Integer> index = findPorToken(aux, Token.tPontoVirgula);
+                    for (Integer indx : index)
+                    {
+                        aux.remove((int)indx);
+                    }
                     break;
 
                 default:
@@ -988,14 +986,18 @@ public class Semantico extends Constantes
         aux.removeAll(mremocao);
     }
 
-    private int findPorToken(List<Match> aux, Token t)
+    private List<Integer> findPorToken(List<Match> aux, Token t)
     {
+        List<Integer> indices = new ArrayList<>();
         int i;
-        for (i = 0; i < aux.size() && !aux.get(i).getToken().equals(t); i++)
+        for (i = 0; i < aux.size(); i++)
         {
-
+            if(aux.get(i).getToken().equals(t))
+            {
+                indices.add(i);
+            }
         }
-        return i;
+        return indices;
     }
 
     private void demaisRegras()

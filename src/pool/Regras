@@ -26,6 +26,13 @@ Idéias
 
 //testes
 
+main teste
+{
+    double cient = 394.36;
+    int in = 0;
+    string s = "4646";
+    char c = 'i';
+}
 
 main teste
 {
