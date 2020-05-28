@@ -321,7 +321,7 @@ public class Conversor
         result.addAll(toCI_atribuicao(int_aux));
         laux.add(new Match(new Lexema("if", 0, 0), Token.tIf));
         laux.add(new Match(new Lexema("vif", 0, 0), Token.tIdentificador));
-        laux.add(new Match(new Lexema("goto" + goto_aux, 0, 0), Token.tgoto));
+        laux.add(new Match(new Lexema("goto markJMPA" + goto_aux, 0, 0), Token.tgoto));
 
         InstrucaoIntermediaria ii = new InstrucaoIntermediaria(laux, If, intr.getEscopo());
 

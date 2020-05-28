@@ -5,6 +5,10 @@
  */
 package util;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
 /**
  *
  * @author luish
@@ -33,4 +37,11 @@ public class Util
      */
     public static final String regex_float = "(\\d)+(\\.){1}(\\d)+";
 
+    
+    private static ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
+    
+    public static String resolveExpressoes(String expressao) throws ScriptException
+    {
+        return engine.eval(expressao).toString();
+    }
 }
