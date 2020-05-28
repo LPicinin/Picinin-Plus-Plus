@@ -819,14 +819,36 @@ public class Semantico extends Constantes
         for (int in = 0; in < size; in++)
         {
             Instrucao i = instrucoes.get(in);
-            if (i.getNome_conversor().equals(Conversor.If))
+            List<Match> aux;
+            switch (i.getNome_conversor())
             {
-                List<Match> aux = new ArrayList<>(i.getCadeia_elementos());
-                retiraPorToken(aux, Token.tParenteses_abre, Token.tParenteses_fecha, Token.tPontoVirgula);
-                if (aux.size() == 2)
+                case Conversor.If:
+                    aux = new ArrayList<>(i.getCadeia_elementos());
+                    break;
+                case Conversor.While:
+                    aux = new ArrayList<>(i.getCadeia_elementos());
+                    break;
+                case Conversor.For:
+                    aux = new ArrayList<>(i.getCadeia_elementos());
+                    retiraPorToken(aux, Token.tFor, Token.tParenteses_abre, Token.tParenteses_fecha);
+                    while (!aux.get(0).getToken().equals(Token.tPontoVirgula))
+                        aux.remove(0);
+                    aux.remove(0);//retira o ponto e virgula
+                    int index = findPorToken(aux, Token.tPontoVirgula);
+                    while(index < aux.size())
+                        aux.remove(index);
+                    break;
+                default:
+                    aux = null;
+                    break;
+            }
+            if (aux != null && !aux.isEmpty())
+            {
+                retiraPorToken(aux, Token.tParenteses_abre, Token.tParenteses_fecha, Token.tPontoVirgula, Token.tIf, Token.tWhile);
+                if (aux.size() == 1)
                 {
-                    if (aux.get(1).getLexema().getPalavra().equals("false")
-                            || aux.get(1).getLexema().getPalavra().equals("0"))
+                    if (aux.get(0).getLexema().getPalavra().equals("false")
+                            || aux.get(0).getLexema().getPalavra().equals("0"))
                     {
                         if (instrucoes.get(in + 1).getNome_conversor().equals(Conversor.escIni))
                         {
@@ -844,6 +866,7 @@ public class Semantico extends Constantes
                         mremocao.add(i);
                 }
             }
+
         }
         instrucoes.removeAll(mremocao);
     }
@@ -897,5 +920,15 @@ public class Semantico extends Constantes
                 mremocao.add(m);
         }
         aux.removeAll(mremocao);
+    }
+
+    private int findPorToken(List<Match> aux, Token t)
+    {
+        int i;
+        for (i = 0; i < aux.size() && !aux.get(i).getToken().equals(t); i++)
+        {
+            
+        }
+        return i;
     }
 }

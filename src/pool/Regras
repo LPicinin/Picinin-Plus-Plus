@@ -15,6 +15,23 @@
 
 //testes
 
+
+main teste
+{
+    double dec = 543.56;
+    int in = 9;
+    // int main dnjdn 56 ; fef
+    while(dec<in and 10 <= 90)
+    {
+    	
+    }
+    if(true)
+    {
+    	in = 90+8;
+    }
+}
+
+
 main teste
 {
     double dec = 543.56;
