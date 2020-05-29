@@ -16,6 +16,7 @@ import Classes.Controle.Simbolo;
 import Controladora.CtrCompilador;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
@@ -131,7 +132,7 @@ public class Semantico extends Constantes
                     break;
             }
         });
-
+        convertHex_e_Oct();
     }
 
     private int contain(Token token, Instrucao in)
@@ -666,13 +667,16 @@ public class Semantico extends Constantes
                 if (elem != in)
                 {
                     auxList2 = in.getCadeia_elementos();
-                    int index = auxList2.indexOf(variavel);
+                    List<Integer> indexs = findPorMatch(auxList2, variavel);
+                    //int index = auxList2.indexOf(variavel);
 
-                    if (index != -1)
+                    if (!indexs.isEmpty())
                     {
-                        in.getCadeia_elementos().remove(index);//--------------------------------------talvez mudar pra set(index, auxList)
-                        in.getCadeia_elementos().addAll(index, auxList);
-                        List<Match> tmp = in.getCadeia_elementos();
+                        for (Integer index : indexs)
+                        {
+                            in.getCadeia_elementos().remove((int)index);
+                            in.getCadeia_elementos().addAll((int)index, auxList);
+                        }
                     }
                 }
 
@@ -1019,6 +1023,46 @@ public class Semantico extends Constantes
             {
                 erros_avisos_semanticos.add(new Erro(Erro.declaracaoIncorreta,
                         "Variavel não pode receber de si mesma na declaração", auxl.get(1).getLexema()));
+            }
+        }
+    }
+
+    private List<Integer> findPorMatch(List<Match> aux, Match variavel)
+    {
+        List<Integer> indices = new ArrayList<>();
+        int i;
+        for (i = 0; i < aux.size(); i++)
+        {
+            if(aux.get(i).getLexema().getPalavra().equals(variavel.getLexema().getPalavra()))
+            {
+                indices.add(i);
+            }
+        }
+        Collections.reverse(indices);
+        return indices;
+    }
+
+    private void convertHex_e_Oct()
+    {
+        for (Instrucao i : instrucoes)
+        {
+            List<Match> aux = i.getCadeia_elementos();
+            for (int j = 0; j < aux.size(); j++)
+            {
+                if(aux.get(j).getToken().equals(Token.tValor_OctaDecimal))
+                {
+                    String oct = aux.get(j).getLexema().getPalavra().replace("o", "").replace("O", "");
+                    oct = Integer.toString(Integer.parseInt(oct, 8));
+                    aux.get(j).getLexema().setPalavra(oct);
+                    aux.get(j).setToken(Token.tValor_Inteiro);
+                }
+                else if(aux.get(j).getToken().equals(Token.tValor_HexaDecimal))
+                {
+                    String hex = aux.get(j).getLexema().getPalavra().replace("x", "").replace("X", "");
+                    hex = Integer.toString(Integer.parseInt(hex, 16));
+                    aux.get(j).getLexema().setPalavra(hex);
+                    aux.get(j).setToken(Token.tValor_Inteiro);
+                }
             }
         }
     }
